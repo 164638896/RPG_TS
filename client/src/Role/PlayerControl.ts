@@ -29,11 +29,6 @@ class PlayerControl extends Laya.Script {
         this.mTerrainSprite = h;
         this.mMyPlayerData = this.mMyPlayer.mRoleData as MyPlayerData;
         this.mPlayerCamera.updateCamera(this.mMyPlayer.mRole3D.transform.position);
-
-        //--------------------------------------------------------------------
-        Laya.stage.on(laya.events.Event.KEY_UP, this, this.onKeyUp);
-        Laya.stage.on(laya.events.Event.KEY_PRESS, this, this.onPress);
-        //--------------------------------------------------------------------
     }
 
     public _update(state: Laya.RenderState): void {
@@ -99,26 +94,4 @@ class PlayerControl extends Laya.Script {
     public joystickUp() {
         this.mMyPlayer.mStateMachine.SwitchState(StateType.Idle, AniName.Idle);
     }
-
-    //-------------------------------------------------------------------
-    private onKeyUp() {
-        this.mMyPlayerData.mJoystickForward.x = 0;
-        this.mMyPlayerData.mJoystickForward.z = 0;
-    }
-
-    private onPress(e: Laya.Event = null){
-        let x: number = 0;
-        let z: number = 0;
-
-        if (e.keyCode == 119) z = -1;
-        if (e.keyCode == 115) z = 1;
-        if (e.keyCode == 97) x = -1;
-        if (e.keyCode == 100) x = 1;
-        
-        if (x != 0 || z != 0)  {
-            this.mMyPlayerData.mJoystickForward.x = x;
-            this.mMyPlayerData.mJoystickForward.z = z;
-        }
-    }
-    //-------------------------------------------------------------------
 }

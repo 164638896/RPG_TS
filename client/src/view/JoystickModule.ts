@@ -36,6 +36,11 @@ class JoystickModule extends laya.events.EventDispatcher {
         this._curPos = new laya.maths.Point();
 
         this._touchArea.on(laya.events.Event.MOUSE_DOWN,this, this.onTouchDown);
+
+        //--------------------------------------------------------------------
+        Laya.stage.on(laya.events.Event.KEY_UP, this, this.onKeyUp);
+        Laya.stage.on(laya.events.Event.KEY_PRESS, this, this.onPress);
+        //--------------------------------------------------------------------
     }
 
     public Trigger(evt: laya.events.Event): void {
@@ -140,4 +145,24 @@ class JoystickModule extends laya.events.EventDispatcher {
             this.event(JoystickModule.JoystickMoving,[offsetX,offsetY]);
         }
     }
+
+    //-------------------------------------------------------------------
+    private onKeyUp() {
+        this.event(JoystickModule.JoystickMoving,[0,0]);
+    }
+
+    private onPress(e: Laya.Event = null){
+        let x: number = 0;
+        let z: number = 0;
+
+        if (e.keyCode == 119) z = -1;
+        if (e.keyCode == 115) z = 1;
+        if (e.keyCode == 97) x = -1;
+        if (e.keyCode == 100) x = 1;
+        
+        if (x != 0 || z != 0)  {
+            this.event(JoystickModule.JoystickMoving,[x,z]);
+        }
+    }
+    //-------------------------------------------------------------------
 }
