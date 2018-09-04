@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "攻击1",
+    "ani": "Attack01",
+    "self_effect": null,
+    "target_effect": null,
+    "dis": 1,
+    "behavior_buff": null,
+    "move_buff": null,
+    "hurt_buff": null,
+    "constrol_buff": null
+  },
+  {
+    "id": 2,
+    "name": "攻击2",
+    "ani": "Attack01",
+    "self_effect": null,
+    "target_effect": null,
+    "dis": 1,
+    "behavior_buff": null,
+    "move_buff": null,
+    "hurt_buff": null,
+    "constrol_buff": null
+  },
+  {
+    "id": 3,
+    "name": "攻击3",
+    "ani": "Attack01",
+    "self_effect": null,
+    "target_effect": null,
+    "dis": 5,
+    "behavior_buff": null,
+    "move_buff": null,
+    "hurt_buff": null,
+    "constrol_buff": null
+  }
+]

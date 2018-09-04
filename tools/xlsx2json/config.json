@@ -1,0 +1,12 @@
+{
+  "xlsx": {
+    "head": 2,
+    "src": "./excel/**/[^~$]*.xlsx",
+    "dest": "../../client/bin/config",
+	"dts": "../../client/libs"
+  },
+  "ts": true,
+  "json": {
+    "uglify": false
+  }
+}
