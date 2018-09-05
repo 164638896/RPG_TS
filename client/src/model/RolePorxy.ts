@@ -31,7 +31,8 @@ class MyPlayerPorxy extends puremvc.Proxy{
             data.mPos = new Laya.Vector3(-0.353, 0.282, -2.68);
             this.setData(data);
 
-            this.sendNotification(NotiNames.MYPLAYER_ADDED, instId);
+            //this.sendNotification(NotiNames.MYPLAYER_ADDED, instId);
+            this.sendNotification(NotiNames.ENTER_SCENE);
         }
         else
         {

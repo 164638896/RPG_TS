@@ -34,13 +34,6 @@ class AppFacade extends puremvc.Facade {
 
     initializeController(): void {
         super.initializeController();
-
-        this.registerCommand(NotiNames.STARTUP, StartUpCommand);
-        this.registerCommand(NotiNames.PRELOAD, PreLoadCommand);
-        this.registerCommand(NotiNames.ENTER_SCENE, EnterSceneCommand);
-        this.registerCommand(NotiNames.SKILL, SkillCommand);
-        // this.registerCommand(NotiNames.LevelUp, TestCommand);
-        // this.registerMediator(new TestMediator());
-        // this.registerProxy(new TestProxy());
+        this.registerCommand(NotiNames.STARTUP, StartUpCMD);
     }
 }

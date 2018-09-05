@@ -4,7 +4,6 @@
 
 class NotiNames {
     static STARTUP: string = "StartUp";
-    static PRELOAD: string = "PreLoad";
     static ENTER_SCENE: string = "EnterScene";
 
     static MYPLAYER_ADDED: string = "MyPlayerAdded";

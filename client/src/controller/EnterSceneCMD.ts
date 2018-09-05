@@ -1,13 +1,15 @@
 /*
 * name;
 */
-class EnterSceneCommand extends puremvc.SimpleCommand {
+class EnterSceneCMD extends puremvc.SimpleCommand {
     constructor() {
         super();
     }
 
     execute(notification: puremvc.INotification): void {
         console.log("EnterSceneCommand");
+
+        let data = notification.getBody();
 
         let scene: Laya.Scene = Laya.loader.getRes("res/3D/1v1Scene.ls");
         Laya.stage.addChildAt(scene, 0);
@@ -24,7 +26,11 @@ class EnterSceneCommand extends puremvc.SimpleCommand {
         ///test
 
         // 创建自己
-        let myPlayer = RoleMgr.getInstance().createMyPlayer(this.facade.retrieveProxy(ProxyNames.MYPLAYER_PROXY) as MyPlayerPorxy);
+        let myPlayer = RoleMgr.getInstance().getMyPlayer();
+        if (myPlayer == null)  {
+            myPlayer = RoleMgr.getInstance().createMyPlayer(this.facade.retrieveProxy(ProxyNames.MYPLAYER_PROXY) as MyPlayerPorxy);
+        }
+
         if(myPlayer)
         {
             scene.addChild(myPlayer.mRole3D);

@@ -53,6 +53,7 @@ class MyPlayerData extends PlayerData
 {
     public mJoystickForward = new Laya.Vector3;
     public mCameraRotation = new Laya.Vector2;
+    public mSceneId : number;
 }
 
 class NpcData extends RoleData

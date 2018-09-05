@@ -2,7 +2,7 @@
 * name;
 */
 
-class SkillCommand extends puremvc.SimpleCommand {
+class SkillCMD extends puremvc.SimpleCommand {
     constructor() {
         super();
     }

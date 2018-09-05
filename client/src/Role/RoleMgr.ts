@@ -59,4 +59,9 @@ class RoleMgr{
     public getPlayer(inst:number): Player{
         return this.mPlayerDict.get(inst);
     }
+
+    public removePlayer()
+    {
+        
+    }
 }

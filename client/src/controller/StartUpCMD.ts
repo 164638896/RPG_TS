@@ -1,11 +1,8 @@
 /*
 * name;
 */
-class PreLoadCommand extends puremvc.SimpleCommand {
-
+class StartUpCMD extends puremvc.SimpleCommand {
     private mProgress: number;
-    private mPlayerDict: laya.utils.Dictionary = new laya.utils.Dictionary;
-    private mSkillDict: laya.utils.Dictionary = new laya.utils.Dictionary;
     private mLoading: LoadingMediator;
 
     constructor() {
@@ -14,11 +11,33 @@ class PreLoadCommand extends puremvc.SimpleCommand {
     }
 
     execute(notification: puremvc.INotification): void {
-        console.log("PreLoadCommand");
+        //加载版本信息文件
+        let url:string = 'version.json?v=' + Laya.Browser.window.resVersion;
+        Laya.ResourceVersion.enable(url, Handler.create(this, this.versionComplete), Laya.ResourceVersion.FILENAME_VERSION);
 
-        // loading
-        this.mLoading = this.facade.retrieveMediator(MediatorNames.LOADING) as LoadingMediator;
+        console.log("StartUpCommand");
+    }
+
+    private versionComplete() {
+
+        fairygui.UIConfig.packageFileExtension = "bin";
+
+        let Res2DArry = [
+            //{ url: "res/Loading@atlas0.png", type: Laya.Loader.IMAGE },
+            { url: "res/Loading.bin", type: Laya.Loader.BUFFER },
+        ];
+        Laya.loader.load(Res2DArry, Laya.Handler.create(this, this.loadingRes));
+    }
+
+    public loadingRes() {
+        Laya.stage.addChild(fairygui.GRoot.inst.displayObject);
+        fairygui.UIPackage.addPackage("res/Loading");
+
+        this.mLoading = new LoadingMediator(MediatorNames.LOADING, fairygui.UIPackage.createObject("Loading", "loading").asCom);
+        this.facade.registerMediator(this.mLoading);
         this.mLoading.open();
+
+        //this.sendNotification(NotiNames.PRELOAD);
 
         // //本地包白名单
         // Laya.MiniAdpter.nativefiles = [
@@ -53,7 +72,7 @@ class PreLoadCommand extends puremvc.SimpleCommand {
         //Laya.loader.maxLoader = 5;
     }
 
-    private on2DComplete() {
+     private on2DComplete() {
         PlayerConfig.getInstance().load("config/PlayerCfg.json");
         SkillConfig.getInstance().load("config/SkillCfg.json");
         fairygui.UIPackage.addPackage("res/Joystick");
@@ -78,8 +97,7 @@ class PreLoadCommand extends puremvc.SimpleCommand {
 
     private conmmonResComplete()
     {
-        // 注册ui
-        this.facade.registerMediator(new MainMediator(MediatorNames.MAIN, fairygui.UIPackage.createObject("Joystick", "Main").asCom));
+        this.mLoading.close();
 
         // 注册porxy
         this.facade.registerProxy(new MyPlayerPorxy());
@@ -87,8 +105,13 @@ class PreLoadCommand extends puremvc.SimpleCommand {
         this.facade.registerProxy(new MonsterPorxy());
         this.facade.registerProxy(new NpcPorxy());
 
-        this.sendNotification(NotiNames.ENTER_SCENE);
+        // 注册ui
+        this.facade.registerMediator(new MainMediator(MediatorNames.MAIN, fairygui.UIPackage.createObject("Joystick", "Main").asCom));
 
-        this.mLoading.close();
+        // 注册命令
+        this.facade.registerCommand(NotiNames.ENTER_SCENE, EnterSceneCMD);
+        this.facade.registerCommand(NotiNames.SKILL, SkillCMD);
+
+        this.sendNotification(NotiNames.ENTER_SCENE);
     }   
 }
