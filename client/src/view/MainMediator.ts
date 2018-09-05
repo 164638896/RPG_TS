@@ -2,8 +2,6 @@
 * name;
 */
 class MainMediator extends FuiBaseMediator {
-    private _joystick: JoystickModule;
-    private _skillBtn: fairygui.GObject;
     private mMyPlayerPorxy: MyPlayerPorxy;
     private touchId: number = -1;
     private _startStageX: number;

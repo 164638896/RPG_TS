@@ -2,9 +2,17 @@
 * name;
 */
 
-class RoleData {
+enum RoleType {
+    None = 0,
+    MyPlayer,
+    OtherPlayer,
+    Monster,
+    Npc,
+}
 
-    public name: string;
+class RoleData {
+    public mRoleType:RoleType; 
+    public mName: string;
     public mInstId: number;
     public mTypeId: number;
     public mMoveSpeed: number;

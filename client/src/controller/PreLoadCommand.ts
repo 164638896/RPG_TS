@@ -39,8 +39,8 @@ class PreLoadCommand extends puremvc.SimpleCommand {
         let Res2DArry = [
             { url: "config/PlayerCfg.json", "type": Laya.Loader.JSON },
             { url: "config/SkillCfg.json", "type": Laya.Loader.JSON },
-            // { url: "res/Joystick@atlas0.png", type: Laya.Loader.IMAGE },
-            // { url: "res/Joystick.bin", type: Laya.Loader.BUFFER },
+            { url: "res/Joystick@atlas0.png", type: Laya.Loader.IMAGE },
+            { url: "res/Joystick.bin", type: Laya.Loader.BUFFER },
         ];
         Laya.loader.load(Res2DArry, Laya.Handler.create(this, this.on2DComplete), Laya.Handler.create(this, this.on2DProgress));
 
@@ -56,6 +56,7 @@ class PreLoadCommand extends puremvc.SimpleCommand {
     private on2DComplete() {
         PlayerConfig.getInstance().load("config/PlayerCfg.json");
         SkillConfig.getInstance().load("config/SkillCfg.json");
+        fairygui.UIPackage.addPackage("res/Joystick");
 
         this.mProgress += 0.5;
         if (this.mProgress >= 1) this.conmmonResComplete();
@@ -77,7 +78,10 @@ class PreLoadCommand extends puremvc.SimpleCommand {
 
     private conmmonResComplete()
     {
-        // 初始化porxy
+        // 注册ui
+        this.facade.registerMediator(new MainMediator(MediatorNames.MAIN, fairygui.UIPackage.createObject("Joystick", "Main").asCom));
+
+        // 注册porxy
         this.facade.registerProxy(new MyPlayerPorxy());
         this.facade.registerProxy(new PlayerPorxy());
         this.facade.registerProxy(new MonsterPorxy());

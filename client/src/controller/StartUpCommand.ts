@@ -9,7 +9,7 @@ class StartUpCommand extends puremvc.SimpleCommand {
     execute(notification: puremvc.INotification): void {
 
         //加载版本信息文件
-        let url:string = 'version.json?' + Laya.Browser.window.resVersion;
+        let url:string = 'version.json?v=' + Laya.Browser.window.resVersion;
         Laya.ResourceVersion.enable(url, Handler.create(this, this.versionComplete), Laya.ResourceVersion.FILENAME_VERSION);
 
         console.log("StartUpCommand");
@@ -20,21 +20,17 @@ class StartUpCommand extends puremvc.SimpleCommand {
         fairygui.UIConfig.packageFileExtension = "bin";
 
         let Res2DArry = [
-            { url: "res/Joystick@atlas0.png", type: Laya.Loader.IMAGE },
-            { url: "res/Joystick.bin", type: Laya.Loader.BUFFER },
+            //{ url: "res/Loading@atlas0.png", type: Laya.Loader.IMAGE },
+            { url: "res/Loading.bin", type: Laya.Loader.BUFFER },
         ];
         Laya.loader.load(Res2DArry, Laya.Handler.create(this, this.loadingRes));
     }
 
     public loadingRes() {
         Laya.stage.addChild(fairygui.GRoot.inst.displayObject);
-        fairygui.UIPackage.addPackage("res/Joystick");
+        fairygui.UIPackage.addPackage("res/Loading");
 
-        let loadingMediator = new LoadingMediator(MediatorNames.LOADING, fairygui.UIPackage.createObject("Joystick", "loading").asCom);
-        this.facade.registerMediator(loadingMediator);
-
-        let mainMediator = new MainMediator(MediatorNames.MAIN, fairygui.UIPackage.createObject("Joystick", "Main").asCom);
-        this.facade.registerMediator(mainMediator);
+        this.facade.registerMediator(new LoadingMediator(MediatorNames.LOADING, fairygui.UIPackage.createObject("Loading", "loading").asCom));
 
         this.sendNotification(NotiNames.PRELOAD);
     }

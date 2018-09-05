@@ -20,6 +20,7 @@ class MyPlayerPorxy extends puremvc.Proxy{
         if(playerCfg)
         {
             let data = new MyPlayerData();
+            data.mRoleType = RoleType.MyPlayer;
             data.mMoveSpeed = playerCfg.speed;
             data.mAtk = playerCfg.atk;
             data.mHp = playerCfg.hp;
@@ -62,7 +63,7 @@ class MyPlayerPorxy extends puremvc.Proxy{
         let data = this.get();
         // 同步给服务器
         // 通知播放动作
-        this.sendNotification(NotiNames.SKILL, [data.mInstId, skillId]);
+        this.sendNotification(NotiNames.SKILL, [data, skillId]);
     }
 }
 
