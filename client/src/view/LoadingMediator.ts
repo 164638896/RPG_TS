@@ -12,7 +12,7 @@ class LoadingMediator extends FuiBaseMediator {
     }
 
     private registerListeners(): void {
-        this.mProgressBar = this.viewComponent.getChild("Progress");
+        this.mProgressBar = this.viewComponent.getChild("Progress") as fairygui.GProgressBar;
     }
 
     listNotificationInterests(): string[] {

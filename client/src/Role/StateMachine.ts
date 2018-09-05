@@ -48,9 +48,7 @@ class StateMachine {
         let newState: IState = this.mDictState.get(stateType);
         if (newState == null) return false;
 
-        this.ExeState(newState, param1);
-
-        return true;
+        return this.ExeState(newState, param1);
     }
 
     public Update(state: Laya.RenderState) {
@@ -68,7 +66,7 @@ class StateMachine {
         this.mNextStateInfo.mParam1 = param1;
     }
 
-    public NextState() {
+    public NextState() : boolean{
         if (this.mNextStateInfo.mStateType != StateType.None) {
             let newState: IState = this.mDictState.get(this.mNextStateInfo.mStateType);
             if (newState == null) return false;
@@ -84,11 +82,11 @@ class StateMachine {
         }
     }
 
-    private ExeState(newState: IState, param1: any) {
+    private ExeState(newState: IState, param1: any) : boolean{
         if (this.mCurrState != null) this.mCurrState.LeaveState();
 
         this.mCurrState = newState;
 
-        this.mCurrState.EnterState(param1);
+       return this.mCurrState.EnterState(param1);
     }
 }

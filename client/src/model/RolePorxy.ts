@@ -56,6 +56,14 @@ class MyPlayerPorxy extends puremvc.Proxy{
         data.mCameraRotation.x = x;
         data.mCameraRotation.y = y;
     }
+
+    public playSkill(skillId: number)
+    {
+        let data = this.get();
+        // 同步给服务器
+        // 通知播放动作
+        this.sendNotification(NotiNames.SKILL, [data.mInstId, skillId]);
+    }
 }
 
 class PlayerPorxy extends puremvc.Proxy{

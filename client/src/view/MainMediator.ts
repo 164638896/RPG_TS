@@ -53,7 +53,8 @@ class MainMediator extends FuiBaseMediator {
     }
 
     private onClickSkill(evt: Event): void {
-        this.sendNotification(NotiNames.SKILL, AniName.Atk);
+        this.mMyPlayerPorxy.playSkill(1);
+        //this.sendNotification(NotiNames.SKILL, AniName.Atk);
     }
 
     private onTouchDown(evt: laya.events.Event) {

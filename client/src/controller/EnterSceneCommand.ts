@@ -24,8 +24,7 @@ class EnterSceneCommand extends puremvc.SimpleCommand {
         ///test
 
         // 创建自己
-        let myPlayerPorxy = this.facade.retrieveProxy(ProxyNames.MYPLAYER_PROXY) as MyPlayerPorxy;
-        let myPlayer = RoleMgr.getInstance().createMyPlayer(myPlayerPorxy.get());
+        let myPlayer = RoleMgr.getInstance().createMyPlayer(this.facade.retrieveProxy(ProxyNames.MYPLAYER_PROXY) as MyPlayerPorxy);
         if(myPlayer)
         {
             scene.addChild(myPlayer.mRole3D);
@@ -42,10 +41,11 @@ class EnterSceneCommand extends puremvc.SimpleCommand {
         let playerArray = playerPorxy.getDataDict().values;
         for (let i = 0; i < playerArray.length; ++i) {
             let otherPlayerData = playerArray[i] as PlayerData;
-            let player = RoleMgr.getInstance().createPlayer(otherPlayerData);
+            let player = RoleMgr.getInstance().createPlayer(playerPorxy, otherPlayerData);
             scene.addChild(player.mRole3D);
         }
 
+        // 打开主界面
         let main = this.facade.retrieveMediator(MediatorNames.MAIN) as MainMediator;
         main.open();
     }

@@ -19,7 +19,6 @@ class LayaAir3D {
         Laya.Stat.show();
 
         AppFacade.getInstance().startup();
-        //GameLoad.getInstance().preLoad();
     }
 }
 

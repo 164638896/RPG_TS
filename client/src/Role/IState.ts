@@ -35,8 +35,8 @@ abstract class IState {
 
     public GetStateType(): StateType { return this.mStateType; }
 
-    public EnterState(param1: any) {
-
+    public EnterState(param1: any) : boolean{
+        return false;
     }
 
     public ExecuteStateAgain(param1: any) {
@@ -60,8 +60,20 @@ class AniState extends IState {
         this.mAnimator = r.mRole3D.getComponentByType(Laya.Animator) as Laya.Animator;
     }
 
-    public EnterState(param1: any) {
-        this.mAnimator.play(param1);
+    public EnterState(param1: any) : boolean{
+        return this.plyaerAni(param1);
+    }
+
+    public plyaerAni(aniName: string) : boolean{
+        let ac = this.mAnimator.getClip(aniName)
+        if(ac == null)
+        {
+            console.log("找不到动作名为: ", aniName);
+            return false;
+        }
+            
+        this.mAnimator.play(aniName);
+        return true;
     }
 }
 
@@ -72,9 +84,9 @@ class TimeState extends IState {
 
     }
 
-    public EnterState(param1: any) {
-
+    public EnterState(param1: any) : boolean{
         Laya.timer.once(param1, this, this.onTimerComplete);
+        return true;
     }
 
     private onTimerComplete() {
@@ -88,13 +100,14 @@ class AtkState extends AniState {
         super(r, machine, state);
     }
 
-    public EnterState(param1: any) {
-        super.EnterState(param1);
+    public EnterState(param1: any) : boolean {
+        if(!super.EnterState(param1)) return false;
 
         this.mAnimator.once(Laya.Event.COMPLETE, this, this.onAniComplete);
         this.mAnimator.once(Laya.Event.STOPPED, this, this.onAniComplete);
 
         this.mChangeState = false;
+        return true;
     }
 
     public LeaveState() {

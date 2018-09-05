@@ -17,8 +17,8 @@ class RoleMgr{
         return RoleMgr._instance;
     }
 
-
-    public createMyPlayer(myPlayerData: MyPlayerData) : MyPlayer{
+    public createMyPlayer(myPlayerPorxy: MyPlayerPorxy) : MyPlayer{
+        let myPlayerData = myPlayerPorxy.get();
         let myPlayerCfg = PlayerConfig.getInstance().getPlayerInfo(myPlayerData.mTypeId);
         if (!myPlayerCfg) {
             return null;
@@ -28,9 +28,7 @@ class RoleMgr{
         if (myPlayer3DLH) {
             let myPlayer3D = myPlayer3DLH.getChildByName("Girl") as Laya.Sprite3D;
             this.mMyPlayer = myPlayer3D.addComponent(MyPlayer) as MyPlayer;
-            this.mMyPlayer.mRoleData = myPlayerData;
-            myPlayer3D.transform.position = myPlayerData.mPos;
-
+            this.mMyPlayer.initData(myPlayerPorxy, myPlayerData);
             return this.mMyPlayer;
         }
         return null;
@@ -40,18 +38,17 @@ class RoleMgr{
         return this.mMyPlayer;
     }
 
-    public createPlayer(playerData: PlayerData) : Player{
+    public createPlayer(playerPorxy: PlayerPorxy, playerData: PlayerData) : Player{
         let playerCfg = PlayerConfig.getInstance().getPlayerInfo(playerData.mTypeId);
         if (!playerCfg) {
             return null;
         }
 
-        let myPlayer3DLH = Laya.loader.getRes(playerCfg.res);
-        if (myPlayer3DLH) {
-            let myPlayer3D = myPlayer3DLH.getChildByName("Girl") as Laya.Sprite3D;
-            let player = myPlayer3D.addComponent(MyPlayer) as MyPlayer;
-            player.mRoleData = playerData;
-            myPlayer3D.transform.position = playerData.mPos;
+        let player3DLH = Laya.loader.getRes(playerCfg.res);
+        if (player3DLH) {
+            let player3D = player3DLH.getChildByName("Girl") as Laya.Sprite3D;
+            let player = player3D.addComponent(Player) as Player;
+            this.mMyPlayer.initData(playerPorxy, playerData);
             this.mPlayerDict.set(playerData.mInstId, player);
 
             return player;
@@ -62,5 +59,4 @@ class RoleMgr{
     public getPlayer(inst:number): Player{
         return this.mPlayerDict.get(inst);
     }
-
 }

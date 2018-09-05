@@ -9,7 +9,7 @@ class StartUpCommand extends puremvc.SimpleCommand {
     execute(notification: puremvc.INotification): void {
 
         //加载版本信息文件
-        let url:string = 'version.json?' + Laya.Browser.window.currVersion;
+        let url:string = 'version.json?' + Laya.Browser.window.resVersion;
         Laya.ResourceVersion.enable(url, Handler.create(this, this.versionComplete), Laya.ResourceVersion.FILENAME_VERSION);
 
         console.log("StartUpCommand");

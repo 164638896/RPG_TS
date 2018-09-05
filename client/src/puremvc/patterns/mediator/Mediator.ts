@@ -26,7 +26,7 @@ module puremvc
 		 *
 		 * @protected
 		 */
-		viewComponent:any = null;
+		viewComponent:fairygui.GComponent = null;
 
 		/**
 		 * Constructs a <code>Mediator</code> instance.
@@ -37,7 +37,7 @@ module puremvc
 		 * @param viewComponent
 		 * 		The view component handled by this <code>Mediator</code>.
 		 */
-		constructor( mediatorName:string=null, viewComponent:any=null )
+		constructor( mediatorName:string=null, viewComponent:fairygui.GComponent=null )
 		{
 			super();
 
@@ -83,7 +83,7 @@ module puremvc
 		 * @param viewComponent
 		 * 		The default view component to set for this <code>Mediator</code>.
 		 */
-		setViewComponent( viewComponent:any ):void
+		setViewComponent( viewComponent:fairygui.GComponent ):void
 		{
 			this.viewComponent = viewComponent;
 		}

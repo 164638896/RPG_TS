@@ -8,8 +8,14 @@ class SkillCommand extends puremvc.SimpleCommand {
     }
 
     execute(notification: puremvc.INotification): void {
-        var ani:string = notification.getBody();
-        let myPlayer = RoleMgr.getInstance().getMyPlayer();
-        myPlayer.mStateMachine.SwitchState(StateType.Atk, ani);
+        let arr = notification.getBody();
+        let role = RoleMgr.getInstance().getMyPlayer() as Role;
+        if(role.mRoleData.mInstId != arr[0])
+        {
+            role = RoleMgr.getInstance().getPlayer(arr[0]);
+        }
+
+        let skillInfo = SkillConfig.getInstance().getSkillInfo(arr[1]);
+        role.mStateMachine.SwitchState(StateType.Atk, skillInfo.ani);
     }
 }
