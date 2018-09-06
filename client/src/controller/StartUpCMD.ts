@@ -11,14 +11,39 @@ class StartUpCMD extends puremvc.SimpleCommand {
     }
 
     execute(notification: puremvc.INotification): void {
-        //加载版本信息文件
-        let url:string = 'version.json?v=' + Laya.Browser.window.resVersion;
-        Laya.ResourceVersion.enable(url, Handler.create(this, this.versionComplete), Laya.ResourceVersion.FILENAME_VERSION);
+        console.log("StartUpCMD");
 
-        console.log("StartUpCommand");
+        let url: string = 'version.json';
+        if (Laya.Browser.onWeiXin) {
+            url = 'version.json';
+        }
+        else {
+            url = 'version.json?v=' + Laya.Browser.window.resVersion;
+        }
+
+        Laya.ResourceVersion.enable(url, Laya.Handler.create(this, this.versionComplete), Laya.ResourceVersion.FILENAME_VERSION);
     }
 
     private versionComplete() {
+        // //本地包白名单
+        // Laya.MiniAdpter.nativefiles = [
+        //     "wxlocal",
+        //     "res/atlas/houzi.atlas",
+        //     "res/atlas/houzi.png",
+        //     "common/tishi.png",
+        //     "common/bg.png",
+        //     "ui.json",
+        //     "newLb/bg031.png"
+        // ];
+
+        if (Laya.Browser.onWeiXin) {
+            Laya.URL.basePath = "http://hsj-update.szfyhd.com/h5/wxgame/";
+        }
+        else {
+           //Laya.URL.basePath = "http://hsj-update.szfyhd.com/h5/web/";
+        }
+
+        console.log("Laya.URL.basePath = ", Laya.URL.basePath);
 
         fairygui.UIConfig.packageFileExtension = "bin";
 
@@ -37,22 +62,6 @@ class StartUpCMD extends puremvc.SimpleCommand {
         this.facade.registerMediator(this.mLoading);
         this.mLoading.open();
 
-        //this.sendNotification(NotiNames.PRELOAD);
-
-        // //本地包白名单
-        // Laya.MiniAdpter.nativefiles = [
-        //     "wxlocal",
-        //     "res/atlas/houzi.atlas",
-        //     "res/atlas/houzi.png",
-        //     "common/tishi.png",
-        //     "common/bg.png",
-        //     "ui.json",
-        //     "newLb/bg031.png"
-        // ];
-        // Laya.URL.basePath = "https://XXXX.com";//请把XXXX换成自己的真实网址；
-        // console.log("Laya.URL.rootPath: " + Laya.URL.rootPath);
-        // console.log("Laya.URL.basePath: " + Laya.URL.basePath);
-
         // 先预加载公共资源
         //2d
         let Res2DArry = [
@@ -69,10 +78,9 @@ class StartUpCMD extends puremvc.SimpleCommand {
             "res/3D/1v1Scene.ls",
         ];
         Laya.loader.create(Res3DArry, Laya.Handler.create(this, this.on3DComplete), Laya.Handler.create(this, this.on3DProgress));
-        //Laya.loader.maxLoader = 5;
     }
 
-     private on2DComplete() {
+    private on2DComplete() {
         PlayerConfig.getInstance().load("config/PlayerCfg.json");
         SkillConfig.getInstance().load("config/SkillCfg.json");
         fairygui.UIPackage.addPackage("res/Joystick");
@@ -87,16 +95,15 @@ class StartUpCMD extends puremvc.SimpleCommand {
     }
 
     private on2DProgress(pro: number) {
-        console.log("2D " +pro);
+        //console.log("2D " + pro);
     }
 
     private on3DProgress(pro: number) {
-        console.log("3D " +pro);
-        this.mLoading.setProgress(pro*100, 100);
+        //console.log("3D " + pro);
+        this.mLoading.setProgress(pro * 100, 100);
     }
 
-    private conmmonResComplete()
-    {
+    private conmmonResComplete()  {
         this.mLoading.close();
 
         // 注册porxy
@@ -113,5 +120,5 @@ class StartUpCMD extends puremvc.SimpleCommand {
         this.facade.registerCommand(NotiNames.SKILL, SkillCMD);
 
         this.sendNotification(NotiNames.ENTER_SCENE);
-    }   
+    }
 }

@@ -8,6 +8,8 @@ class SkillCMD extends puremvc.SimpleCommand {
     }
 
     execute(notification: puremvc.INotification): void {
+        console.log("SkillCMD");
+
         let arr = notification.getBody();
         let roleData = arr[0] as RoleData;
 

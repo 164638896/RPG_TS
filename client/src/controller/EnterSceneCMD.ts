@@ -7,7 +7,7 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
     }
 
     execute(notification: puremvc.INotification): void {
-        console.log("EnterSceneCommand");
+        console.log("EnterSceneCMD");
 
         let data = notification.getBody();
 
