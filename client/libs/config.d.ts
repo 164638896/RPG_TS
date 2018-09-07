@@ -5,7 +5,7 @@ declare class Playercfg {
 	atk: number
 	def: number
 	speed: number
-	skill: number
+	skill: any[]
 }
 declare class Skillcfg {
 	id: number
@@ -30,7 +30,7 @@ declare class Monstercfg {
 	atk: number
 	def: number
 	speed: number
-	skill: number
+	skill: any[]
 }
 declare class Npccfg {
 	id: number
@@ -39,5 +39,5 @@ declare class Npccfg {
 	atk: number
 	def: number
 	speed: number
-	skill: number
+	skill: any[]
 }

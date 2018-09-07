@@ -9,9 +9,8 @@ class MainMediator extends FuiBaseMediator {
 
     constructor(name: string, viewComponent: fairygui.GComponent) {
         super(name, viewComponent);
-        
+
         this.registerListeners();
-     
     }
 
     open(): void {
@@ -23,9 +22,11 @@ class MainMediator extends FuiBaseMediator {
     }
 
     private registerListeners(): void {
-
-        let skillBtn = this.viewComponent.getChild("Btn1");
-        skillBtn.onClick(this, this.onClickSkill);
+        for (let i = 0; i < 4; ++i)  {
+            let strBtn: string = "Btn" + i;
+            let skillBtn = this.viewComponent.getChild(strBtn);
+            skillBtn.onClick(this, this.onClickSkill, [i]);
+        }
 
         let moveArea = this.viewComponent.getChild("MoveArea");
         moveArea.on(laya.events.Event.MOUSE_DOWN, this, this.onTouchDown);
@@ -50,8 +51,8 @@ class MainMediator extends FuiBaseMediator {
         //this.sendNotification( NotiNames.JOYSTICK_UP);
     }
 
-    private onClickSkill(evt: Event): void {
-        this.mMyPlayerPorxy.playSkill(1);
+    private onClickSkill(index, evt: Event): void {
+        this.mMyPlayerPorxy.playSkillByIndex(index);
         //this.sendNotification(NotiNames.SKILL, AniName.Atk);
     }
 
@@ -81,10 +82,10 @@ class MainMediator extends FuiBaseMediator {
     private onTouchUp(evt: laya.events.Event): void {
         if (this.touchId != -1 && evt.touchId == this.touchId) {
             this.touchId = -1;
-            
-            Laya.stage.off(laya.events.Event.MOUSE_MOVE,this,this.onTouchMove);
-            Laya.stage.off(laya.events.Event.MOUSE_UP,this,this.onTouchUp);
-            Laya.stage.off(laya.events.Event.MOUSE_OUT,this,this.onTouchUp);
+
+            Laya.stage.off(laya.events.Event.MOUSE_MOVE, this, this.onTouchMove);
+            Laya.stage.off(laya.events.Event.MOUSE_UP, this, this.onTouchUp);
+            Laya.stage.off(laya.events.Event.MOUSE_OUT, this, this.onTouchUp);
         }
     }
 }

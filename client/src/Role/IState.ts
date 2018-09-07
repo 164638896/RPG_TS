@@ -15,9 +15,8 @@ enum StateType {
 class AniName {
     public static Idle: string = "AttackStandy";
     public static Run: string = "Run01";
-    public static Atk: string = "Attack01";
-    public static Hit: string = "BG_Damage";
-    public static Death: string = "BG_Death";
+    public static Hit: string = "Damage";
+    public static Death: string = "Death";
 }
 
 abstract class IState {

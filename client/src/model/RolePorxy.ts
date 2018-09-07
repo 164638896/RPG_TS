@@ -25,7 +25,7 @@ class MyPlayerPorxy extends puremvc.Proxy{
             d.mAtk = playerCfg.atk;
             d.mHp = playerCfg.hp;
             d.mDef = playerCfg.def;
-            d.mCurrSkillId = playerCfg.skill;
+            d.mSkillList = playerCfg.skill;
             d.mTypeId = typeId;
             d.mInstId = instId;
             d.mSceneId = secenId;
@@ -60,12 +60,12 @@ class MyPlayerPorxy extends puremvc.Proxy{
         data.mCameraRotation.y = y;
     }
 
-    public playSkill(skillId: number)
+    public playSkillByIndex(index: number)
     {
         let data = this.get();
         // 同步给服务器
         // 通知播放动作
-        this.sendNotification(NotiNames.SKILL, [data, skillId]);
+        this.sendNotification(NotiNames.SKILL, [data, data.mSkillList[index]]);
     }
 }
 
@@ -97,7 +97,7 @@ class PlayerPorxy extends puremvc.Proxy{
             d.mAtk = playerCfg.atk;
             d.mHp = playerCfg.hp;
             d.mDef = playerCfg.def;
-            d.mCurrSkillId = playerCfg.skill;
+            d.mSkillList = playerCfg.skill;
             d.mTypeId = typeId;
             d.mInstId = instId;
      
@@ -152,7 +152,7 @@ class NpcPorxy extends puremvc.Proxy{
             d.mAtk = npcCfg.atk;
             d.mHp = npcCfg.hp;
             d.mDef = npcCfg.def;
-            d.mCurrSkillId = npcCfg.skill;
+            d.mSkillList = npcCfg.skill;
             d.mTypeId = typeId;
             d.mInstId = instId;
      
@@ -207,7 +207,7 @@ class MonsterPorxy extends puremvc.Proxy{
             d.mAtk = monsterCfg.atk;
             d.mHp = monsterCfg.hp;
             d.mDef = monsterCfg.def;
-            d.mCurrSkillId = monsterCfg.skill;
+            d.mSkillList = monsterCfg.skill;
             d.mTypeId = typeId;
             d.mInstId = instId;
      

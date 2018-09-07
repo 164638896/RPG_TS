@@ -19,7 +19,6 @@ class RoleData {
     public mHp: number;
     public mAtk: number;
     public mDef: number;
-    public mCurrSkillId: number;
     public mTargetInstId: number;
     public mPos: Laya.Vector3;
     private mForward = new Laya.Vector3();
