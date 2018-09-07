@@ -40,7 +40,7 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
         Laya.stage.addChildAt(scene, 0);
 
         //获取可行走区域模型
-        var meshSprite3D: Laya.MeshSprite3D = scene.getChildByName('Scenes').getChildByName('HeightMap') as Laya.MeshSprite3D;
+        var meshSprite3D: Laya.MeshSprite3D = scene.getChildByName('HeightMap') as Laya.MeshSprite3D;
         //使可行走区域模型隐藏
         meshSprite3D.active = false;
         //初始化MeshTerrainSprite3D

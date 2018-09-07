@@ -49,14 +49,14 @@ class StartUpCMD extends puremvc.SimpleCommand {
 
         let Res2DArry = [
             //{ url: "res/Loading@atlas0.png", type: Laya.Loader.IMAGE },
-            { url: "res/Loading.bin", type: Laya.Loader.BUFFER },
+            { url: "res/ui/Loading.bin", type: Laya.Loader.BUFFER },
         ];
         Laya.loader.load(Res2DArry, Laya.Handler.create(this, this.loadingRes));
     }
 
     public loadingRes() {
         Laya.stage.addChild(fairygui.GRoot.inst.displayObject);
-        fairygui.UIPackage.addPackage("res/Loading");
+        fairygui.UIPackage.addPackage("res/ui/Loading");
 
         this.mLoading = new LoadingMediator(MediatorNames.LOADING, fairygui.UIPackage.createObject("Loading", "loading").asCom);
         this.facade.registerMediator(this.mLoading);
@@ -68,8 +68,8 @@ class StartUpCMD extends puremvc.SimpleCommand {
             { url: "config/PlayerCfg.json", "type": Laya.Loader.JSON },
             { url: "config/SkillCfg.json", "type": Laya.Loader.JSON },
             { url: "config/SceneCfg.json", "type": Laya.Loader.JSON },
-            { url: "res/Joystick@atlas0.png", type: Laya.Loader.IMAGE },
-            { url: "res/Joystick.bin", type: Laya.Loader.BUFFER },
+            { url: "res/ui/Joystick@atlas0.png", type: Laya.Loader.IMAGE },
+            { url: "res/ui/Joystick.bin", type: Laya.Loader.BUFFER },
         ];
         Laya.loader.load(Res2DArry, Laya.Handler.create(this, this.on2DComplete), Laya.Handler.create(this, this.on2DProgress));
 
@@ -86,7 +86,7 @@ class StartUpCMD extends puremvc.SimpleCommand {
         SkillConfig.getInstance().load("config/SkillCfg.json");
         SceneConfig.getInstance().load("config/SceneCfg.json");
 
-        fairygui.UIPackage.addPackage("res/Joystick");
+        fairygui.UIPackage.addPackage("res/ui/Joystick");
 
         //this.mProgress += 0.5;
         this.conmmonResComplete();

@@ -37,7 +37,7 @@ class MyPlayerPorxy extends puremvc.Proxy{
         }
         else
         {
-            console.log("找不到玩家 typeId =1" );
+            console.error("找不到玩家 typeId =1" );
         }
     }
 
