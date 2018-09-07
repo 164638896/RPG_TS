@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "res": "res/3D/Girl.lh",
+    "res": "res/3D/Girl01.lh",
     "hp": 200,
     "atk": 10,
     "def": 30,
@@ -10,7 +10,7 @@
   },
   {
     "id": 2,
-    "res": "res/3D/Girl.lh",
+    "res": "res/3D/Boy01.lh",
     "hp": 200,
     "atk": 20,
     "def": 15,

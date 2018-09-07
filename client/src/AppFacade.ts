@@ -15,12 +15,11 @@
 // command: facade->view->Observer->ExecuteCommand 这里收到
 // mediator: facade->view->Observer->handleNotification 这里收到, RemoveMediator 注册的消息也会自动删除
 
-
 class AppFacade extends puremvc.Facade {
     constructor() {
         super();
     }
-    
+
     static getInstance(): AppFacade {
         if (!puremvc.Facade.instance)
             puremvc.Facade.instance = new AppFacade();
@@ -28,12 +27,12 @@ class AppFacade extends puremvc.Facade {
         return <AppFacade> /*</>*/puremvc.Facade.instance;
     }
 
-    startup() {
-        this.sendNotification(NotiNames.STARTUP);
-    }
-
     initializeController(): void {
         super.initializeController();
         this.registerCommand(NotiNames.STARTUP, StartUpCMD);
+    }
+
+    startup() {
+        this.sendNotification(NotiNames.STARTUP);
     }
 }

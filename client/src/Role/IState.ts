@@ -68,7 +68,7 @@ class AniState extends IState {
         let ac = this.mAnimator.getClip(aniName)
         if(ac == null)
         {
-            console.log("找不到动作名为: ", aniName);
+            console.error("找不到动作名为: ", aniName);
             return false;
         }
             

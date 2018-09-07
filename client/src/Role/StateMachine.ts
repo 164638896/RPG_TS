@@ -21,7 +21,7 @@ class StateMachine {
 
     public RegistState(state: IState): Boolean {
         if (this.mDictState.get(state.GetStateType())) {
-            console.log("StateMachine::RegistState->state had exist! state id=" + state.GetStateType());
+            console.warn("StateMachine::RegistState->state had exist! state id=" + state.GetStateType());
             return false;
         }
 

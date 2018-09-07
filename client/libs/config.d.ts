@@ -19,3 +19,7 @@ declare class Skillcfg {
 	hurt_buff: string
 	constrol_buff: string
 }
+declare class Scenecfg {
+	id: number
+	res: string
+}

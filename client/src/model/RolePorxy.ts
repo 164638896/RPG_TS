@@ -5,8 +5,7 @@
 class MyPlayerPorxy extends puremvc.Proxy{
     constructor(){
         super(ProxyNames.MYPLAYER_PROXY);
-        this.data = new MyPlayerData();
-
+      
         // 测试数据
         this.add();
     }
@@ -15,21 +14,23 @@ class MyPlayerPorxy extends puremvc.Proxy{
     {
         let instId : number = 1;
         let typeId: number = 1;
+        let secenId: number = 1;
 
         let playerCfg = PlayerConfig.getInstance().getPlayerInfo(typeId);
         if(playerCfg)
         {
-            let data = new MyPlayerData();
-            data.mRoleType = RoleType.MyPlayer;
-            data.mMoveSpeed = playerCfg.speed;
-            data.mAtk = playerCfg.atk;
-            data.mHp = playerCfg.hp;
-            data.mDef = playerCfg.def;
-            data.mCurrSkillId = playerCfg.skill;
-            data.mTypeId = typeId;
-            data.mInstId = instId;
-            data.mPos = new Laya.Vector3(-0.353, 0.282, -2.68);
-            this.setData(data);
+            let d = new MyPlayerData();
+            d.mRoleType = RoleType.MyPlayer;
+            d.mMoveSpeed = playerCfg.speed;
+            d.mAtk = playerCfg.atk;
+            d.mHp = playerCfg.hp;
+            d.mDef = playerCfg.def;
+            d.mCurrSkillId = playerCfg.skill;
+            d.mTypeId = typeId;
+            d.mInstId = instId;
+            d.mSceneId = secenId;
+            d.mPos = new Laya.Vector3(-0.353, 0.282, -2.68);
+            this.setData(d);
 
             //this.sendNotification(NotiNames.MYPLAYER_ADDED, instId);
             this.sendNotification(NotiNames.ENTER_SCENE);
@@ -72,6 +73,9 @@ class PlayerPorxy extends puremvc.Proxy{
     constructor(){
         super(ProxyNames.PLAYER_PROXY);
         this.data = new laya.utils.Dictionary;
+
+        // 测试数据
+        this.add();
     }
 
 	getDataDict():laya.utils.Dictionary
@@ -81,9 +85,31 @@ class PlayerPorxy extends puremvc.Proxy{
 
     add()
     {
-        // let d = new PlayerData();
-        // this.getDataDict().set(1, d);
-        // this.sendNotification(NotiNames.PLAYER_ADDED, instId);
+        let instId : number = 2;
+        let typeId: number = 2;
+
+        let playerCfg = PlayerConfig.getInstance().getPlayerInfo(typeId);
+        if(playerCfg)
+        {
+            let d = new PlayerData();
+            d.mRoleType = RoleType.OtherPlayer;
+            d.mMoveSpeed = playerCfg.speed;
+            d.mAtk = playerCfg.atk;
+            d.mHp = playerCfg.hp;
+            d.mDef = playerCfg.def;
+            d.mCurrSkillId = playerCfg.skill;
+            d.mTypeId = typeId;
+            d.mInstId = instId;
+     
+            d.mPos = new Laya.Vector3(-0.353, 0.282, -2.68);
+            this.getDataDict().set(d.mInstId, d);
+
+            this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
+        }
+        else
+        {
+            console.log("找不到玩家 typeId =1" );
+        }     
     }
 
     remove(instId:number)
@@ -112,7 +138,7 @@ class NpcPorxy extends puremvc.Proxy{
     add()
     {
         // let d = new NpcData();
-        // this.getDataDict().set(1, d);
+        //this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 
     remove(instId:number)
@@ -141,7 +167,7 @@ class MonsterPorxy extends puremvc.Proxy{
     add()
     {
         // let d = new MonsterData();
-        // this.getDataDict().set(1, d);
+        //this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 
     remove(instId:number)

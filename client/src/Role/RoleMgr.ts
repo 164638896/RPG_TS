@@ -19,14 +19,16 @@ class RoleMgr{
 
     public createMyPlayer(myPlayerPorxy: MyPlayerPorxy) : MyPlayer{
         let myPlayerData = myPlayerPorxy.get();
+        if(!myPlayerData) return null;
+
         let myPlayerCfg = PlayerConfig.getInstance().getPlayerInfo(myPlayerData.mTypeId);
         if (!myPlayerCfg) {
             return null;
         }
 
-        let myPlayer3DLH = Laya.loader.getRes(myPlayerCfg.res);
-        if (myPlayer3DLH) {
-            let myPlayer3D = myPlayer3DLH.getChildByName("Girl") as Laya.Sprite3D;
+        let myPlayer3DRoot = Laya.loader.getRes(myPlayerCfg.res) as Laya.Sprite3D;
+        if (myPlayer3DRoot) {
+            let myPlayer3D = myPlayer3DRoot.getChildAt(0) as Laya.Sprite3D;
             this.mMyPlayer = myPlayer3D.addComponent(MyPlayer) as MyPlayer;
             this.mMyPlayer.initData(myPlayerPorxy, myPlayerData);
             return this.mMyPlayer;
@@ -44,11 +46,11 @@ class RoleMgr{
             return null;
         }
 
-        let player3DLH = Laya.loader.getRes(playerCfg.res);
-        if (player3DLH) {
-            let player3D = player3DLH.getChildByName("Girl") as Laya.Sprite3D;
+        let player3DRoot = Laya.loader.getRes(playerCfg.res) as Laya.Sprite3D;
+        if (player3DRoot) {
+            let player3D = player3DRoot.getChildAt(0) as Laya.Sprite3D;
             let player = player3D.addComponent(Player) as Player;
-            this.mMyPlayer.initData(playerPorxy, playerData);
+            player.initData(playerPorxy, playerData);
             this.mPlayerDict.set(playerData.mInstId, player);
 
             return player;

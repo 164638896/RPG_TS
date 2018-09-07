@@ -11,7 +11,7 @@ class StartUpCMD extends puremvc.SimpleCommand {
     }
 
     execute(notification: puremvc.INotification): void {
-        console.log("StartUpCMD");
+        console.info("StartUpCMD");
 
         let url: string = 'version.json';
         if (Laya.Browser.onWeiXin) {
@@ -43,7 +43,7 @@ class StartUpCMD extends puremvc.SimpleCommand {
            //Laya.URL.basePath = "http://hsj-update.szfyhd.com/h5/web/";
         }
 
-        console.log("Laya.URL.basePath = ", Laya.URL.basePath);
+        console.info("Laya.URL.basePath = ", Laya.URL.basePath);
 
         fairygui.UIConfig.packageFileExtension = "bin";
 
@@ -67,41 +67,44 @@ class StartUpCMD extends puremvc.SimpleCommand {
         let Res2DArry = [
             { url: "config/PlayerCfg.json", "type": Laya.Loader.JSON },
             { url: "config/SkillCfg.json", "type": Laya.Loader.JSON },
+            { url: "config/SceneCfg.json", "type": Laya.Loader.JSON },
             { url: "res/Joystick@atlas0.png", type: Laya.Loader.IMAGE },
             { url: "res/Joystick.bin", type: Laya.Loader.BUFFER },
         ];
         Laya.loader.load(Res2DArry, Laya.Handler.create(this, this.on2DComplete), Laya.Handler.create(this, this.on2DProgress));
 
-        //3d
-        let Res3DArry = [
-            "res/3D/Girl.lh",
-            "res/3D/1v1Scene.ls",
-        ];
-        Laya.loader.create(Res3DArry, Laya.Handler.create(this, this.on3DComplete), Laya.Handler.create(this, this.on3DProgress));
+        // //3d
+        // let Res3DArry = [
+        //     //"res/3D/Girl01.lh",
+        //     //"res/3D/1v1Scene.ls",
+        // ];
+        // Laya.loader.create(Res3DArry, Laya.Handler.create(this, this.on3DComplete), Laya.Handler.create(this, this.on3DProgress));
     }
 
     private on2DComplete() {
         PlayerConfig.getInstance().load("config/PlayerCfg.json");
         SkillConfig.getInstance().load("config/SkillCfg.json");
+        SceneConfig.getInstance().load("config/SceneCfg.json");
+
         fairygui.UIPackage.addPackage("res/Joystick");
 
-        this.mProgress += 0.5;
-        if (this.mProgress >= 1) this.conmmonResComplete();
+        //this.mProgress += 0.5;
+        this.conmmonResComplete();
     }
 
-    private on3DComplete() {
-        this.mProgress += 0.5;
-        if (this.mProgress >= 1) this.conmmonResComplete();
-    }
+    // private on3DComplete() {
+    //     this.mProgress += 0.5;
+    //     if (this.mProgress >= 1) this.conmmonResComplete();
+    // }
 
     private on2DProgress(pro: number) {
         //console.log("2D " + pro);
     }
 
-    private on3DProgress(pro: number) {
-        //console.log("3D " + pro);
-        this.mLoading.setProgress(pro * 100, 100);
-    }
+    // private on3DProgress(pro: number) {
+    //     //console.log("3D " + pro);
+    //     this.mLoading.setProgress(pro * 100, 100);
+    // }
 
     private conmmonResComplete()  {
         this.mLoading.close();
@@ -117,8 +120,7 @@ class StartUpCMD extends puremvc.SimpleCommand {
 
         // 注册命令
         this.facade.registerCommand(NotiNames.ENTER_SCENE, EnterSceneCMD);
-        this.facade.registerCommand(NotiNames.SKILL, SkillCMD);
-
+        
         this.sendNotification(NotiNames.ENTER_SCENE);
     }
 }

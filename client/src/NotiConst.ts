@@ -18,6 +18,7 @@ class NotiNames {
     static NPC_ADDED: string = "NpcAdded";
     static NPC_REMOVE: string = "NpcRemove";
 
+    static ADD_ROLE: string = "AddRole";
     static SKILL: string = "Skill";
 }
 
