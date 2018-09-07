@@ -16,7 +16,7 @@ class MyPlayerPorxy extends puremvc.Proxy{
         let typeId: number = 1;
         let secenId: number = 1;
 
-        let playerCfg = PlayerConfig.getInstance().getPlayerInfo(typeId);
+        let playerCfg = PlayerConfig.getInstance().getPlayer(typeId);
         if(playerCfg)
         {
             let d = new MyPlayerData();
@@ -88,7 +88,7 @@ class PlayerPorxy extends puremvc.Proxy{
         let instId : number = 2;
         let typeId: number = 2;
 
-        let playerCfg = PlayerConfig.getInstance().getPlayerInfo(typeId);
+        let playerCfg = PlayerConfig.getInstance().getPlayer(typeId);
         if(playerCfg)
         {
             let d = new PlayerData();
@@ -101,20 +101,20 @@ class PlayerPorxy extends puremvc.Proxy{
             d.mTypeId = typeId;
             d.mInstId = instId;
      
-            d.mPos = new Laya.Vector3(-0.353, 0.282, -2.68);
+            d.mPos = new Laya.Vector3(-0.353, 0.282, -1.68);
             this.getDataDict().set(d.mInstId, d);
 
             this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
         }
         else
         {
-            console.log("找不到玩家 typeId =1" );
+            console.log("找不到Player typeId =1" );
         }     
     }
 
     remove(instId:number)
     {
-        this.sendNotification(NotiNames.PLAYER_REMOVE, instId);
+        this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
         this.getDataDict().remove(instId);
     }
 
@@ -126,8 +126,11 @@ class PlayerPorxy extends puremvc.Proxy{
 
 class NpcPorxy extends puremvc.Proxy{
     constructor(){
-        super(ProxyNames.MONSTER_PROXY);
+        super(ProxyNames.NPC_PROXY);
         this.data = new laya.utils.Dictionary;
+
+        // 测试数据
+        this.add();
     }
 
 	getDataDict():laya.utils.Dictionary
@@ -137,13 +140,36 @@ class NpcPorxy extends puremvc.Proxy{
 
     add()
     {
-        // let d = new NpcData();
-        //this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
+        let instId : number = 4;
+        let typeId: number = 1;
+
+        let npcCfg = NpcConfig.getInstance().getNpc(typeId);
+        if(npcCfg)
+        {
+            let d = new NpcData();
+            d.mRoleType = RoleType.Npc;
+            d.mMoveSpeed = npcCfg.speed;
+            d.mAtk = npcCfg.atk;
+            d.mHp = npcCfg.hp;
+            d.mDef = npcCfg.def;
+            d.mCurrSkillId = npcCfg.skill;
+            d.mTypeId = typeId;
+            d.mInstId = instId;
+     
+            d.mPos = new Laya.Vector3(-1.353, 0.282, -2.68);
+            this.getDataDict().set(d.mInstId, d);
+
+            this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
+        }
+        else
+        {
+            console.log("找不到Npc typeId =1" );
+        }  
     }
 
     remove(instId:number)
     {
-        this.sendNotification(NotiNames.NPC_ADDED, instId);
+        this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
         this.getDataDict().remove(instId);
     }
 
@@ -157,6 +183,9 @@ class MonsterPorxy extends puremvc.Proxy{
     constructor(){
         super(ProxyNames.MONSTER_PROXY);
         this.data = new laya.utils.Dictionary;
+
+        // 测试数据
+        this.add();
     }
 
 	getDataDict():laya.utils.Dictionary
@@ -166,13 +195,36 @@ class MonsterPorxy extends puremvc.Proxy{
 
     add()
     {
-        // let d = new MonsterData();
-        //this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
+        let instId : number = 3;
+        let typeId: number = 1;
+
+        let monsterCfg = MonsterConfig.getInstance().getMonster(typeId);
+        if(monsterCfg)
+        {
+            let d = new MonsterData();
+            d.mRoleType = RoleType.Monster;
+            d.mMoveSpeed = monsterCfg.speed;
+            d.mAtk = monsterCfg.atk;
+            d.mHp = monsterCfg.hp;
+            d.mDef = monsterCfg.def;
+            d.mCurrSkillId = monsterCfg.skill;
+            d.mTypeId = typeId;
+            d.mInstId = instId;
+     
+            d.mPos = new Laya.Vector3(-0.353, 0.282, -3.68);
+            this.getDataDict().set(d.mInstId, d);
+
+            this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
+        }
+        else
+        {
+            console.log("找不到Monster typeId =1" );
+        }  
     }
 
     remove(instId:number)
     {
-        this.sendNotification(NotiNames.MONSTER_ADDED, instId);
+        this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
         this.getDataDict().remove(instId);
     }
 

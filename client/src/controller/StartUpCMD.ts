@@ -66,6 +66,8 @@ class StartUpCMD extends puremvc.SimpleCommand {
         //2d
         let Res2DArry = [
             { url: "config/PlayerCfg.json", "type": Laya.Loader.JSON },
+            { url: "config/MonsterCfg.json", "type": Laya.Loader.JSON },
+            { url: "config/NpcCfg.json", "type": Laya.Loader.JSON },
             { url: "config/SkillCfg.json", "type": Laya.Loader.JSON },
             { url: "config/SceneCfg.json", "type": Laya.Loader.JSON },
             { url: "res/ui/Joystick@atlas0.png", type: Laya.Loader.IMAGE },
@@ -83,6 +85,8 @@ class StartUpCMD extends puremvc.SimpleCommand {
 
     private on2DComplete() {
         PlayerConfig.getInstance().load("config/PlayerCfg.json");
+        MonsterConfig.getInstance().load("config/MonsterCfg.json");
+        NpcConfig.getInstance().load("config/NpcCfg.json");
         SkillConfig.getInstance().load("config/SkillCfg.json");
         SceneConfig.getInstance().load("config/SceneCfg.json");
 

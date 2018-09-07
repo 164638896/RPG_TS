@@ -23,3 +23,21 @@ declare class Scenecfg {
 	id: number
 	res: string
 }
+declare class Monstercfg {
+	id: number
+	res: string
+	hp: number
+	atk: number
+	def: number
+	speed: number
+	skill: number
+}
+declare class Npccfg {
+	id: number
+	res: string
+	hp: number
+	atk: number
+	def: number
+	speed: number
+	skill: number
+}

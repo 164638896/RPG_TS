@@ -23,7 +23,7 @@ class PlayerConfig {
         Laya.loader.clearRes(url, true);
     }
 
-    public getPlayerInfo(typeId: number): Playercfg {
+    public getPlayer(typeId: number): Playercfg {
         return this.mPlayerDict.get(typeId);
     }
 }

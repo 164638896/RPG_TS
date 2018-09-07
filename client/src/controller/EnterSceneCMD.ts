@@ -19,7 +19,7 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
             return;
         }
 
-        let playerCfg = PlayerConfig.getInstance().getPlayerInfo(myPlayerData.mTypeId);
+        let playerCfg = PlayerConfig.getInstance().getPlayer(myPlayerData.mTypeId);
         if (!playerCfg) {
             console.error("找不到玩家typeId=", myPlayerData.mTypeId);
             return;
@@ -71,6 +71,7 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
         main.open();
 
         this.facade.registerCommand(NotiNames.ADD_ROLE, AddRoleCMD);
+        this.facade.registerCommand(NotiNames.REMOVE_ROLE, RemoveRoleCMD);
         this.facade.registerCommand(NotiNames.SKILL, SkillCMD);
 
         // 初始化其他玩家
@@ -81,7 +82,19 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
             this.sendNotification(NotiNames.ADD_ROLE, [playerPorxy, otherPlayerData]);
         }
         // 初始化monster
+        let monsterPorxy = this.facade.retrieveProxy(ProxyNames.MONSTER_PROXY) as MonsterPorxy;
+        let monsterArray = monsterPorxy.getDataDict().values;
+        for (let i = 0; i < monsterArray.length; ++i) {
+            let monsterData = monsterArray[i] as PlayerData;
+            this.sendNotification(NotiNames.ADD_ROLE, [monsterPorxy, monsterData]);
+        }
         // 初始化npc
+        let npcPorxy = this.facade.retrieveProxy(ProxyNames.NPC_PROXY) as NpcPorxy;
+        let npcArray = npcPorxy.getDataDict().values;
+        for (let i = 0; i < npcArray.length; ++i) {
+            let npcData = npcArray[i] as PlayerData;
+            this.sendNotification(NotiNames.ADD_ROLE, [npcPorxy, npcData]);
+        }
     }
 
     private onSceneProgress(pro: number) {

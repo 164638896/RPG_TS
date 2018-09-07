@@ -6,19 +6,8 @@ class NotiNames {
     static STARTUP: string = "StartUp";
     static ENTER_SCENE: string = "EnterScene";
 
-    static MYPLAYER_ADDED: string = "MyPlayerAdded";
-    static MYPLAYER_REMOVE: string = "MyPlayerRemove";
-
-    static PLAYER_ADDED: string = "PlayerAdded";
-    static PLAYER_REMOVE: string = "PlayerRemove";
-
-    static MONSTER_ADDED: string = "MonsterAdded";
-    static MONSTER_REMOVE: string = "MonsterRemove";
-
-    static NPC_ADDED: string = "NpcAdded";
-    static NPC_REMOVE: string = "NpcRemove";
-
     static ADD_ROLE: string = "AddRole";
+    static REMOVE_ROLE: string = "RemoveRole";
     static SKILL: string = "Skill";
 }
 
