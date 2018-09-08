@@ -2,12 +2,15 @@
 * name;
 */
 class EnterSceneCMD extends puremvc.SimpleCommand {
+    private mLoading : LoadingMediator;
     constructor() {
         super();
     }
 
     execute(notification: puremvc.INotification): void {
         console.info("EnterSceneCMD");
+
+        this.mLoading = this.facade.retrieveMediator(MediatorNames.LOADING) as LoadingMediator;
 
         let myPlayerPorxy = this.facade.retrieveProxy(ProxyNames.MYPLAYER_PROXY) as MyPlayerPorxy;
         let myPlayerData = myPlayerPorxy.get();
@@ -95,9 +98,11 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
             let npcData = npcArray[i] as PlayerData;
             this.sendNotification(NotiNames.ADD_ROLE, [npcPorxy, npcData]);
         }
+
+        this.mLoading.close();
     }
 
     private onSceneProgress(pro: number) {
-        //console.log("2D " + pro);
+        this.mLoading.setProgress(pro, 1);
     }
 }

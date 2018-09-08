@@ -3,7 +3,6 @@
 */
 class StartUpCMD extends puremvc.SimpleCommand {
     private mProgress: number;
-    private mLoading: LoadingMediator;
 
     constructor() {
         super();
@@ -58,9 +57,9 @@ class StartUpCMD extends puremvc.SimpleCommand {
         Laya.stage.addChild(fairygui.GRoot.inst.displayObject);
         fairygui.UIPackage.addPackage("res/ui/Loading");
 
-        this.mLoading = new LoadingMediator(MediatorNames.LOADING, fairygui.UIPackage.createObject("Loading", "loading").asCom);
-        this.facade.registerMediator(this.mLoading);
-        this.mLoading.open();
+        let loading = new LoadingMediator(MediatorNames.LOADING, fairygui.UIPackage.createObject("Loading", "loading").asCom);
+        this.facade.registerMediator(loading);
+        loading.open();
 
         // 先预加载公共资源
         //2d
@@ -111,8 +110,6 @@ class StartUpCMD extends puremvc.SimpleCommand {
     // }
 
     private conmmonResComplete()  {
-        this.mLoading.close();
-
         // 注册porxy
         this.facade.registerProxy(new MyPlayerPorxy());
         this.facade.registerProxy(new PlayerPorxy());

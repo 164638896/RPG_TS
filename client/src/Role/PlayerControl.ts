@@ -28,7 +28,7 @@ class PlayerControl extends Laya.Script {
         this.mMyPlayer = p;
         this.mTerrainSprite = h;
         this.mMyPlayerData = this.mMyPlayer.mRoleData as MyPlayerData;
-        this.mPlayerCamera.updateCamera(this.mMyPlayer.mRole3D.transform.position);
+        //this.mPlayerCamera.updateCamera(this.mMyPlayer.mRole3D.transform.position);
     }
 
     public _update(state: Laya.RenderState): void {
@@ -54,9 +54,15 @@ class PlayerControl extends Laya.Script {
 
         let cameraRotation = this.mMyPlayerData.mCameraRotation;
         if (cameraRotation.x != 0 || cameraRotation.y != 0) {
-            this.mPlayerCamera.setParam(-cameraRotation.x / 1000, cameraRotation.y/1000, this.mMyPlayer.mRole3D.transform.position);
+            this.mPlayerCamera.setParam(-cameraRotation.x / 500, cameraRotation.y / 500, this.mMyPlayer.mRole3D.transform.position);
             cameraRotation.x = 0;
             cameraRotation.y = 0;
+        }
+        else  {
+            let pos = this.mMyPlayer.mRole3D.transform.position;
+            if (!Laya.Vector3.equals(this.mPlayerCamera.mTargetPos, pos))  {
+                this.mPlayerCamera.updateCamera(pos);
+            }
         }
     }
 
@@ -83,7 +89,7 @@ class PlayerControl extends Laya.Script {
                 Laya.Vector3.add(role3D.transform.position, forward, dirPos);
                 role3D.transform.lookAt(dirPos, Laya.Vector3.Up, false);
 
-                this.mPlayerCamera.updateCamera(this.mMyPlayer.mRole3D.transform.position);
+                //this.mPlayerCamera.updateCamera(this.mMyPlayer.mRole3D.transform.position);
             }
         }
         else {

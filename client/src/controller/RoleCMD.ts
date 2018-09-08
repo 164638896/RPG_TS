@@ -109,24 +109,24 @@ class SkillCMD extends puremvc.SimpleCommand {
 
         let role = null;
         if (roleData.mRoleType == RoleType.MyPlayer) {
-            role = RoleMgr.getInstance().getMyPlayer() as Role;
+            role = RoleMgr.getInstance().getMyPlayer();
         }
         else if (roleData.mRoleType == RoleType.OtherPlayer) {
             role = RoleMgr.getInstance().getPlayer(roleData.mInstId);
         }
         else if (roleData.mRoleType == RoleType.Monster) {
-
+            role = RoleMgr.getInstance().getMonster(roleData.mInstId);
         }
         else if (roleData.mRoleType == RoleType.Npc) {
-
+            role = RoleMgr.getInstance().getNpc(roleData.mInstId);
         }
 
         if (role) {
             let skillInfo = SkillConfig.getInstance().getSkillInfo(arr[1]);
-            if (skillInfo)  {
+            if (skillInfo) {
                 role.mStateMachine.SwitchState(StateType.Atk, skillInfo.ani);
             }
-            else  {
+            else {
                 console.error("没有这个技能Id=", arr[1]);
             }
         }
