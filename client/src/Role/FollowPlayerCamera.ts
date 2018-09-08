@@ -4,7 +4,7 @@
 
 class FollowPlayerCamera {
     private mCamera: Laya.Camera;
-    public mCameraForward: Laya.Vector3 = new Laya.Vector3(0, -1, 1);
+    public mCameraForward: Laya.Vector3 = new Laya.Vector3(0, -0.6, 1);
     public mCameraOffsetDis: number = -1.5;
     public mLookAtOffset: Laya.Vector3 = new Laya.Vector3(0, 0.3, 0);
     public mTargetPos: Laya.Vector3 = new Laya.Vector3();
@@ -14,7 +14,8 @@ class FollowPlayerCamera {
     private _cameraOffset = new Laya.Vector3();
     private _cameraNewPos = new Laya.Vector3();
     private _lookAtPos = new Laya.Vector3();
-    private _x = new Laya.Vector3();
+    private _UnitX = new Laya.Vector3();
+    private _cameraForward = new Laya.Vector3();
 
     constructor(camera: Laya.Camera) {
         this.mCamera = camera;
@@ -24,22 +25,21 @@ class FollowPlayerCamera {
         Laya.Quaternion.createFromAxisAngle(Laya.Vector3.Up, yaw, this._cameraQuat);
         Laya.Vector3.transformQuat(this.mCameraForward, this._cameraQuat, this.mCameraForward);
         Laya.Vector3.normalize(this.mCameraForward, this.mCameraForward);
-        Laya.Vector3.cross(Laya.Vector3.Up, this.mCameraForward, this._x);
-        Laya.Vector3.normalize(this._x, this._x);
-        Laya.Quaternion.createFromAxisAngle(this._x, pitch, this._cameraQuatH);
-        Laya.Vector3.transformQuat(this.mCameraForward, this._cameraQuatH, this.mCameraForward);
+        Laya.Vector3.cross(Laya.Vector3.Up, this.mCameraForward, this._UnitX);
+        Laya.Vector3.normalize(this._UnitX, this._UnitX);
+        Laya.Quaternion.createFromAxisAngle(this._UnitX, pitch, this._cameraQuatH);
+        Laya.Vector3.transformQuat(this.mCameraForward, this._cameraQuatH, this._cameraForward);
+
+        if (this._cameraForward.y <= -0.2 && this._cameraForward.y >= -0.9) {
+            this._cameraForward.cloneTo(this.mCameraForward);
+        }
 
         this.updateCamera(targetPos);
     }
 
     public updateCamera(targetPos: Laya.Vector3) {
 
-        this.mTargetPos = targetPos;
-
-        if (this.mCameraForward.y >= -0.1) this.mCameraForward.y = -0.1;
-        if (this.mCameraForward.y <= -0.85) this.mCameraForward.y = -0.85;
-
-        Laya.Vector3.normalize(this.mCameraForward, this.mCameraForward);
+        Laya.Tween.to(this.mTargetPos, {x:targetPos.x, y:targetPos.y, z:targetPos.z}, 1000, Laya.Ease.elasticOut);
 
         Laya.Vector3.scale(this.mCameraForward, this.mCameraOffsetDis, this._cameraOffset);
         Laya.Vector3.add(this.mTargetPos, this._cameraOffset, this._cameraNewPos);
@@ -48,5 +48,6 @@ class FollowPlayerCamera {
 
         Laya.Vector3.add(this.mTargetPos, this.mLookAtOffset, this._lookAtPos);
         this.mCamera.transform.lookAt(this._lookAtPos, Laya.Vector3.Up, false);
+        //console.log("x=",this.mCameraForward.x," y=", this.mCameraForward.y," z=", this.mCameraForward.z)
     }
 }
