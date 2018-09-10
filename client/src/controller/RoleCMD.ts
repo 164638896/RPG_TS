@@ -111,7 +111,7 @@ class SkillCMD extends puremvc.SimpleCommand {
         if (roleData instanceof MyPlayerData) {
             role = RoleMgr.getInstance().getMyPlayer();
         }
-        if (roleData instanceof PlayerData) {
+        else if (roleData instanceof PlayerData) {
             role = RoleMgr.getInstance().getPlayer(roleData.mInstId);
         }
         else if (roleData instanceof MonsterData) {

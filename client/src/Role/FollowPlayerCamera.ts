@@ -37,9 +37,9 @@ class FollowPlayerCamera {
         this.updateCamera(targetPos);
     }
 
-    public updateCamera(targetPos: Laya.Vector3) {
-
-        Laya.Tween.to(this.mTargetPos, {x:targetPos.x, y:targetPos.y, z:targetPos.z}, 1000, Laya.Ease.elasticOut);
+    public updateCamera(targetPos: Laya.Vector3, force:boolean = false) {
+        if(force) this.mTargetPos = targetPos;
+        else Laya.Tween.to(this.mTargetPos, {x:targetPos.x, y:targetPos.y, z:targetPos.z}, 1000, Laya.Ease.strongOut);
 
         Laya.Vector3.scale(this.mCameraForward, this.mCameraOffsetDis, this._cameraOffset);
         Laya.Vector3.add(this.mTargetPos, this._cameraOffset, this._cameraNewPos);

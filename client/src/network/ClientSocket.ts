@@ -52,7 +52,6 @@ class ClientSocket {
         this._connectFlag = true;
     }
 
-
     private onSocketClose(e: any = null): void {
         this._isConnecting = false;
 

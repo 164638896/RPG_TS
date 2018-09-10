@@ -14,7 +14,7 @@ class PlayerControl extends Laya.Script {
     private mPlayerNewPos = new Laya.Vector3();
     private mPlayerNewDir = new Laya.Vector3();
 
-    private  _cameraQuat = new Laya.Quaternion();
+    private _cameraQuat = new Laya.Quaternion();
     private _forward = new Laya.Vector3();
     private _dirPos = new Laya.Vector3();
 
@@ -32,6 +32,7 @@ class PlayerControl extends Laya.Script {
         this.mMyPlayer = p;
         this.mTerrainSprite = h;
         this.mMyPlayerData = this.mMyPlayer.mRoleData as MyPlayerData;
+        this.mPlayerCamera.updateCamera(this.mMyPlayer.mRole3D.transform.position, true);
     }
 
     public _update(state: Laya.RenderState): void {
@@ -57,9 +58,9 @@ class PlayerControl extends Laya.Script {
             cameraRotation.x = 0;
             cameraRotation.y = 0;
         }
-        else  {
+        else {
             let pos = this.mMyPlayer.mRole3D.transform.position;
-            if (!Laya.Vector3.equals(this.mPlayerCamera.mTargetPos, pos))  {
+            if (!Laya.Vector3.equals(this.mPlayerCamera.mTargetPos, pos)) {
                 this.mPlayerCamera.updateCamera(pos);
             }
         }
