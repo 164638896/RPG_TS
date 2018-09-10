@@ -11,7 +11,6 @@ enum RoleType {
 }
 
 class RoleData {
-    public mRoleType:RoleType; 
     public mName: string;
     public mInstId: number;
     public mTypeId: number;
@@ -23,7 +22,7 @@ class RoleData {
     public mPos: Laya.Vector3;
     private mForward = new Laya.Vector3();
 
-    public mSkillList:Array<number> = new Array<number>();
+    public mSkillList: Array<number> = new Array<number>();
 
     constructor() {
 
@@ -43,24 +42,21 @@ class RoleData {
     public GetForward(): Laya.Vector3 { return this.mForward; }
 }
 
-class PlayerData extends RoleData
-{
+class PlayerData extends RoleData {
 
 }
 
-class MyPlayerData extends PlayerData
-{
+class MyPlayerData extends PlayerData {
+
     public mJoystickForward = new Laya.Vector3;
     public mCameraRotation = new Laya.Vector2;
-    public mSceneId : number;
+    public mSceneId: number;
 }
 
-class NpcData extends RoleData
-{
+class NpcData extends RoleData {
 
 }
 
-class MonsterData extends RoleData
-{
+class MonsterData extends RoleData {
 
 }

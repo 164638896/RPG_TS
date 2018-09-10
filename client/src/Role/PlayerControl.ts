@@ -14,6 +14,10 @@ class PlayerControl extends Laya.Script {
     private mPlayerNewPos = new Laya.Vector3();
     private mPlayerNewDir = new Laya.Vector3();
 
+    private  _cameraQuat = new Laya.Quaternion();
+    private _forward = new Laya.Vector3();
+    private _dirPos = new Laya.Vector3();
+
     constructor() {
         super();
     }
@@ -28,7 +32,6 @@ class PlayerControl extends Laya.Script {
         this.mMyPlayer = p;
         this.mTerrainSprite = h;
         this.mMyPlayerData = this.mMyPlayer.mRoleData as MyPlayerData;
-        //this.mPlayerCamera.updateCamera(this.mMyPlayer.mRole3D.transform.position);
     }
 
     public _update(state: Laya.RenderState): void {
@@ -39,13 +42,9 @@ class PlayerControl extends Laya.Script {
 
             let cameraDir = new Laya.Vector3(this.mPlayerCamera.mCameraForward.x, 0, -this.mPlayerCamera.mCameraForward.z);
 
-            let cameraQuat = new Laya.Quaternion();
-            Laya.Quaternion.rotationLookAt(cameraDir, Laya.Vector3.Up, cameraQuat);
-
-            let forward = new Laya.Vector3;
-            Laya.Vector3.transformQuat(joystickForward, cameraQuat, forward);
-
-            this.mMyPlayer.mRoleData.SetDir(forward);
+            Laya.Quaternion.rotationLookAt(cameraDir, Laya.Vector3.Up, this._cameraQuat);
+            Laya.Vector3.transformQuat(joystickForward, this._cameraQuat, this._forward);
+            this.mMyPlayer.mRoleData.SetDir(this._forward);
             this.JoyStickMove(state);
         }
         else {
@@ -85,11 +84,8 @@ class PlayerControl extends Laya.Script {
                 }
 
                 // rotate
-                let dirPos = new Laya.Vector3();
-                Laya.Vector3.add(role3D.transform.position, forward, dirPos);
-                role3D.transform.lookAt(dirPos, Laya.Vector3.Up, false);
-
-                //this.mPlayerCamera.updateCamera(this.mMyPlayer.mRole3D.transform.position);
+                Laya.Vector3.add(role3D.transform.position, forward, this._dirPos);
+                role3D.transform.lookAt(this._dirPos, Laya.Vector3.Up, false);
             }
         }
         else {

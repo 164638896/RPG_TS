@@ -110,6 +110,8 @@ class StartUpCMD extends puremvc.SimpleCommand {
     // }
 
     private conmmonResComplete()  {
+        ClientSocket.getInstance().initServer("127.0.0.1", 8000, new ProtoBufMsg);
+        
         // 注册porxy
         this.facade.registerProxy(new MyPlayerPorxy());
         this.facade.registerProxy(new PlayerPorxy());
@@ -119,9 +121,7 @@ class StartUpCMD extends puremvc.SimpleCommand {
         // 注册ui
         this.facade.registerMediator(new MainMediator(MediatorNames.MAIN, fairygui.UIPackage.createObject("Joystick", "Main").asCom));
 
-        // 注册命令
         this.facade.registerCommand(NotiNames.ENTER_SCENE, EnterSceneCMD);
-        
         this.sendNotification(NotiNames.ENTER_SCENE);
     }
 }

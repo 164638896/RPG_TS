@@ -69,14 +69,24 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
             playerControl.initData(myPlayer, terrainSprite);
         }
 
-        // 打开主界面
-        let main = this.facade.retrieveMediator(MediatorNames.MAIN) as MainMediator;
-        main.open();
-
         this.facade.registerCommand(NotiNames.ADD_ROLE, AddRoleCMD);
         this.facade.registerCommand(NotiNames.REMOVE_ROLE, RemoveRoleCMD);
         this.facade.registerCommand(NotiNames.SKILL, SkillCMD);
 
+        this.initRole();
+     
+        this.mLoading.close();
+        // 打开主界面
+        let main = this.facade.retrieveMediator(MediatorNames.MAIN) as MainMediator;
+        main.open();
+    }
+
+    private onSceneProgress(pro: number) {
+        this.mLoading.setProgress(pro, 1);
+    }
+
+    private initRole()
+    {
         // 初始化其他玩家
         let playerPorxy = this.facade.retrieveProxy(ProxyNames.PLAYER_PROXY) as PlayerPorxy;
         let playerArray = playerPorxy.getDataDict().values;
@@ -98,11 +108,5 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
             let npcData = npcArray[i] as PlayerData;
             this.sendNotification(NotiNames.ADD_ROLE, [npcPorxy, npcData]);
         }
-
-        this.mLoading.close();
-    }
-
-    private onSceneProgress(pro: number) {
-        this.mLoading.setProgress(pro, 1);
     }
 }

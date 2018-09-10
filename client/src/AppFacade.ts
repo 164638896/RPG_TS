@@ -24,7 +24,7 @@ class AppFacade extends puremvc.Facade {
         if (!puremvc.Facade.instance)
             puremvc.Facade.instance = new AppFacade();
 
-        return <AppFacade> /*</>*/puremvc.Facade.instance;
+        return <AppFacade> puremvc.Facade.instance;
     }
 
     initializeController(): void {

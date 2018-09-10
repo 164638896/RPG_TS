@@ -7,10 +7,25 @@ class MyPlayerPorxy extends puremvc.Proxy{
         super(ProxyNames.MYPLAYER_PROXY);
       
         // 测试数据
-        this.add();
+        this.add(null);
+
+        // MessageCenter.getInstance().addListener(MsgConst.USER_LOGIN, this, this.add);
+        // this.socketTest("test");
     }
 
-    add()
+    // public socketTest(userName:string):void{
+
+    //     let message = new awesomepackage.AwesomeMessage();
+    //     message.awesomeField= userName;
+  
+    //     let encodeBuffer = awesomepackage.AwesomeMessage.encode(message).finish();      
+    //     ClientSocket.getInstance().send(1, encodeBuffer);
+
+    //     let decodeMessage = awesomepackage.AwesomeMessage.decode(encodeBuffer) as awesomepackage.AwesomeMessage;
+    //     console.log(decodeMessage.awesomeField); 
+    // }
+
+    add(obj:any)
     {
         let instId : number = 1;
         let typeId: number = 1;
@@ -20,7 +35,6 @@ class MyPlayerPorxy extends puremvc.Proxy{
         if(playerCfg)
         {
             let d = new MyPlayerData();
-            d.mRoleType = RoleType.MyPlayer;
             d.mMoveSpeed = playerCfg.speed;
             d.mAtk = playerCfg.atk;
             d.mHp = playerCfg.hp;
@@ -92,7 +106,6 @@ class PlayerPorxy extends puremvc.Proxy{
         if(playerCfg)
         {
             let d = new PlayerData();
-            d.mRoleType = RoleType.OtherPlayer;
             d.mMoveSpeed = playerCfg.speed;
             d.mAtk = playerCfg.atk;
             d.mHp = playerCfg.hp;
@@ -147,7 +160,6 @@ class NpcPorxy extends puremvc.Proxy{
         if(npcCfg)
         {
             let d = new NpcData();
-            d.mRoleType = RoleType.Npc;
             d.mMoveSpeed = npcCfg.speed;
             d.mAtk = npcCfg.atk;
             d.mHp = npcCfg.hp;
@@ -202,7 +214,6 @@ class MonsterPorxy extends puremvc.Proxy{
         if(monsterCfg)
         {
             let d = new MonsterData();
-            d.mRoleType = RoleType.Monster;
             d.mMoveSpeed = monsterCfg.speed;
             d.mAtk = monsterCfg.atk;
             d.mHp = monsterCfg.hp;

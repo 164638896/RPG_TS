@@ -22,3 +22,13 @@ class ProxyNames {
     static MONSTER_PROXY: string = "MonsterProxy";
     static NPC_PROXY: string = "NpcProxy";
 }
+
+class MsgConst{
+    static SOCKET_CONNECT:number = 1;
+    static SOCKET_RECONNECT:number = 2;
+    static SOCKET_START_RECONNECT:number = 3;
+    static SOCKET_CLOSE:number = 4;
+    static SOCKET_NOCONNECT:number = 5;
+
+    static USER_LOGIN:number = 6;
+}
