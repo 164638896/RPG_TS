@@ -2,7 +2,6 @@
 * name;
 */
 
-
 enum StateType {
     None = 0,
     Idle,
@@ -89,7 +88,7 @@ class TimeState extends IState {
     }
 
     private onTimerComplete() {
-        this.mStateMachine.NextState();
+        this.mStateMachine.nextState();
     }
 }
 
@@ -106,6 +105,7 @@ class AtkState extends AniState {
         this.mAnimator.once(Laya.Event.STOPPED, this, this.onAniComplete);
 
         this.mChangeState = false;
+
         return true;
     }
 
@@ -114,7 +114,6 @@ class AtkState extends AniState {
     }
 
     private onAniComplete() {
-        this.mStateMachine.NextState();
+        this.mStateMachine.nextState();
     }
 }
-

@@ -124,7 +124,7 @@ class SkillCMD extends puremvc.SimpleCommand {
         if (role) {
             let skillInfo = SkillConfig.getInstance().getSkillInfo(arr[1]);
             if (skillInfo) {
-                role.mStateMachine.SwitchState(StateType.Atk, skillInfo.ani);
+                role.mStateMachine.switchState(StateType.Atk, skillInfo.ani);
             }
             else {
                 console.error("没有这个技能Id=", arr[1]);

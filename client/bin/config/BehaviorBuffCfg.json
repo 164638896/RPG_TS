@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "name": "晕眩",
+    "duration": 1000,
+    "CanMove": 0,
+    "CanAtk": 0
+  },
+  {
+    "id": 2,
+    "name": "缠绕",
+    "duration": 1000,
+    "CanMove": 0,
+    "CanAtk": 1
+  },
+  {
+    "id": 3,
+    "name": "沉默",
+    "duration": 1000,
+    "CanMove": 1,
+    "CanAtk": 0
+  },
+  {
+    "id": 4,
+    "name": "互动控制",
+    "duration": 1000,
+    "CanMove": 0,
+    "CanAtk": 0
+  }
+]

@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "name": "单次伤害",
+    "duration": 1000,
+    "ani": "Damage"
+  },
+  {
+    "id": 2,
+    "name": "持续伤害",
+    "duration": 1000,
+    "ani": "Damage"
+  }
+]

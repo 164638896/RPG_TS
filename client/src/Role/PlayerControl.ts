@@ -2,7 +2,6 @@
 * name;
 */
 
-
 class PlayerControl extends Laya.Script {
 
     private mPlayerCamera: FollowPlayerCamera;
@@ -67,8 +66,8 @@ class PlayerControl extends Laya.Script {
     }
 
     public JoyStickMove(state: Laya.RenderState) {
-        if (this.mMyPlayer.mBuffSystem.CanMove()) {
-            if (this.mMyPlayer.mStateMachine.SwitchState(StateType.Run, AniName.Run) == true) {
+        if (this.mMyPlayer.mBuffSystem.canMove()) {
+            if (this.mMyPlayer.mStateMachine.switchState(StateType.Run, AniName.Run) == true) {
 
                 let forward = this.mMyPlayer.mRoleData.GetForward();
 
@@ -76,7 +75,7 @@ class PlayerControl extends Laya.Script {
 
                 // position
                 let teampPos = new Laya.Vector3();
-                Laya.Vector3.scale(forward, -this.mMyPlayer.mRoleData.mMoveSpeed * state.elapsedTime * 0.001, teampPos);
+                Laya.Vector3.scale(forward, -this.mMyPlayer.mRoleData.mMoveSpeed * state.elapsedTime * 0.0007, teampPos);
 
                 Laya.Vector3.add(role3D.transform.position, teampPos, teampPos);
                 teampPos.y = this.mTerrainSprite.getHeight(teampPos.x, teampPos.z);
@@ -90,11 +89,11 @@ class PlayerControl extends Laya.Script {
             }
         }
         else {
-            this.mMyPlayer.mStateMachine.SwitchState(StateType.Idle, AniName.Idle);
+            this.mMyPlayer.mStateMachine.switchState(StateType.Idle, AniName.Idle);
         }
     }
 
     public joystickUp() {
-        this.mMyPlayer.mStateMachine.SwitchState(StateType.Idle, AniName.Idle);
+        this.mMyPlayer.mStateMachine.switchState(StateType.Idle, AniName.Idle);
     }
 }

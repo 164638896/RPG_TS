@@ -41,3 +41,33 @@ declare class Npccfg {
 	speed: number
 	skill: any[]
 }
+declare class Behaviorbuffcfg {
+	id: number
+	name: string
+	duration: number
+	CanMove: number
+	CanAtk: number
+}
+declare class Movebuffcfg {
+	id: number
+	name: string
+	duration: number
+	Dir: number
+	Distance: number
+}
+declare class Hurtbuffcfg {
+	id: number
+	name: string
+	duration: number
+	ani: string
+}
+declare class Controlbuffcfg {
+	id: number
+	name: string
+	duration: number
+	ClearBuff: number
+	EnableBehavior: number
+	EnableMove: number
+	EnableHurt: number
+	EnableSelect: number
+}

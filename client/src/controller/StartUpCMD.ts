@@ -39,7 +39,7 @@ class StartUpCMD extends puremvc.SimpleCommand {
             Laya.URL.basePath = "http://hsj-update.szfyhd.com/h5/wxgame/";
         }
         else {
-           //Laya.URL.basePath = "http://hsj-update.szfyhd.com/h5/web/";
+            //Laya.URL.basePath = "http://hsj-update.szfyhd.com/h5/web/";
         }
 
         console.info("Laya.URL.basePath = ", Laya.URL.basePath);
@@ -69,6 +69,10 @@ class StartUpCMD extends puremvc.SimpleCommand {
             { url: "config/NpcCfg.json", "type": Laya.Loader.JSON },
             { url: "config/SkillCfg.json", "type": Laya.Loader.JSON },
             { url: "config/SceneCfg.json", "type": Laya.Loader.JSON },
+            { url: "config/BehaviorBuffCfg.json", "type": Laya.Loader.JSON },
+            { url: "config/MoveBuffCfg.json", "type": Laya.Loader.JSON },
+            { url: "config/HurtBuffCfg.json", "type": Laya.Loader.JSON },
+            { url: "config/ControlBuffCfg.json", "type": Laya.Loader.JSON },
             { url: "res/ui/Joystick@atlas0.png", type: Laya.Loader.IMAGE },
             { url: "res/ui/Joystick.bin", type: Laya.Loader.BUFFER },
         ];
@@ -88,6 +92,10 @@ class StartUpCMD extends puremvc.SimpleCommand {
         NpcConfig.getInstance().load("config/NpcCfg.json");
         SkillConfig.getInstance().load("config/SkillCfg.json");
         SceneConfig.getInstance().load("config/SceneCfg.json");
+        BuffConfig.getInstance().loadBehaviorBuff("config/BehaviorBuffCfg.json");
+        BuffConfig.getInstance().loadMoveBuff("config/MoveBuffCfg.json");
+        BuffConfig.getInstance().loadHurtBuff("config/HurtBuffCfg.json");
+        BuffConfig.getInstance().loadControlBuff("config/ControlBuffCfg.json");
 
         fairygui.UIPackage.addPackage("res/ui/Joystick");
 
@@ -109,9 +117,9 @@ class StartUpCMD extends puremvc.SimpleCommand {
     //     this.mLoading.setProgress(pro * 100, 100);
     // }
 
-    private conmmonResComplete()  {
+    private conmmonResComplete() {
         ClientSocket.getInstance().initServer("127.0.0.1", 8000, new ProtoBufMsg);
-        
+
         // 注册porxy
         this.facade.registerProxy(new MyPlayerPorxy());
         this.facade.registerProxy(new PlayerPorxy());

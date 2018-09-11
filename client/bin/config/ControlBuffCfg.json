@@ -1,0 +1,22 @@
+[
+  {
+    "id": 1,
+    "name": "不可切换,不可选中",
+    "duration": 1000,
+    "ClearBuff": 0,
+    "EnableBehavior": 1,
+    "EnableMove": 0,
+    "EnableHurt": 1,
+    "EnableSelect": 0
+  },
+  {
+    "id": 2,
+    "name": "不可选中状态",
+    "duration": 1000,
+    "ClearBuff": 0,
+    "EnableBehavior": 1,
+    "EnableMove": 1,
+    "EnableHurt": 1,
+    "EnableSelect": 0
+  }
+]

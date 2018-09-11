@@ -16,7 +16,7 @@ class Role extends Laya.Script {
     _initialize(owner: Laya.ComponentNode): void {
         super._initialize(owner);
         this.mRole3D = owner as Laya.Sprite3D;
-        this.mStateMachine.RegistState(new AniState(this, this.mStateMachine, StateType.Idle));
+        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Idle));
     }
 
     _start(state: Laya.RenderState): void {
@@ -25,7 +25,8 @@ class Role extends Laya.Script {
 
     _update(state: Laya.RenderState): void {
         super._update(state);
-        this.mStateMachine.Update(state);
+        this.mStateMachine.update(state);
+        this.mBuffSystem.update();
     }
 
     initData(proxy: puremvc.Proxy, data: RoleData)  {
@@ -44,9 +45,9 @@ class Player extends Role {
     _initialize(owner: Laya.ComponentNode): void {
         super._initialize(owner);
 
-        this.mStateMachine.RegistState(new AniState(this, this.mStateMachine, StateType.Run));
-        this.mStateMachine.RegistState(new AtkState(this, this.mStateMachine, StateType.Atk));
-        this.mStateMachine.RegistState(new AniState(this, this.mStateMachine, StateType.Hit));
+        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Run));
+        this.mStateMachine.registState(new AtkState(this, this.mStateMachine, StateType.Atk));
+        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Hit));
     }
 
     initData(proxy: puremvc.Proxy, data: RoleData)  {
@@ -90,7 +91,7 @@ class Npc extends Role {
     _initialize(owner: Laya.ComponentNode): void {
         super._initialize(owner);
 
-        this.mStateMachine.RegistState(new AniState(this, this.mStateMachine, StateType.Run));
+        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Run));
     }
 
     initData(proxy: puremvc.Proxy, data: RoleData)  {
@@ -112,9 +113,9 @@ class Monster extends Role {
     _initialize(owner: Laya.ComponentNode): void {
         super._initialize(owner);
 
-        this.mStateMachine.RegistState(new AniState(this, this.mStateMachine, StateType.Run));
-        this.mStateMachine.RegistState(new AtkState(this, this.mStateMachine, StateType.Atk));
-        this.mStateMachine.RegistState(new AniState(this, this.mStateMachine, StateType.Hit));
+        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Run));
+        this.mStateMachine.registState(new AtkState(this, this.mStateMachine, StateType.Atk));
+        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Hit));
     }
 
     initData(proxy: puremvc.Proxy, data: RoleData)  {

@@ -6,7 +6,7 @@ class FollowPlayerCamera {
     private mCamera: Laya.Camera;
     public mCameraForward: Laya.Vector3 = new Laya.Vector3(0, -0.6, 1);
     public mCameraOffsetDis: number = -1.5;
-    public mLookAtOffset: Laya.Vector3 = new Laya.Vector3(0, 0.3, 0);
+    public mLookAtOffset: Laya.Vector3 = new Laya.Vector3(0, 0.15, 0);
     public mTargetPos: Laya.Vector3 = new Laya.Vector3();
 
     private _cameraQuat: Laya.Quaternion = new Laya.Quaternion;

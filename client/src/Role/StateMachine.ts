@@ -19,7 +19,7 @@ class StateMachine {
         this.mDefaultStateInfo.mParam1 = AniName.Idle;
     }
 
-    public RegistState(state: IState): Boolean {
+    public registState(state: IState): Boolean {
         if (this.mDictState.get(state.GetStateType())) {
             console.warn("StateMachine::RegistState->state had exist! state id=" + state.GetStateType());
             return false;
@@ -29,11 +29,11 @@ class StateMachine {
         return true;
     }
 
-    public UnRegistState(state: IState) {
+    public unRegistState(state: IState) {
         this.mDictState.remove(state.GetStateType());
     }
 
-    public SwitchState(stateType: StateType, param1: any): Boolean {
+    public switchState(stateType: StateType, param1: any): Boolean {
 
         if (null != this.mCurrState && !this.mCurrState.mChangeState) {
             //console.log("不可切换，等待此状态:" + this.mCurrState.GetStateType())
@@ -48,41 +48,41 @@ class StateMachine {
         let newState: IState = this.mDictState.get(stateType);
         if (newState == null) return false;
 
-        return this.ExeState(newState, param1);
+        return this.exeState(newState, param1);
     }
 
-    public Update(state: Laya.RenderState) {
+    public update(state: Laya.RenderState) {
         if (this.mCurrState != null) {
             this.mCurrState.Update(state);
         }
     }
 
-    public GetCurState(): IState {
+    public getCurState(): IState {
         return this.mCurrState;
     }
 
-    public SetNextState(nextStateType: StateType, param1: any) {
+    public setNextState(nextStateType: StateType, param1: any) {
         this.mNextStateInfo.mStateType = nextStateType;
         this.mNextStateInfo.mParam1 = param1;
     }
 
-    public NextState() : boolean{
+    public nextState() : boolean{
         if (this.mNextStateInfo.mStateType != StateType.None) {
             let newState: IState = this.mDictState.get(this.mNextStateInfo.mStateType);
             if (newState == null) return false;
 
-            this.ExeState(newState, this.mNextStateInfo.mParam1);
+            this.exeState(newState, this.mNextStateInfo.mParam1);
             this.mNextStateInfo.mStateType = StateType.None;
         }
         else {
             let newState: IState = this.mDictState.get(this.mDefaultStateInfo.mStateType);
             if (newState == null) return false;
 
-            this.ExeState(newState, this.mDefaultStateInfo.mParam1);
+            this.exeState(newState, this.mDefaultStateInfo.mParam1);
         }
     }
 
-    private ExeState(newState: IState, param1: any) : boolean{
+    private exeState(newState: IState, param1: any) : boolean{
         if (this.mCurrState != null) this.mCurrState.LeaveState();
 
         this.mCurrState = newState;

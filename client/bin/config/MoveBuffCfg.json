@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "击退",
+    "duration": 1000,
+    "Dir": 1,
+    "Distance": 1
+  },
+  {
+    "id": 2,
+    "name": "吸掌",
+    "duration": 1000,
+    "Dir": 2,
+    "Distance": 1
+  },
+  {
+    "id": 3,
+    "name": "冲锋",
+    "duration": 1000,
+    "Dir": 3,
+    "Distance": 2
+  },
+  {
+    "id": 4,
+    "name": "后退",
+    "duration": 1000,
+    "Dir": 4,
+    "Distance": 1
+  },
+  {
+    "id": 5,
+    "name": "聚怪",
+    "duration": 500,
+    "Dir": 5,
+    "Distance": 2
+  }
+]
