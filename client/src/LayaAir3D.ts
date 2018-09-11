@@ -10,7 +10,7 @@ class LayaAir3D {
         Laya3D.init(1136, 640/*, true*/);
 
         //适配模式
-        Laya.stage.scaleMode = Laya.Stage.SCALE_FIXED_AUTO;
+        Laya.stage.scaleMode = Laya.Stage.SCALE_SHOWALL;
         Laya.stage.screenMode = Laya.Stage.SCREEN_HORIZONTAL;
         Laya.stage.alignH = Laya.Stage.ALIGN_CENTER;
         Laya.stage.alignV = Laya.Stage.ALIGN_MIDDLE;
