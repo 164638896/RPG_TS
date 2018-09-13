@@ -60,7 +60,13 @@ class StateMachine {
     public getCurState(): IState {
         return this.mCurrState;
     }
-
+    public getCurStateType(): StateType {
+        if(this.mCurrState)
+        {
+            return this.mCurrState.GetStateType();
+        }
+        return StateType.None;
+    }
     public setNextState(nextStateType: StateType, param1: any) {
         this.mNextStateInfo.mStateType = nextStateType;
         this.mNextStateInfo.mParam1 = param1;

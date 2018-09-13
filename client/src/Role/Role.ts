@@ -27,11 +27,57 @@ class Role extends Laya.Script {
         super._update(state);
         this.mStateMachine.update(state);
         this.mBuffSystem.update();
+        this.updatePos(state);
     }
 
-    initData(proxy: puremvc.Proxy, data: RoleData)  {
+    initData(proxy: puremvc.Proxy, data: RoleData) {
         this.mRoleData = data;
-        this.mRole3D.transform.position = this.mRoleData.mPos;
+        this.mRole3D.transform.position = this.mRoleData.mMoveList[0].mPos;
+    }
+
+    private updatePos(state: Laya.RenderState) {
+        if (this.mRoleData.mMoveList.length == 0) return;
+        if (this.mRoleData.mMoveList.length == 1 && Laya.Vector3.equals(this.mRole3D.transform.position, this.mRoleData.mMoveList[0].mPos)) {
+            if (this.mStateMachine.getCurStateType() == StateType.Run) {
+                this.mStateMachine.switchState(StateType.Idle, [AniName.Idle, 1]);
+            }
+            return;
+        }
+        if (this.mBuffSystem.canMove()) {
+            let rate: number = 1;
+            if (this.mRoleData.mMoveList.length > 2) rate *= 2;
+
+            if (this.mStateMachine.switchState(StateType.Run, [AniName.Run,rate]) == true) {
+                let maxStep = this.mRoleData.mMoveSpeed * (state.elapsedTime * 0.001) * rate;
+                let nextMove = this.mRoleData.mMoveList[this.mRoleData.mMoveList.length - 1];
+          
+                let dist = Laya.Vector3.distance(this.mRole3D.transform.position, nextMove.mPos);
+                nextMove.setForward(nextMove.mPos, this.mRole3D.transform.position);
+                let forward = nextMove.getForward();
+                if (dist <= maxStep + 0.001) {
+                    maxStep = dist;
+                    if (this.mRoleData.mMoveList.length >= 2)  {
+                        this.mRoleData.mMoveList.shift();
+                    }
+                }
+
+                let teampPos = new Laya.Vector3();
+
+                // position
+                Laya.Vector3.scale(forward, maxStep, teampPos);
+                Laya.Vector3.add(this.mRole3D.transform.position, teampPos, teampPos);
+                this.mRole3D.transform.position = teampPos;
+
+                // rotate
+                let dirPos = new Laya.Vector3();
+                //Laya.Vector3.add(teampPos, forward, dirPos);
+                Laya.Vector3.subtract(teampPos, forward, dirPos);
+                this.mRole3D.transform.lookAt(dirPos, Laya.Vector3.Up, false);
+            }
+        }
+        else {
+            this.mStateMachine.switchState(StateType.Idle, [AniName.Idle,1]);
+        }
     }
 }
 
@@ -50,12 +96,12 @@ class Player extends Role {
         this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Hit));
     }
 
-    initData(proxy: puremvc.Proxy, data: RoleData)  {
+    initData(proxy: puremvc.Proxy, data: RoleData) {
         super.initData(proxy, data);
         this.mPlayerPorxy = proxy as PlayerPorxy;
     }
 
-    getPlayerData(): PlayerData  {
+    getPlayerData(): PlayerData {
         return <PlayerData>this.mRoleData;
     }
 }
@@ -71,12 +117,12 @@ class MyPlayer extends Player {
         super._initialize(owner);
     }
 
-    initData(proxy: puremvc.Proxy, data: RoleData)  {
+    initData(proxy: puremvc.Proxy, data: RoleData) {
         super.initData(proxy, data);
         this.mMyPlayerPorxy = proxy as MyPlayerPorxy;
     }
 
-    getMyPlayerData(): MyPlayerData  {
+    getMyPlayerData(): MyPlayerData {
         return <MyPlayerData>this.mRoleData;
     }
 }
@@ -94,12 +140,12 @@ class Npc extends Role {
         this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Run));
     }
 
-    initData(proxy: puremvc.Proxy, data: RoleData)  {
+    initData(proxy: puremvc.Proxy, data: RoleData) {
         super.initData(proxy, data);
         this.mNpcPorxy = proxy as NpcPorxy;
     }
 
-    getNpcData(): NpcData  {
+    getNpcData(): NpcData {
         return <NpcData>this.mRoleData;
     }
 }
@@ -118,12 +164,12 @@ class Monster extends Role {
         this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Hit));
     }
 
-    initData(proxy: puremvc.Proxy, data: RoleData)  {
+    initData(proxy: puremvc.Proxy, data: RoleData) {
         super.initData(proxy, data);
         this.mMonsterPorxy = proxy as MonsterPorxy;
     }
 
-    getMonsterData(): MonsterData  {
+    getMonsterData(): MonsterData {
         return <MonsterData>this.mRoleData;
     }
 }

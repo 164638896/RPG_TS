@@ -33,11 +33,11 @@ abstract class IState {
 
     public GetStateType(): StateType { return this.mStateType; }
 
-    public EnterState(param1: any) : boolean{
+    public EnterState(param: any) : boolean{
         return false;
     }
 
-    public ExecuteStateAgain(param1: any) {
+    public ExecuteStateAgain(param: any) {
 
     }
 
@@ -58,20 +58,24 @@ class AniState extends IState {
         this.mAnimator = r.mRole3D.getComponentByType(Laya.Animator) as Laya.Animator;
     }
 
-    public EnterState(param1: any) : boolean{
-        return this.plyaerAni(param1);
+    public EnterState(param: any) : boolean{
+        return this.playAni(param);
     }
 
-    public plyaerAni(aniName: string) : boolean{
-        let ac = this.mAnimator.getClip(aniName)
+    public playAni(param: any) : boolean{
+        let ac = this.mAnimator.getClip(param[0])
         if(ac == null)
         {
-            console.error("找不到动作名为: ", aniName);
+            console.error("找不到动作名为: ", param[0]);
             return false;
         }
             
-        this.mAnimator.play(aniName);
+        this.mAnimator.play(param[0], param[1]);
         return true;
+    }
+
+    public ExecuteStateAgain(param: any) {
+        this.mAnimator.playbackRate = param[1];
     }
 }
 
@@ -82,8 +86,8 @@ class TimeState extends IState {
 
     }
 
-    public EnterState(param1: any) : boolean{
-        Laya.timer.once(param1, this, this.onTimerComplete);
+    public EnterState(param: any) : boolean{
+        Laya.timer.once(param, this, this.onTimerComplete);
         return true;
     }
 
@@ -98,8 +102,8 @@ class AtkState extends AniState {
         super(r, machine, state);
     }
 
-    public EnterState(param1: any) : boolean {
-        if(!super.EnterState(param1)) return false;
+    public EnterState(param: any) : boolean {
+        if(!super.EnterState(param)) return false;
 
         this.mAnimator.once(Laya.Event.COMPLETE, this, this.onAniComplete);
         this.mAnimator.once(Laya.Event.STOPPED, this, this.onAniComplete);

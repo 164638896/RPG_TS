@@ -44,12 +44,12 @@ class PlayerControl extends Laya.Script {
 
             Laya.Quaternion.rotationLookAt(cameraDir, Laya.Vector3.Up, this._cameraQuat);
             Laya.Vector3.transformQuat(joystickForward, this._cameraQuat, this._forward);
-            this.mMyPlayer.mRoleData.SetDir(this._forward);
-            this.JoyStickMove(state);
+            this.mMyPlayer.mRoleData.mMoveList[0].setDir(this._forward.x,this._forward.y,this._forward.z);
+            this.joyStickMove(state);
         }
-        else {
-            this.joystickUp();
-        }
+        // else {
+        //     this.joystickUp();
+        // }
 
         let cameraRotation = this.mMyPlayerData.mCameraRotation;
         if (cameraRotation.x != 0 || cameraRotation.y != 0) {
@@ -65,35 +65,30 @@ class PlayerControl extends Laya.Script {
         }
     }
 
-    public JoyStickMove(state: Laya.RenderState) {
+    public joyStickMove(state: Laya.RenderState) {
         if (this.mMyPlayer.mBuffSystem.canMove()) {
-            if (this.mMyPlayer.mStateMachine.switchState(StateType.Run, AniName.Run) == true) {
-
-                let forward = this.mMyPlayer.mRoleData.GetForward();
-
+            //if (this.mMyPlayer.mStateMachine.switchState(StateType.Run, AniName.Run) == true) {
+                let forward = this.mMyPlayer.mRoleData.mMoveList[0].getForward();
                 let role3D = this.mMyPlayer.mRole3D;
 
                 // position
                 let teampPos = new Laya.Vector3();
-                Laya.Vector3.scale(forward, -this.mMyPlayer.mRoleData.mMoveSpeed * state.elapsedTime * 0.0007, teampPos);
+                Laya.Vector3.scale(forward, -this.mMyPlayer.mRoleData.mMoveSpeed * state.elapsedTime * 0.001, teampPos);
 
                 Laya.Vector3.add(role3D.transform.position, teampPos, teampPos);
                 teampPos.y = this.mTerrainSprite.getHeight(teampPos.x, teampPos.z);
                 if (!isNaN(teampPos.y)) {
-                    role3D.transform.position = teampPos;
+                    //this.mMyPlayer.mRoleData.mPos = teampPos;
+                    this.mMyPlayer.mRoleData.mMoveList[0].mPos = teampPos;
                 }
-
-                // rotate
-                Laya.Vector3.add(role3D.transform.position, forward, this._dirPos);
-                role3D.transform.lookAt(this._dirPos, Laya.Vector3.Up, false);
-            }
+            //}
         }
-        else {
-            this.mMyPlayer.mStateMachine.switchState(StateType.Idle, AniName.Idle);
-        }
+        // else {
+        //     this.mMyPlayer.mStateMachine.switchState(StateType.Idle, AniName.Idle);
+        // }
     }
 
-    public joystickUp() {
-        this.mMyPlayer.mStateMachine.switchState(StateType.Idle, AniName.Idle);
-    }
+    // public joystickUp() {
+    //     this.mMyPlayer.mStateMachine.switchState(StateType.Idle, AniName.Idle);
+    // }
 }

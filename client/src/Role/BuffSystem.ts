@@ -75,7 +75,7 @@ class BuffSystem {
         if (buff != null) {
             buff.onEnter();
             this.mCurrBuffList[type].set(buff.mInstId, buff);
-            //return mInstId;
+            //return this.mInstId;
         }
         else {
             return -1;

@@ -63,7 +63,7 @@ class AddRoleCMD extends puremvc.SimpleCommand {
                 currScene.addChild(role.mRole3D);
             }
             else if (roleData instanceof MonsterData) {
-                let role = RoleMgr.getInstance().createMonster(porxy as PlayerPorxy, roleData);
+                let role = RoleMgr.getInstance().createMonster(porxy as MonsterPorxy, roleData);
                 currScene.addChild(role.mRole3D);
             }
             else if (roleData instanceof NpcData) {
@@ -124,7 +124,7 @@ class SkillCMD extends puremvc.SimpleCommand {
         if (role) {
             let skillInfo = SkillConfig.getInstance().getSkillInfo(arr[1]);
             if (skillInfo) {
-                role.mStateMachine.switchState(StateType.Atk, skillInfo.ani);
+                role.mStateMachine.switchState(StateType.Atk, [skillInfo.ani, 2]);
             }
             else {
                 console.error("没有这个技能Id=", arr[1]);

@@ -6,10 +6,7 @@ class MyPlayerPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.MYPLAYER_PROXY);
 
-        // 测试数据
-        this.add(null);
-
-        // MessageCenter.getInstance().addListener(MsgConst.USER_LOGIN, this, this.add);
+        MessageCenter.getInstance().addListener(MsgConst.ADD_MYPLAYER, this, this.add);
         // this.socketTest("test");
     }
 
@@ -25,38 +22,31 @@ class MyPlayerPorxy extends puremvc.Proxy {
     //     console.log(decodeMessage.awesomeField); 
     // }
 
-    add(obj: any)  {
-        let instId: number = 1;
-        let typeId: number = 1;
-        let secenId: number = 1;
+    add(param: any) {
+        let d = new MyPlayerData();
+        d.mInstId = param.instId;
+        d.mTypeId = param.typeId;
+        d.mMoveSpeed = param.speed;
+        d.mSceneId = param.secenId;
+        d.mAtk = param.atk;
+        d.mHp = param.hp;
+        d.mDef = param.def;
+        d.mSkillList = param.skillList;
+        let m = new MoveData;
+        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
+        d.mMoveList.push(m);
+        this.setData(d);
 
-        let playerCfg = PlayerConfig.getInstance().getPlayer(typeId);
-        if (playerCfg)  {
-            let d = new MyPlayerData();
-            d.mMoveSpeed = playerCfg.speed;
-            d.mAtk = playerCfg.atk;
-            d.mHp = playerCfg.hp;
-            d.mDef = playerCfg.def;
-            d.mSkillList = playerCfg.skill;
-            d.mTypeId = typeId;
-            d.mInstId = instId;
-            d.mSceneId = secenId;
-            d.mPos = new Laya.Vector3(-0.353, 0.282, -2.68);
-            this.setData(d);
-
-            //this.sendNotification(NotiNames.MYPLAYER_ADDED, instId);
-            this.sendNotification(NotiNames.ENTER_SCENE);
-        }
-        else  {
-            console.error("找不到玩家 typeId =1");
-        }
+        //this.sendNotification(NotiNames.MYPLAYER_ADDED, instId);
+        this.sendNotification(NotiNames.ENTER_SCENE);
     }
 
-    get(): MyPlayerData  {
+    get(): MyPlayerData {
         return <MyPlayerData>this.data;
     }
 
-    public setJoystickForward(x: number, z: number)  {
+    public setJoystickForward(x: number, z: number) {
         let data = this.get();
         data.mJoystickForward.x = x;
         data.mJoystickForward.y = 0;
@@ -68,7 +58,7 @@ class MyPlayerPorxy extends puremvc.Proxy {
         data.mCameraRotation.x = x;
         data.mCameraRotation.y = y;
     }
-    public playSkillByIndex(index: number)  {
+    public playSkillByIndex(index: number) {
         let data = this.get();
         // 同步给服务器
         // 通知播放动作
@@ -80,46 +70,38 @@ class PlayerPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.PLAYER_PROXY);
         this.data = new laya.utils.Dictionary;
-
-        // 测试数据
-        this.add();
+        MessageCenter.getInstance().addListener(MsgConst.ADD_PLAYER, this, this.add);
     }
 
     getDataDict(): laya.utils.Dictionary {
         return <laya.utils.Dictionary>this.data;
     }
 
-    add()  {
-        let instId: number = 2;
-        let typeId: number = 2;
+    add(param: any) {
+        let d = new PlayerData();
+        d.mInstId = param.instId;
+        d.mTypeId = param.typeId;
+        d.mMoveSpeed = param.speed;
+        d.mAtk = param.atk;
+        d.mHp = param.hp;
+        d.mDef = param.def;
+        d.mSkillList = param.skillList;
+        let m = new MoveData;
+        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
+        d.mMoveList.push(m);
 
-        let playerCfg = PlayerConfig.getInstance().getPlayer(typeId);
-        if (playerCfg)  {
-            let d = new PlayerData();
-            d.mMoveSpeed = playerCfg.speed;
-            d.mAtk = playerCfg.atk;
-            d.mHp = playerCfg.hp;
-            d.mDef = playerCfg.def;
-            d.mSkillList = playerCfg.skill;
-            d.mTypeId = typeId;
-            d.mInstId = instId;
+        this.getDataDict().set(d.mInstId, d);
 
-            d.mPos = new Laya.Vector3(-0.353, 0.282, -1.68);
-            this.getDataDict().set(d.mInstId, d);
-
-            this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
-        }
-        else  {
-            console.log("找不到Player typeId =1");
-        }
+        this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 
-    remove(instId: number)  {
+    remove(instId: number) {
         this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
         this.getDataDict().remove(instId);
     }
 
-    get(instId: number): PlayerData  {
+    get(instId: number): PlayerData {
         return this.getDataDict().get(instId);
     }
 }
@@ -128,46 +110,37 @@ class NpcPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.NPC_PROXY);
         this.data = new laya.utils.Dictionary;
-
-        // 测试数据
-        this.add();
+        MessageCenter.getInstance().addListener(MsgConst.ADD_NPC, this, this.add);
     }
 
     getDataDict(): laya.utils.Dictionary {
         return <laya.utils.Dictionary>this.data;
     }
 
-    add()  {
-        let instId: number = 4;
-        let typeId: number = 1;
+    add(param: any) {
+        let d = new NpcData();
+        d.mInstId = param.instId;
+        d.mTypeId = param.typeId;
+        d.mMoveSpeed = param.speed;
+        d.mAtk = param.atk;
+        d.mHp = param.hp;
+        d.mDef = param.def;
+        d.mSkillList = param.skillList;
+        let m = new MoveData;
+        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
+        d.mMoveList.push(m);
+        this.getDataDict().set(d.mInstId, d);
 
-        let npcCfg = NpcConfig.getInstance().getNpc(typeId);
-        if (npcCfg)  {
-            let d = new NpcData();
-            d.mMoveSpeed = npcCfg.speed;
-            d.mAtk = npcCfg.atk;
-            d.mHp = npcCfg.hp;
-            d.mDef = npcCfg.def;
-            d.mSkillList = npcCfg.skill;
-            d.mTypeId = typeId;
-            d.mInstId = instId;
-
-            d.mPos = new Laya.Vector3(-1.353, 0.282, -2.68);
-            this.getDataDict().set(d.mInstId, d);
-
-            this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
-        }
-        else  {
-            console.log("找不到Npc typeId =1");
-        }
+        this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 
-    remove(instId: number)  {
+    remove(instId: number) {
         this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
         this.getDataDict().remove(instId);
     }
 
-    get(instId: number): NpcData  {
+    get(instId: number): NpcData {
         return this.getDataDict().get(instId);
     }
 }
@@ -176,46 +149,49 @@ class MonsterPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.MONSTER_PROXY);
         this.data = new laya.utils.Dictionary;
-
-        // 测试数据
-        this.add();
+        MessageCenter.getInstance().addListener(MsgConst.ADD_MONSTER, this, this.add);
+        MessageCenter.getInstance().addListener(MsgConst.MOVE_MONSTER, this, this.move);
     }
 
     getDataDict(): laya.utils.Dictionary {
         return <laya.utils.Dictionary>this.data;
     }
 
-    add()  {
-        let instId: number = 3;
-        let typeId: number = 1;
+    add(param: any) {
+        let d = new MonsterData();
+        d.mInstId = param.instId;
+        d.mTypeId = param.typeId;
+        d.mMoveSpeed = param.speed;
+        d.mAtk = param.atk;
+        d.mHp = param.hp;
+        d.mDef = param.def;
+        d.mSkillList = param.skillList;
+        let m = new MoveData;
+        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
+        d.mMoveList.push(m);
+        this.getDataDict().set(d.mInstId, d);
 
-        let monsterCfg = MonsterConfig.getInstance().getMonster(typeId);
-        if (monsterCfg)  {
-            let d = new MonsterData();
-            d.mMoveSpeed = monsterCfg.speed;
-            d.mAtk = monsterCfg.atk;
-            d.mHp = monsterCfg.hp;
-            d.mDef = monsterCfg.def;
-            d.mSkillList = monsterCfg.skill;
-            d.mTypeId = typeId;
-            d.mInstId = instId;
-
-            d.mPos = new Laya.Vector3(-0.353, 0.282, -3.68);
-            this.getDataDict().set(d.mInstId, d);
-
-            this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
-        }
-        else  {
-            console.log("找不到Monster typeId =1");
-        }
+        this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 
-    remove(instId: number)  {
+    move(param: any)  {
+        let d = this.get(param.instId);
+        if(!d) return;
+
+        d.mMoveSpeed = param.speed;
+        let m = new MoveData;
+        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        m.setDir(param.dir[0], param.dir[1], param.dir[2]);
+        d.mMoveList.push(m);
+    }
+
+    remove(instId: number) {
         this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
         this.getDataDict().remove(instId);
     }
 
-    get(instId: number): MonsterData  {
+    get(instId: number): MonsterData {
         return this.getDataDict().get(instId);
     }
 }

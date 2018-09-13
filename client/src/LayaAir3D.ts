@@ -1,6 +1,8 @@
 import Handler = laya.utils.Handler;
 import Loader = laya.net.Loader;
 
+var GameTime: Date = new Date();        
+
 // 程序入口
 class LayaAir3D {
     constructor() {

@@ -23,12 +23,16 @@ class ProxyNames {
     static NPC_PROXY: string = "NpcProxy";
 }
 
-class MsgConst{
-    static SOCKET_CONNECT:number = 1;
-    static SOCKET_RECONNECT:number = 2;
-    static SOCKET_START_RECONNECT:number = 3;
-    static SOCKET_CLOSE:number = 4;
-    static SOCKET_NOCONNECT:number = 5;
+class MsgConst {
+    static SOCKET_CONNECT: number = 1;
+    static SOCKET_RECONNECT: number = 2;
+    static SOCKET_START_RECONNECT: number = 3;
+    static SOCKET_CLOSE: number = 4;
+    static SOCKET_NOCONNECT: number = 5;
 
-    static USER_LOGIN:number = 6;
+    static ADD_MYPLAYER: number = 6;
+    static ADD_PLAYER: number = 7;
+    static ADD_MONSTER: number = 8;
+    static ADD_NPC: number = 9;
+    static MOVE_MONSTER: number = 10;
 }

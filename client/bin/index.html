@@ -50,6 +50,9 @@
 	<script type="text/javascript"> window.currVersion = 0; //版本号</script>
 	<!--jsfile--Custom-->
 	<!--自定义的js(src文件夹下)文件自动添加到下面jsfile模块标签里面里-->
+	<script type='text/javascript'>
+	function getCDN() { return ""; }
+	</script>
 	<!--删除标签，ide不会自动添加js文件，请谨慎操作-->
 	<!--jsfile--startTag-->
 	<script src="js/Role/StateMachine.js"></script>
@@ -91,12 +94,13 @@
 	<script src="js/puremvc/patterns/proxy/Proxy.js"></script>
 	<script src="js/model/RolePorxy.js"></script>
 	<script src="js/network/BaseMsg.js"></script>
+	<script src="js/Role/Role.js"></script>
+	<script src="js/network/LocalServer.js"></script>
 	<script src="js/puremvc/patterns/command/MacroCommand.js"></script>
 	<script src="js/puremvc/patterns/mediator/Mediator.js"></script>
 	<script src="js/Role/IBuff.js"></script>
 	<script src="js/Role/IState.js"></script>
 	<script src="js/Role/PlayerControl.js"></script>
-	<script src="js/Role/Role.js"></script>
 	<script src="js/view/FuiBaseMediator.js"></script>
 	<script src="js/view/JoystickModule.js"></script>
 	<script src="js/view/LoadingMediator.js"></script>
