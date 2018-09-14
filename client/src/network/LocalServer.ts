@@ -25,20 +25,16 @@ class LocalServer {
     private static mInstId: number = 0;
 
     constructor() {
-        this.createMyPlayer(1);
-        //this.createPlayer(1);
-        //this.createNpc(1);
-        this.createMonster(2);
+        this.createMyPlayer(1, 0, 0.282, -2.68);
+        // this.createPlayer(1);
+        // this.createNpc(1);
+        this.createMonster(1, -1, 0.282, -2.68);
+        this.createMonster(2, 1, 0.282, -2.68);
 
-        //Laya.timer.loop(100, this, this.update);
-        Laya.timer.loop(500, this, this.moveMonster);
+        Laya.timer.loop(3000, this, this.moveMonster);
     }
 
-    private update() {
-
-    }
-
-    public createMyPlayer(typeId: number) {
+    public createMyPlayer(typeId: number, x: number, y: number, z: number) {
         let playerCfg = PlayerConfig.getInstance().getPlayer(typeId);
         if (!playerCfg) {
             return null;
@@ -53,10 +49,8 @@ class LocalServer {
         d.mSkillList = playerCfg.skill;
         d.mTypeId = typeId;
         d.mInstId = LocalServer.mInstId++;
-        let m = new MoveData;
-        m.setPos(-0.353, 0.282, -2.68);
-        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
+        d.setPos(x, y, z);
+        d.setDir(0, 0, -1);
 
         let player = new SPlayer();
         player.mRoleData = d;
@@ -66,8 +60,8 @@ class LocalServer {
             secenId: d.mSceneId,
             instId: d.mInstId,
             typeId: d.mTypeId,
-            pos: [d.mMoveList[0].mPos.x, d.mMoveList[0].mPos.y, d.mMoveList[0].mPos.z],
-            dir: [d.mMoveList[0].mForward.x, d.mMoveList[0].mForward.y, d.mMoveList[0].mForward.z],
+            pos: [d.mPos.x, d.mPos.y, d.mPos.z],
+            dir: [d.mForward.x, d.mForward.y, d.mForward.z],
             speed: d.mMoveSpeed,
             atk: d.mAtk,
             hp: d.mHp,
@@ -76,7 +70,7 @@ class LocalServer {
         });
     }
 
-    public createPlayer(typeId: number) {
+    public createPlayer(typeId: number, x: number, y: number, z: number) {
         let playerCfg = PlayerConfig.getInstance().getPlayer(typeId);
         if (!playerCfg) {
             return null;
@@ -91,11 +85,8 @@ class LocalServer {
         d.mSkillList = playerCfg.skill;
         d.mTypeId = typeId;
         d.mInstId = LocalServer.mInstId++;
-
-        let m = new MoveData;
-        m.setPos(-0.353, 0.282, -1.68);
-        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
+        d.setPos(-0.353, 0.282, -2.68);
+        d.setDir(0, 0, -1);
 
         let player = new SPlayer();
         player.mRoleData = d;
@@ -105,8 +96,8 @@ class LocalServer {
             secenId: d.mSceneId,
             instId: d.mInstId,
             typeId: d.mTypeId,
-            pos: [d.mMoveList[0].mPos.x, d.mMoveList[0].mPos.y, d.mMoveList[0].mPos.z],
-            dir: [d.mMoveList[0].mForward.x, d.mMoveList[0].mForward.y, d.mMoveList[0].mForward.z],
+            pos: [d.mPos.x, d.mPos.y, d.mPos.z],
+            dir: [d.mForward.x, d.mForward.y, d.mForward.z],
             speed: d.mMoveSpeed,
             atk: d.mAtk,
             hp: d.mHp,
@@ -115,7 +106,7 @@ class LocalServer {
         });
     }
 
-    public createNpc(typeId: number) {
+    public createNpc(typeId: number, x: number, y: number, z: number) {
         let npcCfg = NpcConfig.getInstance().getNpc(typeId);
         if (!npcCfg) {
             return null;
@@ -131,10 +122,8 @@ class LocalServer {
         d.mTypeId = typeId;
         d.mInstId = LocalServer.mInstId++;
 
-        let m = new MoveData;
-        m.setPos(-0.853, 0.282, -1.68);
-        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
+        d.setPos(-0.353, 0.282, -2.68);
+        d.setDir(0, 0, -1);
 
         let player = new SPlayer();
         player.mRoleData = d;
@@ -144,8 +133,8 @@ class LocalServer {
             secenId: d.mSceneId,
             instId: d.mInstId,
             typeId: d.mTypeId,
-            pos: [d.mMoveList[0].mPos.x, d.mMoveList[0].mPos.y, d.mMoveList[0].mPos.z],
-            dir: [d.mMoveList[0].mForward.x, d.mMoveList[0].mForward.y, d.mMoveList[0].mForward.z],
+            pos: [d.mPos.x, d.mPos.y, d.mPos.z],
+            dir: [d.mForward.x, d.mForward.y, d.mForward.z],
             speed: d.mMoveSpeed,
             atk: d.mAtk,
             hp: d.mHp,
@@ -155,7 +144,7 @@ class LocalServer {
 
     }
 
-    public createMonster(typeId: number) {
+    public createMonster(typeId: number, x: number, y: number, z: number) {
         let monsterCfg = MonsterConfig.getInstance().getMonster(typeId);
         if (!monsterCfg) {
             return;
@@ -171,12 +160,8 @@ class LocalServer {
         d.mTypeId = typeId;
         d.mInstId = LocalServer.mInstId++;
 
-
-        let m = new MoveData;
-        m.setPos(-0.353, 0.282, -2);
-        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
-
+        d.setPos(x, y, z);
+        d.setDir(0, 0, -1);
         let monster = new SMonster();
         monster.mRoleData = d;
         this.mMonsterDict.set(d.mInstId, monster);
@@ -185,8 +170,8 @@ class LocalServer {
             secenId: 1,
             instId: d.mInstId,
             typeId: d.mTypeId,
-            pos: [d.mMoveList[0].mPos.x, d.mMoveList[0].mPos.y, d.mMoveList[0].mPos.z],
-            dir: [d.mMoveList[0].mForward.x, d.mMoveList[0].mForward.y, d.mMoveList[0].mForward.z],
+            pos: [d.mPos.x, d.mPos.y, d.mPos.z],
+            dir: [d.mForward.x, d.mForward.y, d.mForward.z],
             speed: d.mMoveSpeed,
             atk: d.mAtk,
             hp: d.mHp,
@@ -197,19 +182,25 @@ class LocalServer {
 
     public moveMonster() {
         let array = this.mMonsterDict.values;
-        for (let i = 0; i < array.length; ++i) {
-            let d = array[i].mRoleData as MonsterData;
-            let oldPos = d.mMoveList[0].mPos.clone();
-            d.mMoveList[0].mPos.x = Math.random() * 2;
-            d.mMoveList[0].mPos.z = -2 - Math.random() * 1.5;
-            d.mMoveList[0].setForward(d.mMoveList[0].mPos, oldPos);
 
-            MessageCenter.getInstance().dispatch(MsgConst.MOVE_MONSTER, {
-                instId: d.mInstId,
-                pos: [d.mMoveList[0].mPos.x, d.mMoveList[0].mPos.y, d.mMoveList[0].mPos.z],
-                dir: [d.mMoveList[0].mForward.x, d.mMoveList[0].mForward.y, d.mMoveList[0].mForward.z],
-                speed: d.mMoveSpeed
-            });
+        let index = Math.floor(Math.random() * array.length);
+        let d = array[index].mRoleData as MonsterData;
+        let oldPos = d.mPos.clone();
+        if (d.mMoveList.length < 1)  {
+            let m = new MoveData();
+            d.mMoveList.push(m);
         }
+
+        d.mMoveList[0].mPos.x = Math.random() * 2;
+        d.mMoveList[0].mPos.z = -2 - Math.random() * 1.5;
+        d.mMoveList[0].mPos.y = oldPos.y;
+        d.mMoveList[0].setNextForward(d.mMoveList[0].mPos, oldPos);
+
+        MessageCenter.getInstance().dispatch(MsgConst.MOVE_MONSTER, {
+            instId: d.mInstId,
+            pos: [d.mMoveList[0].mPos.x, d.mMoveList[0].mPos.y, d.mMoveList[0].mPos.z],
+            dir: [d.mMoveList[0].mNextForward.x, d.mMoveList[0].mNextForward.y, d.mMoveList[0].mNextForward.z],
+            speed: d.mMoveSpeed
+        });
     }
 }

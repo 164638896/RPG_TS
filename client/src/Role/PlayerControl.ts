@@ -44,7 +44,7 @@ class PlayerControl extends Laya.Script {
 
             Laya.Quaternion.rotationLookAt(cameraDir, Laya.Vector3.Up, this._cameraQuat);
             Laya.Vector3.transformQuat(joystickForward, this._cameraQuat, this._forward);
-            this.mMyPlayer.mRoleData.mMoveList[0].setDir(this._forward.x,this._forward.y,this._forward.z);
+            this.mMyPlayer.mRoleData.setDir(this._forward.x,this._forward.y,this._forward.z);
             this.joyStickMove(state);
         }
         // else {
@@ -68,7 +68,7 @@ class PlayerControl extends Laya.Script {
     public joyStickMove(state: Laya.RenderState) {
         if (this.mMyPlayer.mBuffSystem.canMove()) {
             //if (this.mMyPlayer.mStateMachine.switchState(StateType.Run, AniName.Run) == true) {
-                let forward = this.mMyPlayer.mRoleData.mMoveList[0].getForward();
+                let forward = this.mMyPlayer.mRoleData.mForward;
                 let role3D = this.mMyPlayer.mRole3D;
 
                 // position
@@ -78,8 +78,7 @@ class PlayerControl extends Laya.Script {
                 Laya.Vector3.add(role3D.transform.position, teampPos, teampPos);
                 teampPos.y = this.mTerrainSprite.getHeight(teampPos.x, teampPos.z);
                 if (!isNaN(teampPos.y)) {
-                    //this.mMyPlayer.mRoleData.mPos = teampPos;
-                    this.mMyPlayer.mRoleData.mMoveList[0].mPos = teampPos;
+                    this.mMyPlayer.mRoleData.mPos = teampPos;
                 }
             //}
         }

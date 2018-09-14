@@ -104,6 +104,10 @@ class RoleMgr{
         return this.mMonsterDict.get(inst);
     }
 
+    public getMonsters(inst:number): laya.utils.Dictionary{
+        return this.mMonsterDict;
+    }
+
     public removeMonster(inst: number)  {
         let currScene = Laya.stage.getChildAt(0) as Laya.Scene;
 

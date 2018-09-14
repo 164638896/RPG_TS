@@ -50,7 +50,7 @@ abstract class IState {
     }
 }
 
-class AniState extends IState {
+class LoopAniState extends IState {
     protected mAnimator: Laya.Animator;
 
     constructor(r: Role, machine: StateMachine, state: StateType) {
@@ -96,7 +96,7 @@ class TimeState extends IState {
     }
 }
 
-class AtkState extends AniState {
+class AtkState extends LoopAniState {
 
     constructor(r: Role, machine: StateMachine, state: StateType) {
         super(r, machine, state);
@@ -115,6 +115,26 @@ class AtkState extends AniState {
 
     public LeaveState() {
         this.mChangeState = true;
+    }
+
+    private onAniComplete() {
+        this.mStateMachine.nextState();
+    }
+}
+
+class OnceAniState extends LoopAniState {
+
+    constructor(r: Role, machine: StateMachine, state: StateType) {
+        super(r, machine, state);
+    }
+
+    public EnterState(param: any) : boolean {
+        if(!super.EnterState(param)) return false;
+
+        this.mAnimator.once(Laya.Event.COMPLETE, this, this.onAniComplete);
+        this.mAnimator.once(Laya.Event.STOPPED, this, this.onAniComplete);
+
+        return true;
     }
 
     private onAniComplete() {

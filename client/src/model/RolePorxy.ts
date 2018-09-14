@@ -32,10 +32,8 @@ class MyPlayerPorxy extends puremvc.Proxy {
         d.mHp = param.hp;
         d.mDef = param.def;
         d.mSkillList = param.skillList;
-        let m = new MoveData;
-        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
+        d.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        d.setDir(param.dir[0], param.dir[1], param.dir[2]);
         this.setData(d);
 
         //this.sendNotification(NotiNames.MYPLAYER_ADDED, instId);
@@ -58,6 +56,7 @@ class MyPlayerPorxy extends puremvc.Proxy {
         data.mCameraRotation.x = x;
         data.mCameraRotation.y = y;
     }
+
     public playSkillByIndex(index: number) {
         let data = this.get();
         // 同步给服务器
@@ -86,14 +85,23 @@ class PlayerPorxy extends puremvc.Proxy {
         d.mHp = param.hp;
         d.mDef = param.def;
         d.mSkillList = param.skillList;
-        let m = new MoveData;
-        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
+        d.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        d.setDir(param.dir[0], param.dir[1], param.dir[2]);
 
         this.getDataDict().set(d.mInstId, d);
 
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
+    }
+
+    move(param: any) {
+        let d = this.get(param.instId);
+        if (!d) return;
+
+        d.mMoveSpeed = param.speed;
+        let m = new MoveData;
+        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
+        d.mMoveList.push(m);
     }
 
     remove(instId: number) {
@@ -126,13 +134,22 @@ class NpcPorxy extends puremvc.Proxy {
         d.mHp = param.hp;
         d.mDef = param.def;
         d.mSkillList = param.skillList;
-        let m = new MoveData;
-        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
+        d.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        d.setDir(param.dir[0], param.dir[1], param.dir[2]);
         this.getDataDict().set(d.mInstId, d);
 
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
+    }
+
+    move(param: any) {
+        let d = this.get(param.instId);
+        if (!d) return;
+
+        d.mMoveSpeed = param.speed;
+        let m = new MoveData;
+        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
+        d.mMoveList.push(m);
     }
 
     remove(instId: number) {
@@ -166,23 +183,21 @@ class MonsterPorxy extends puremvc.Proxy {
         d.mHp = param.hp;
         d.mDef = param.def;
         d.mSkillList = param.skillList;
-        let m = new MoveData;
-        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        //m.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
+        d.setPos(param.pos[0], param.pos[1], param.pos[2]);
+        d.setDir(param.dir[0], param.dir[1], param.dir[2]);
         this.getDataDict().set(d.mInstId, d);
 
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 
-    move(param: any)  {
+    move(param: any) {
         let d = this.get(param.instId);
-        if(!d) return;
+        if (!d) return;
 
         d.mMoveSpeed = param.speed;
         let m = new MoveData;
         m.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        m.setDir(param.dir[0], param.dir[1], param.dir[2]);
+        m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
         d.mMoveList.push(m);
     }
 

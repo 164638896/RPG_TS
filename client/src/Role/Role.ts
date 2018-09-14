@@ -16,7 +16,7 @@ class Role extends Laya.Script {
     _initialize(owner: Laya.ComponentNode): void {
         super._initialize(owner);
         this.mRole3D = owner as Laya.Sprite3D;
-        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Idle));
+        this.mStateMachine.registState(new LoopAniState(this, this.mStateMachine, StateType.Idle));
     }
 
     _start(state: Laya.RenderState): void {
@@ -32,33 +32,34 @@ class Role extends Laya.Script {
 
     initData(proxy: puremvc.Proxy, data: RoleData) {
         this.mRoleData = data;
-        this.mRole3D.transform.position = this.mRoleData.mMoveList[0].mPos;
+        this.mRole3D.transform.position = this.mRoleData.mPos;
     }
 
     private updatePos(state: Laya.RenderState) {
-        if (this.mRoleData.mMoveList.length == 0) return;
-        if (this.mRoleData.mMoveList.length == 1 && Laya.Vector3.equals(this.mRole3D.transform.position, this.mRoleData.mMoveList[0].mPos)) {
-            if (this.mStateMachine.getCurStateType() == StateType.Run) {
-                this.mStateMachine.switchState(StateType.Idle, [AniName.Idle, 1]);
+        if (Laya.Vector3.equals(this.mRole3D.transform.position, this.mRoleData.mPos)) {
+            if (this.mRoleData.mMoveList.length != 0)  {
+                this.mRoleData.mPos = this.mRoleData.mMoveList.shift().mPos;
             }
-            return;
+            else  {
+                if (this.mStateMachine.getCurStateType() == StateType.Run) {
+                    this.mStateMachine.switchState(StateType.Idle, [AniName.Idle, 1]);
+                }
+                return;
+            }
         }
+
         if (this.mBuffSystem.canMove()) {
             let rate: number = 1;
             if (this.mRoleData.mMoveList.length > 2) rate *= 2;
 
-            if (this.mStateMachine.switchState(StateType.Run, [AniName.Run,rate]) == true) {
+            if (this.mStateMachine.switchState(StateType.Run, [AniName.Run, rate]) == true) {
                 let maxStep = this.mRoleData.mMoveSpeed * (state.elapsedTime * 0.001) * rate;
-                let nextMove = this.mRoleData.mMoveList[this.mRoleData.mMoveList.length - 1];
-          
-                let dist = Laya.Vector3.distance(this.mRole3D.transform.position, nextMove.mPos);
-                nextMove.setForward(nextMove.mPos, this.mRole3D.transform.position);
-                let forward = nextMove.getForward();
+      
+                let dist = Laya.Vector3.distance(this.mRole3D.transform.position, this.mRoleData.mPos);
+                this.mRoleData.setForward(this.mRoleData.mPos, this.mRole3D.transform.position);
+                let forward = this.mRoleData.mForward;
                 if (dist <= maxStep + 0.001) {
                     maxStep = dist;
-                    if (this.mRoleData.mMoveList.length >= 2)  {
-                        this.mRoleData.mMoveList.shift();
-                    }
                 }
 
                 let teampPos = new Laya.Vector3();
@@ -76,7 +77,7 @@ class Role extends Laya.Script {
             }
         }
         else {
-            this.mStateMachine.switchState(StateType.Idle, [AniName.Idle,1]);
+            this.mStateMachine.switchState(StateType.Idle, [AniName.Idle, 1]);
         }
     }
 }
@@ -91,9 +92,9 @@ class Player extends Role {
     _initialize(owner: Laya.ComponentNode): void {
         super._initialize(owner);
 
-        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Run));
+        this.mStateMachine.registState(new LoopAniState(this, this.mStateMachine, StateType.Run));
         this.mStateMachine.registState(new AtkState(this, this.mStateMachine, StateType.Atk));
-        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Hit));
+        this.mStateMachine.registState(new OnceAniState(this, this.mStateMachine, StateType.Hit));
     }
 
     initData(proxy: puremvc.Proxy, data: RoleData) {
@@ -137,7 +138,7 @@ class Npc extends Role {
     _initialize(owner: Laya.ComponentNode): void {
         super._initialize(owner);
 
-        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Run));
+        this.mStateMachine.registState(new LoopAniState(this, this.mStateMachine, StateType.Run));
     }
 
     initData(proxy: puremvc.Proxy, data: RoleData) {
@@ -159,9 +160,9 @@ class Monster extends Role {
     _initialize(owner: Laya.ComponentNode): void {
         super._initialize(owner);
 
-        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Run));
+        this.mStateMachine.registState(new LoopAniState(this, this.mStateMachine, StateType.Run));
         this.mStateMachine.registState(new AtkState(this, this.mStateMachine, StateType.Atk));
-        this.mStateMachine.registState(new AniState(this, this.mStateMachine, StateType.Hit));
+        this.mStateMachine.registState(new OnceAniState(this, this.mStateMachine, StateType.Hit));
     }
 
     initData(proxy: puremvc.Proxy, data: RoleData) {

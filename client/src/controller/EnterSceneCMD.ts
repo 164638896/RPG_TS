@@ -98,14 +98,14 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
         let monsterPorxy = this.facade.retrieveProxy(ProxyNames.MONSTER_PROXY) as MonsterPorxy;
         let monsterArray = monsterPorxy.getDataDict().values;
         for (let i = 0; i < monsterArray.length; ++i) {
-            let monsterData = monsterArray[i] as PlayerData;
+            let monsterData = monsterArray[i] as MonsterData;
             this.sendNotification(NotiNames.ADD_ROLE, [monsterPorxy, monsterData]);
         }
         // 初始化npc
         let npcPorxy = this.facade.retrieveProxy(ProxyNames.NPC_PROXY) as NpcPorxy;
         let npcArray = npcPorxy.getDataDict().values;
         for (let i = 0; i < npcArray.length; ++i) {
-            let npcData = npcArray[i] as PlayerData;
+            let npcData = npcArray[i] as NpcData;
             this.sendNotification(NotiNames.ADD_ROLE, [npcPorxy, npcData]);
         }
     }
