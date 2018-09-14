@@ -182,17 +182,15 @@ class LocalServer {
 
     public moveMonster() {
         let array = this.mMonsterDict.values;
-
-        let index = Math.floor(Math.random() * array.length);
-        let d = array[index].mRoleData as MonsterData;
+        let d = RandomUtils.randomArray(array).mRoleData as MonsterData;
         let oldPos = d.mPos.clone();
         if (d.mMoveList.length < 1)  {
             let m = new MoveData();
             d.mMoveList.push(m);
         }
 
-        d.mMoveList[0].mPos.x = Math.random() * 2;
-        d.mMoveList[0].mPos.z = -2 - Math.random() * 1.5;
+        d.mMoveList[0].mPos.x = RandomUtils.limit(0, 2);
+        d.mMoveList[0].mPos.z = RandomUtils.limit(-3.5, -2); 
         d.mMoveList[0].mPos.y = oldPos.y;
         d.mMoveList[0].setNextForward(d.mMoveList[0].mPos, oldPos);
 
