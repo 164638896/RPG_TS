@@ -3,17 +3,16 @@
 */
 class BuffSystem {
     public mRole: Role;
-    private mCurrBuffList: any;
+    private mCurrBuffList = {};
     private mDeathBuffList = new Array<IBuff>();
     private static mInstId: number;
 
     constructor(role: Role) {
         this.mRole = role;
-        this.mCurrBuffList = {};
-        this.mCurrBuffList[BuffType.Behavior] = new laya.utils.Dictionary;
-        this.mCurrBuffList[BuffType.Move] = new laya.utils.Dictionary;
-        this.mCurrBuffList[BuffType.Hurt] = new laya.utils.Dictionary;
-        this.mCurrBuffList[BuffType.Control] = new laya.utils.Dictionary;
+        this.mCurrBuffList[BuffType.Behavior] = new Array<IBuff>();
+        this.mCurrBuffList[BuffType.Move] = new Array<IBuff>();
+        this.mCurrBuffList[BuffType.Hurt] = new Array<IBuff>();
+        this.mCurrBuffList[BuffType.Control] = new Array<IBuff>();
     }
 
     public clear() {
@@ -74,7 +73,7 @@ class BuffSystem {
 
         if (buff != null) {
             buff.onEnter();
-            this.mCurrBuffList[type].set(buff.mInstId, buff);
+            this.mCurrBuffList[type].push(buff);
             //return this.mInstId;
         }
         else {
@@ -86,15 +85,17 @@ class BuffSystem {
         while (this.mDeathBuffList.length > 0) {
             let buff: IBuff = this.mDeathBuffList.shift();
             Laya.Pool.recover(this.getPoolKey(buff.mType), buff);
-            let dict = this.mCurrBuffList[buff.mType] as laya.utils.Dictionary;
-            dict.remove(buff.mInstId);
+
+            let arr: Array<any> = this.mCurrBuffList[buff.mType];
+            let index = arr.indexOf(buff);
+            if(index > -1) {
+                arr.splice(index,1);
+            }
         }
 
-        let keys = Object.keys(this.mCurrBuffList);
-        for (var i: number = 0, len = keys.length; i < len; i++) {
-            var type = keys[i];
-            let dict = this.mCurrBuffList[type];
-            let buffArray = dict.values;
+        for(let i in this.mCurrBuffList)
+        {
+            let buffArray = this.mCurrBuffList[i];
             for (let y = 0; y < buffArray.length; ++y) {
                 buffArray[y].onUpdate();
             }
@@ -103,15 +104,12 @@ class BuffSystem {
 
     public clearAllBuff() // 先全部删除buff.后面在支持只删除debuff
     {
-        let keys = Object.keys(this.mCurrBuffList);
-        for (var i: number = 0, len = keys.length; i < len; i++) {
-            var type = keys[i];
-            let dict = this.mCurrBuffList[type];
-            let buffArray = dict.values;
+        for(let i in this.mCurrBuffList)
+        {
+            let buffArray = this.mCurrBuffList[i];
             for (let y = 0; y < buffArray.length; ++y) {
-                this.removeBuff(buffArray[y]);
+                 this.removeBuff(buffArray[y]);
             }
-            dict.clear();
         }
     }
 
@@ -121,7 +119,7 @@ class BuffSystem {
 
     public canMove(): boolean {
         let move: boolean = true;
-        let buffArray = this.mCurrBuffList[BuffType.Control].values;
+        let buffArray = this.mCurrBuffList[BuffType.Control];
         for (let i = 0; i < buffArray.length; ++i) {
             if (buffArray[i].mBehaviorBuffConfig.mCanMove == false) {
                 move = false;
@@ -133,7 +131,7 @@ class BuffSystem {
 
     public canAtk(): boolean {
         let atk: boolean = true;
-        let buffArray = this.mCurrBuffList[BuffType.Control].values;
+        let buffArray = this.mCurrBuffList[BuffType.Control];
         for (let i = 0; i < buffArray.length; ++i) {
             if (buffArray[i].mBehaviorBuffConfig.mCanAtk == false) {
                 atk = false;
@@ -146,7 +144,7 @@ class BuffSystem {
 
     public enableBehaviorBuff(): boolean {
         let enable: boolean = true;
-        let buffArray = this.mCurrBuffList[BuffType.Control].values;
+        let buffArray = this.mCurrBuffList[BuffType.Control];
         for (let i = 0; i < buffArray.length; ++i) {
             if (buffArray[i].mControlBuffConfig.mEnableBehavior == false) {
                 enable = false;
@@ -158,7 +156,7 @@ class BuffSystem {
 
     public enableMoveBuff(): boolean {
         let enable: boolean = true;
-        let buffArray = this.mCurrBuffList[BuffType.Control].values;
+        let buffArray = this.mCurrBuffList[BuffType.Control];
         for (let i = 0; i < buffArray.length; ++i) {
             if (buffArray[i].mControlBuffConfig.mEnableMove == false) {
                 enable = false;
@@ -170,7 +168,7 @@ class BuffSystem {
 
     public enableHurtBuff(): boolean {
         let enable: boolean = true;
-        let buffArray = this.mCurrBuffList[BuffType.Control].values;
+        let buffArray = this.mCurrBuffList[BuffType.Control];
         for (let i = 0; i < buffArray.length; ++i) {
             if (buffArray[i].mControlBuffConfig.mEnableHurt == false) {
                 enable = false;
@@ -182,7 +180,7 @@ class BuffSystem {
 
     public enableSelect(): boolean {
         let enable: boolean = true;
-        let buffArray = this.mCurrBuffList[BuffType.Control].values;
+        let buffArray = this.mCurrBuffList[BuffType.Control];
         for (let i = 0; i < buffArray.length; ++i) {
             if (buffArray[i].mControlBuffConfig.mEnableSelect == false) {
                 enable = false;
@@ -193,7 +191,7 @@ class BuffSystem {
     }
 
     public getSameBuff(type: BuffType, typeId: number): IBuff {
-        let buffArray = this.mCurrBuffList[type].values;
+        let buffArray = this.mCurrBuffList[type];
         for (let i = 0; i < buffArray.length; ++i) {
             if (buffArray[i].mBuffConfig.mTypeId == typeId) {
                 return buffArray[i];
@@ -204,7 +202,7 @@ class BuffSystem {
     }
 
     public hasSameBuff(type: BuffType, typeId: number): boolean {
-        let buffArray = this.mCurrBuffList[type].values;
+        let buffArray = this.mCurrBuffList[type];
         for (let i = 0; i < buffArray.length; ++i) {
             if (buffArray[i].mBuffConfig.mTypeId == typeId) {
                 return true;

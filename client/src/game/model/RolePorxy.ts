@@ -68,12 +68,8 @@ class MyPlayerPorxy extends puremvc.Proxy {
 class PlayerPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.PLAYER_PROXY);
-        this.data = new laya.utils.Dictionary;
+        this.data = {};
         MessageCenter.getInstance().addListener(MsgConst.ADD_PLAYER, this, this.add);
-    }
-
-    getDataDict(): laya.utils.Dictionary {
-        return <laya.utils.Dictionary>this.data;
     }
 
     add(param: any) {
@@ -88,7 +84,7 @@ class PlayerPorxy extends puremvc.Proxy {
         d.setPos(param.pos[0], param.pos[1], param.pos[2]);
         d.setDir(param.dir[0], param.dir[1], param.dir[2]);
 
-        this.getDataDict().set(d.mInstId, d);
+        this.data[d.mInstId] = d;
 
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
@@ -106,23 +102,19 @@ class PlayerPorxy extends puremvc.Proxy {
 
     remove(instId: number) {
         this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
-        this.getDataDict().remove(instId);
+        this.data[instId] = null;
     }
 
     get(instId: number): PlayerData {
-        return this.getDataDict().get(instId);
+        return this.data[instId];
     }
 }
 
 class NpcPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.NPC_PROXY);
-        this.data = new laya.utils.Dictionary;
+        this.data = {};
         MessageCenter.getInstance().addListener(MsgConst.ADD_NPC, this, this.add);
-    }
-
-    getDataDict(): laya.utils.Dictionary {
-        return <laya.utils.Dictionary>this.data;
     }
 
     add(param: any) {
@@ -136,7 +128,7 @@ class NpcPorxy extends puremvc.Proxy {
         d.mSkillList = param.skillList;
         d.setPos(param.pos[0], param.pos[1], param.pos[2]);
         d.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        this.getDataDict().set(d.mInstId, d);
+        this.data[d.mInstId] = d;
 
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
@@ -154,24 +146,20 @@ class NpcPorxy extends puremvc.Proxy {
 
     remove(instId: number) {
         this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
-        this.getDataDict().remove(instId);
+        this.data[instId] = null;
     }
 
     get(instId: number): NpcData {
-        return this.getDataDict().get(instId);
+        return this.data[instId];
     }
 }
 
 class MonsterPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.MONSTER_PROXY);
-        this.data = new laya.utils.Dictionary;
+        this.data = {};
         MessageCenter.getInstance().addListener(MsgConst.ADD_MONSTER, this, this.add);
         MessageCenter.getInstance().addListener(MsgConst.MOVE_MONSTER, this, this.move);
-    }
-
-    getDataDict(): laya.utils.Dictionary {
-        return <laya.utils.Dictionary>this.data;
     }
 
     add(param: any) {
@@ -185,8 +173,8 @@ class MonsterPorxy extends puremvc.Proxy {
         d.mSkillList = param.skillList;
         d.setPos(param.pos[0], param.pos[1], param.pos[2]);
         d.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        this.getDataDict().set(d.mInstId, d);
-
+        this.data[d.mInstId] = d;
+ 
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 
@@ -203,10 +191,10 @@ class MonsterPorxy extends puremvc.Proxy {
 
     remove(instId: number) {
         this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
-        this.getDataDict().remove(instId);
+        this.data[instId] = null;
     }
 
     get(instId: number): MonsterData {
-        return this.getDataDict().get(instId);
+        return this.data[instId];
     }
 }

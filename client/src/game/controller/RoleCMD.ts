@@ -131,9 +131,9 @@ class SkillCMD extends puremvc.SimpleCommand {
         // Laya.Vector3.normalize(forward, nforward);
 
         let monsterPorxy = this.facade.retrieveProxy(ProxyNames.MONSTER_PROXY) as MonsterPorxy;
-        let monsterArray = monsterPorxy.getDataDict().values;
-        for (let i = 0; i < monsterArray.length; ++i) {
-            let monsterData = monsterArray[i] as MonsterData;
+        let datas = monsterPorxy.getData();
+        for(let i in datas){
+            let monsterData = datas[i] as MonsterData;
             let tPos = monsterData.mPos;
 
             if(MathUtils.IsPointInCircularSector(pos.x, pos.z, forward.x, forward.z, 0.5, 3.14 / 2, tPos.x, tPos.z))

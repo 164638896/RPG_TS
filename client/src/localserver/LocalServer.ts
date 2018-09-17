@@ -18,9 +18,9 @@ class SMonster extends Role {
 }
 
 class LocalServer {
-    private mPlayerDict: laya.utils.Dictionary = new laya.utils.Dictionary;
-    private mMonsterDict: laya.utils.Dictionary = new laya.utils.Dictionary;
-    private mNpcDict: laya.utils.Dictionary = new laya.utils.Dictionary;
+    private mPlayerDict = {};
+    private mMonsterDict = {};
+    private mNpcDict = {};
 
     private static mInstId: number = 0;
 
@@ -54,7 +54,7 @@ class LocalServer {
 
         let player = new SPlayer();
         player.mRoleData = d;
-        this.mPlayerDict.set(d.mInstId, player);
+        this.mPlayerDict[d.mInstId] = player;
 
         MessageCenter.getInstance().dispatch(MsgConst.ADD_MYPLAYER, {
             secenId: d.mSceneId,
@@ -90,7 +90,7 @@ class LocalServer {
 
         let player = new SPlayer();
         player.mRoleData = d;
-        this.mPlayerDict.set(d.mInstId, player);
+        this.mPlayerDict[d.mInstId] = player;
 
         MessageCenter.getInstance().dispatch(MsgConst.ADD_PLAYER, {
             secenId: d.mSceneId,
@@ -127,7 +127,7 @@ class LocalServer {
 
         let player = new SPlayer();
         player.mRoleData = d;
-        this.mPlayerDict.set(d.mInstId, player);
+        this.mPlayerDict[d.mInstId] = player;
 
         MessageCenter.getInstance().dispatch(MsgConst.ADD_NPC, {
             secenId: d.mSceneId,
@@ -164,7 +164,7 @@ class LocalServer {
         d.setDir(0, 0, -1);
         let monster = new SMonster();
         monster.mRoleData = d;
-        this.mMonsterDict.set(d.mInstId, monster);
+        this.mMonsterDict[d.mInstId] = monster;
 
         MessageCenter.getInstance().dispatch(MsgConst.ADD_MONSTER, {
             secenId: 1,
@@ -181,16 +181,18 @@ class LocalServer {
     }
 
     public moveMonster() {
-        let array = this.mMonsterDict.values;
-        let d = RandomUtils.randomArray(array).mRoleData as MonsterData;
+        let keys = Object.keys(this.mMonsterDict);
+        let index = RandomUtils.randomArray(keys)
+        let d = this.mMonsterDict[index].mRoleData as MonsterData;
+        //let d = RandomUtils.randomArray(a).mRoleData as MonsterData;
         let oldPos = d.mPos.clone();
-        if (d.mMoveList.length < 1)  {
+        if (d.mMoveList.length < 1) {
             let m = new MoveData();
             d.mMoveList.push(m);
         }
 
         d.mMoveList[0].mPos.x = RandomUtils.limit(0, 2);
-        d.mMoveList[0].mPos.z = RandomUtils.limit(-3.5, -2); 
+        d.mMoveList[0].mPos.z = RandomUtils.limit(-3.5, -2);
         d.mMoveList[0].mPos.y = oldPos.y;
         d.mMoveList[0].setNextForward(d.mMoveList[0].mPos, oldPos);
 

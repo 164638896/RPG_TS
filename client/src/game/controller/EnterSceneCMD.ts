@@ -89,24 +89,21 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
     {
         // 初始化其他玩家
         let playerPorxy = this.facade.retrieveProxy(ProxyNames.PLAYER_PROXY) as PlayerPorxy;
-        let playerArray = playerPorxy.getDataDict().values;
-        for (let i = 0; i < playerArray.length; ++i) {
-            let otherPlayerData = playerArray[i] as PlayerData;
-            this.sendNotification(NotiNames.ADD_ROLE, [playerPorxy, otherPlayerData]);
+        let playerData = playerPorxy.getData();
+        for (let i in playerData){
+            this.sendNotification(NotiNames.ADD_ROLE, [playerPorxy, playerData[i]]);
         }
         // 初始化monster
         let monsterPorxy = this.facade.retrieveProxy(ProxyNames.MONSTER_PROXY) as MonsterPorxy;
-        let monsterArray = monsterPorxy.getDataDict().values;
-        for (let i = 0; i < monsterArray.length; ++i) {
-            let monsterData = monsterArray[i] as MonsterData;
-            this.sendNotification(NotiNames.ADD_ROLE, [monsterPorxy, monsterData]);
+        let monsterData = monsterPorxy.getData();
+        for (let i in monsterData){
+            this.sendNotification(NotiNames.ADD_ROLE, [monsterPorxy, monsterData[i]]);
         }
         // 初始化npc
         let npcPorxy = this.facade.retrieveProxy(ProxyNames.NPC_PROXY) as NpcPorxy;
-        let npcArray = npcPorxy.getDataDict().values;
-        for (let i = 0; i < npcArray.length; ++i) {
-            let npcData = npcArray[i] as NpcData;
-            this.sendNotification(NotiNames.ADD_ROLE, [npcPorxy, npcData]);
+        let npcData = npcPorxy.getData();
+         for (let i in npcData){
+            this.sendNotification(NotiNames.ADD_ROLE, [npcPorxy, npcData[i]]);
         }
     }
 }

@@ -9,7 +9,7 @@ class StateInfo {
 
 class StateMachine {
     private mCurrState: IState;
-    private mDictState: laya.utils.Dictionary = new laya.utils.Dictionary;
+    private mDictState = {};
     private mDefaultStateInfo: StateInfo = new StateInfo();
     private mNextStateInfo: StateInfo = new StateInfo();
 
@@ -20,17 +20,18 @@ class StateMachine {
     }
 
     public registState(state: IState): Boolean {
-        if (this.mDictState.get(state.GetStateType())) {
+        if (this.mDictState[state.GetStateType()]) {
             console.warn("StateMachine::RegistState->state had exist! state id=" + state.GetStateType());
             return false;
         }
 
-        this.mDictState.set(state.GetStateType(), state);
+        this.mDictState[state.GetStateType()] = state;
+        //this.mDictState.set(state.GetStateType(), state);
         return true;
     }
 
     public unRegistState(state: IState) {
-        this.mDictState.remove(state.GetStateType());
+        this.mDictState[state.GetStateType()] = null;
     }
 
     public switchState(stateType: StateType, param: any): Boolean {
@@ -45,7 +46,7 @@ class StateMachine {
             return true;
         }
 
-        let newState: IState = this.mDictState.get(stateType);
+        let newState: IState = this.mDictState[stateType];
         if (newState == null) return false;
 
         return this.exeState(newState, param);
@@ -61,8 +62,7 @@ class StateMachine {
         return this.mCurrState;
     }
     public getCurStateType(): StateType {
-        if(this.mCurrState)
-        {
+        if (this.mCurrState)  {
             return this.mCurrState.GetStateType();
         }
         return StateType.None;
@@ -72,27 +72,27 @@ class StateMachine {
         this.mNextStateInfo.mParam = param;
     }
 
-    public nextState() : boolean{
+    public nextState(): boolean {
         if (this.mNextStateInfo.mStateType != StateType.None) {
-            let newState: IState = this.mDictState.get(this.mNextStateInfo.mStateType);
+            let newState: IState = this.mDictState[this.mNextStateInfo.mStateType];
             if (newState == null) return false;
 
             this.exeState(newState, this.mNextStateInfo.mParam);
             this.mNextStateInfo.mStateType = StateType.None;
         }
         else {
-            let newState: IState = this.mDictState.get(this.mDefaultStateInfo.mStateType);
+            let newState: IState = this.mDictState[this.mDefaultStateInfo.mStateType];
             if (newState == null) return false;
 
             this.exeState(newState, this.mDefaultStateInfo.mParam);
         }
     }
 
-    private exeState(newState: IState, param: any) : boolean{
+    private exeState(newState: IState, param: any): boolean {
         if (this.mCurrState != null) this.mCurrState.LeaveState();
 
         this.mCurrState = newState;
 
-       return this.mCurrState.EnterState(param);
+        return this.mCurrState.EnterState(param);
     }
 }

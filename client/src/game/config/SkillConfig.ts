@@ -3,7 +3,7 @@
 */
 class SkillConfig {
 
-    private mSkillDict: laya.utils.Dictionary = new laya.utils.Dictionary;
+    private mSkillDict={};
 
     private static _instance = null;
     public static getInstance(): SkillConfig {
@@ -17,13 +17,13 @@ class SkillConfig {
         let arr = Laya.loader.getRes(url);
 
         for (let i = 0; i < arr.length; ++i) {
-            this.mSkillDict.set(arr[i].id, arr[i]);
+            this.mSkillDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public getSkillInfo(typeId: number): Skillcfg {
-        return this.mSkillDict.get(typeId);
+        return this.mSkillDict[typeId];
     }
 }

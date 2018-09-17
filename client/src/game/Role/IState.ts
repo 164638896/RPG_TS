@@ -110,6 +110,8 @@ class AtkState extends LoopAniState {
 
         this.mChangeState = false;
 
+        //this.mRole.mBuffSystem.addBuff(this.mRole, BuffType.Behavior, 1);
+
         return true;
     }
 

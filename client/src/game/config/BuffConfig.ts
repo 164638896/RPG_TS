@@ -4,10 +4,10 @@
 
 class BuffConfig {
 
-    private mBehaviorDict: laya.utils.Dictionary = new laya.utils.Dictionary;
-    private mMoveDict: laya.utils.Dictionary = new laya.utils.Dictionary;
-    private mHurtDict: laya.utils.Dictionary = new laya.utils.Dictionary;
-    private mControlDict: laya.utils.Dictionary = new laya.utils.Dictionary;
+    private mBehaviorDict={};
+    private mMoveDict={};
+    private mHurtDict={};
+    private mControlDict={};
 
     private static _instance = null;
     public static getInstance(): BuffConfig {
@@ -21,7 +21,7 @@ class BuffConfig {
         let arr = Laya.loader.getRes(url);
 
         for (let i = 0; i < arr.length; ++i) {
-            this.mBehaviorDict.set(arr[i].id, arr[i]);
+            this.mBehaviorDict[arr[i].id] = arr[i];
         }
 
         Laya.loader.clearRes(url, true);
@@ -31,7 +31,7 @@ class BuffConfig {
         let arr = Laya.loader.getRes(url);
 
         for (let i = 0; i < arr.length; ++i) {
-            this.mMoveDict.set(arr[i].id, arr[i]);
+            this.mMoveDict[arr[i].id] = arr[i];
         }
 
         Laya.loader.clearRes(url, true);
@@ -41,7 +41,7 @@ class BuffConfig {
         let arr = Laya.loader.getRes(url);
 
         for (let i = 0; i < arr.length; ++i) {
-            this.mHurtDict.set(arr[i].id, arr[i]);
+           this.mHurtDict[arr[i].id] = arr[i];
         }
 
         Laya.loader.clearRes(url, true);
@@ -51,25 +51,25 @@ class BuffConfig {
         let arr = Laya.loader.getRes(url);
 
         for (let i = 0; i < arr.length; ++i) {
-            this.mControlDict.set(arr[i].id, arr[i]);
+            this.mControlDict[arr[i].id] = arr[i];
         }
 
         Laya.loader.clearRes(url, true);
     }
 
     public getBehaviorBuff(typeId: number): Behaviorbuffcfg {
-        return this.mBehaviorDict.get(typeId);
+        return this.mBehaviorDict[typeId];
     }
 
     public getMoveBuff(typeId: number): Movebuffcfg {
-        return this.mMoveDict.get(typeId);
+        return this.mMoveDict[typeId];
     }
 
     public getHurtBuff(typeId: number): Hurtbuffcfg {
-        return this.mHurtDict.get(typeId);
+        return this.mHurtDict[typeId];
     }
 
     public getControlBuff(typeId: number): Controlbuffcfg {
-        return this.mControlDict.get(typeId);
+        return this.mControlDict[typeId];
     }
 }

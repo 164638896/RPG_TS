@@ -4,7 +4,7 @@
 
 class SceneConfig {
 
-    private mSceneDict: laya.utils.Dictionary = new laya.utils.Dictionary;
+    private mSceneDict={};
 
     private static _instance = null;
     public static getInstance(): SceneConfig {
@@ -18,13 +18,13 @@ class SceneConfig {
         let arr = Laya.loader.getRes(url);
 
         for (let i = 0; i < arr.length; ++i) {
-            this.mSceneDict.set(arr[i].id, arr[i]);
+            this.mSceneDict[arr[i].id] = arr[i];
         }
 
         Laya.loader.clearRes(url, true);
     }
 
     public getSceneInfo(typeId: number): Scenecfg {
-        return this.mSceneDict.get(typeId);
+        return this.mSceneDict[typeId];
     }
 }

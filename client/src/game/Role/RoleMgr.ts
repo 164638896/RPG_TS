@@ -2,9 +2,9 @@
 * name;
 */
 class RoleMgr{
-    private mPlayerDict: laya.utils.Dictionary = new laya.utils.Dictionary;
-    private mMonsterDict: laya.utils.Dictionary = new laya.utils.Dictionary;
-    private mNpcDict: laya.utils.Dictionary = new laya.utils.Dictionary;
+    private mPlayerDict={};
+    private mMonsterDict={};
+    private mNpcDict={};
     private mMyPlayer: MyPlayer;
 
     constructor() {
@@ -58,7 +58,7 @@ class RoleMgr{
             
             let player = player3D.addComponent(Player) as Player;
             player.initData(playerPorxy, playerData);
-            this.mPlayerDict.set(playerData.mInstId, player);
+            this.mPlayerDict[playerData.mInstId] = player;
 
             return player;
         }
@@ -66,7 +66,7 @@ class RoleMgr{
     }
 
     public getPlayer(inst:number): Player{
-        return this.mPlayerDict.get(inst);
+        return this.mPlayerDict[inst];
     }
 
     public removePlayer(inst: number)  {
@@ -93,7 +93,8 @@ class RoleMgr{
             
             let monster = monster3D.addComponent(Monster) as Monster;
             monster.initData(monsterProxy, monsterData);
-            this.mMonsterDict.set(monsterData.mInstId, monster);
+            //this.mMonsterDict.set(monsterData.mInstId, monster);
+            this.mMonsterDict[monsterData.mInstId] = monster;
 
             return monster;
         }
@@ -101,11 +102,8 @@ class RoleMgr{
     }
 
     public getMonster(inst:number): Monster{
-        return this.mMonsterDict.get(inst);
-    }
-
-    public getMonsters(inst:number): laya.utils.Dictionary{
-        return this.mMonsterDict;
+        //return this.mMonsterDict.get(inst);
+        return this.mMonsterDict[inst];
     }
 
     public removeMonster(inst: number)  {
@@ -132,7 +130,8 @@ class RoleMgr{
             
             let npc = npc3D.addComponent(Npc) as Npc;
             npc.initData(npcProxy, npcData);
-            this.mNpcDict.set(npcData.mInstId, npc);
+            //this.mNpcDict.set(npcData.mInstId, npc);
+            this.mNpcDict[npcData.mInstId] = npc;
 
             return npc;
         }
@@ -140,7 +139,8 @@ class RoleMgr{
     }
 
     public getNpc(inst:number): Monster{
-        return this.mNpcDict.get(inst);
+        //return this.mNpcDict.get(inst);
+        return this.mNpcDict[inst];
     }
 
     public removeNpc(inst: number)  {
