@@ -40,6 +40,7 @@ class JoystickModule extends laya.events.EventDispatcher {
         //--------------------------------------------------------------------
         Laya.stage.on(laya.events.Event.KEY_UP, this, this.onKeyUp);
         Laya.stage.on(laya.events.Event.KEY_PRESS, this, this.onPress);
+        Laya.stage.on(laya.events.Event.KEY_DOWN, this, this.onPress);
         //--------------------------------------------------------------------
     }
 
@@ -155,10 +156,10 @@ class JoystickModule extends laya.events.EventDispatcher {
         let x: number = 0;
         let z: number = 0;
 
-        if (e.keyCode == 119) z = -1;
-        if (e.keyCode == 115) z = 1;
-        if (e.keyCode == 97) x = -1;
-        if (e.keyCode == 100) x = 1;
+        if (e.keyCode == 119 || e.keyCode == 87) z = -1;
+        if (e.keyCode == 115 || e.keyCode == 83) z = 1;
+        if (e.keyCode == 97 || e.keyCode == 65) x = -1;
+        if (e.keyCode == 100 || e.keyCode == 68) x = 1;
 
         if (x != 0 || z != 0) {
             this.event(JoystickModule.JoystickMoving, [x, z]);

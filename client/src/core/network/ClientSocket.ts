@@ -99,14 +99,13 @@ class ClientSocket {
     private onReceiveMessage(msg: any = null): void {
         var obj: any = this.mMsg.decode(msg);
         if (obj != null) {
-            MessageCenter.getInstance().dispatch(obj.msgID, obj.byte);
+            MessageCenter.getInstance().dispatch(obj.id, obj.data);
         }
     }
 
     public send(msgID: number, msg: any): void {
         var obj: any = this.mMsg.encode(msgID, msg);
         if (obj) {
-            obj.position = 0;
             this.mSocket.send(obj);
         }
     }
