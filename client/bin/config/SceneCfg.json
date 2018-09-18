@@ -1,10 +1,22 @@
 [
   {
     "id": 1,
-    "res": "res/3D/1v1Scene.ls"
+    "res": "res/3D/1v1Scene.ls",
+    "asynres": [
+      "res/3D/Scenes1.lh",
+      "res/3D/Scenes2.lh",
+      "res/3D/Scenes3.lh",
+      "res/3D/Scenes4.lh"
+    ]
   },
   {
     "id": 2,
-    "res": "res/3D/1v1Scene.ls"
+    "res": "res/3D/1v1Scene.ls",
+    "asynres": [
+      "res/3D/Scenes1.lh",
+      "res/3D/Scenes2.lh",
+      "res/3D/Scenes3.lh",
+      "res/3D/Scenes4.lh"
+    ]
   }
 ]

@@ -2,7 +2,7 @@
 * name;
 */
 class EnterSceneCMD extends puremvc.SimpleCommand {
-    private mLoading : LoadingMediator;
+    private mLoading: LoadingMediator;
     constructor() {
         super();
     }
@@ -30,11 +30,11 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
 
         let resURL = [sceneCfg.res, playerCfg.res];
 
-        Laya.loader.create(resURL, Laya.Handler.create(this, this.onSceneComplete, resURL), Laya.Handler.create(this, this.onSceneProgress));
+        Laya.loader.create([sceneCfg.res, playerCfg.res], Laya.Handler.create(this, this.onSceneComplete, [sceneCfg.res, playerCfg.res, sceneCfg.asynres]), Laya.Handler.create(this, this.onSceneProgress));
     }
 
-    private onSceneComplete(sceneRes: any, myPlayerRes: any) {
-        let scene: Laya.Scene = Laya.loader.getRes(sceneRes.url);
+    private onSceneComplete(sceneRes: any, myPlayerRes: any, asynres: any) {
+        let scene: Laya.Scene = Laya.loader.getRes(sceneRes);
         if (!scene) {
             console.error("取不到场景资源:", sceneRes);
             return;
@@ -42,8 +42,12 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
 
         Laya.stage.addChildAt(scene, 0);
 
+        for (let i in asynres)  {
+            scene.addChild(Laya.loader.create(asynres[i]));
+        }
+
         //获取可行走区域模型
-        var meshSprite3D: Laya.MeshSprite3D = scene.getChildByName('HeightMap') as Laya.MeshSprite3D;
+        var meshSprite3D: Laya.MeshSprite3D = scene.getChildByName('Scenes').getChildByName('HeightMap') as Laya.MeshSprite3D;
         //使可行走区域模型隐藏
         meshSprite3D.active = false;
         //初始化MeshTerrainSprite3D
@@ -63,7 +67,7 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
         }
         scene.addChild(myPlayer.mRole3D);
 
-        let camera: Laya.Camera = scene.getChildByName("Main Camera") as Laya.Camera;
+        let camera: Laya.Camera = scene.getChildByName('Scenes').getChildByName("Main Camera") as Laya.Camera;
         if (camera) {
             let playerControl: PlayerControl = camera.addComponent(PlayerControl) as PlayerControl;
             playerControl.initData(myPlayer, terrainSprite);
@@ -74,7 +78,7 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
         this.facade.registerCommand(NotiNames.SKILL, SkillCMD);
 
         this.initRole();
-     
+
         this.mLoading.close();
         // 打开主界面
         let main = this.facade.retrieveMediator(MediatorNames.MAIN) as MainMediator;
@@ -85,24 +89,23 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
         this.mLoading.setProgress(pro, 1);
     }
 
-    private initRole()
-    {
+    private initRole() {
         // 初始化其他玩家
         let playerPorxy = this.facade.retrieveProxy(ProxyNames.PLAYER_PROXY) as PlayerPorxy;
         let playerData = playerPorxy.getData();
-        for (let i in playerData){
+        for (let i in playerData) {
             this.sendNotification(NotiNames.ADD_ROLE, [playerPorxy, playerData[i]]);
         }
         // 初始化monster
         let monsterPorxy = this.facade.retrieveProxy(ProxyNames.MONSTER_PROXY) as MonsterPorxy;
         let monsterData = monsterPorxy.getData();
-        for (let i in monsterData){
+        for (let i in monsterData) {
             this.sendNotification(NotiNames.ADD_ROLE, [monsterPorxy, monsterData[i]]);
         }
         // 初始化npc
         let npcPorxy = this.facade.retrieveProxy(ProxyNames.NPC_PROXY) as NpcPorxy;
         let npcData = npcPorxy.getData();
-         for (let i in npcData){
+        for (let i in npcData) {
             this.sendNotification(NotiNames.ADD_ROLE, [npcPorxy, npcData[i]]);
         }
     }

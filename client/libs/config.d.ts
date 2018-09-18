@@ -22,6 +22,7 @@ declare class Skillcfg {
 declare class Scenecfg {
 	id: number
 	res: string
+	asynres: any[]
 }
 declare class Monstercfg {
 	id: number
