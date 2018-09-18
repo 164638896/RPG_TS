@@ -1,7 +1,7 @@
 /*
 * name;
 */
-class ClientSocket {
+class Network {
     private mSocket: Laya.Socket = null;
     private mHost: string;
     private mPort: any;
@@ -13,16 +13,18 @@ class ClientSocket {
     private _connectFlag: boolean;
     private _isConnecting: boolean;
 
+    private mMsgDict = {};
+
     constructor() {
 
     }
 
     private static _instance = null;
-    public static getInstance(): ClientSocket {
-        if (ClientSocket._instance == null) {
-            ClientSocket._instance = new ClientSocket();
+    public static getInstance(): Network {
+        if (Network._instance == null) {
+            Network._instance = new Network();
         }
-        return ClientSocket._instance;
+        return Network._instance;
     }
 
     private addEvents() {
@@ -44,9 +46,9 @@ class ClientSocket {
         this._isConnecting = true;
 
         if (this._connectFlag && this._needReconnect) {
-            MessageCenter.getInstance().dispatch(MsgConst.SOCKET_RECONNECT);
+            this.dispatch(MsgConst.SOCKET_RECONNECT);
         } else {
-            MessageCenter.getInstance().dispatch(MsgConst.SOCKET_CONNECT);
+            this.dispatch(MsgConst.SOCKET_CONNECT);
         }
 
         this._connectFlag = true;
@@ -56,10 +58,10 @@ class ClientSocket {
         this._isConnecting = false;
 
         if (this._needReconnect) {
-            MessageCenter.getInstance().dispatch(MsgConst.SOCKET_START_RECONNECT);
+            this.dispatch(MsgConst.SOCKET_START_RECONNECT);
             this.reconnect();
         } else {
-            MessageCenter.getInstance().dispatch(MsgConst.SOCKET_CLOSE);
+            this.dispatch(MsgConst.SOCKET_CLOSE);
         }
     }
 
@@ -67,7 +69,7 @@ class ClientSocket {
         if (this._needReconnect) {
             this.reconnect();
         } else {
-            MessageCenter.getInstance().dispatch(MsgConst.SOCKET_NOCONNECT);
+            this.dispatch(MsgConst.SOCKET_NOCONNECT);
         }
         this._isConnecting = false;
     }
@@ -76,6 +78,7 @@ class ClientSocket {
         this.mHost = host;
         this.mPort = port;
         this.mMsg = msg;
+        this.connect();
     }
 
     public connect(): void {
@@ -99,7 +102,7 @@ class ClientSocket {
     private onReceiveMessage(msg: any = null): void {
         var obj: any = this.mMsg.decode(msg);
         if (obj != null) {
-            MessageCenter.getInstance().dispatch(obj.id, obj.data);
+            this.dispatch(obj.id, obj.data);
         }
     }
 
@@ -113,6 +116,7 @@ class ClientSocket {
     public close(): void {
         this._connectFlag = false;
         this.closeCurrentSocket();
+        this.mMsgDict = {};
     }
 
     private closeCurrentSocket() {
@@ -124,5 +128,88 @@ class ClientSocket {
 
     public isConnecting(): boolean {
         return this._isConnecting;
+    }
+
+
+    public on(type: number, listenerObj: any, listener: Function): boolean {
+        let arr: Array<any> = this.mMsgDict[type];
+        if (arr == null) {
+            arr = new Array<any>();
+            this.mMsgDict[type] = arr;
+        }
+
+        //检测是否已经存在
+        let i: number = 0;
+        let len: number = arr.length;
+        for (i; i < len; i++) {
+            if (arr[i][0] == listener && arr[i][1] == listenerObj) {
+                return false;
+            }
+        }
+
+        arr.push([listener, listenerObj]);
+        return true;
+    }
+
+    public off(type: number, listenerObj: any, listener: Function): boolean {
+        let arr: Array<any> = this.mMsgDict[type];
+        if (arr == null) {
+            return false;
+        }
+
+        let i: number = 0;
+        let len: number = arr.length;
+        for (i; i < len; i++) {
+            if (arr[i][0] == listener && arr[i][1] == listenerObj) {
+                arr.splice(i, 1);
+                break;
+            }
+        }
+
+        if (arr.length == 0) {
+            this.mMsgDict[type] = null;
+            delete this.mMsgDict[type];
+        }
+
+        return true;
+    }
+
+    public offAll(listenerObj: any): void {
+        let keys = Object.keys(this.mMsgDict);
+        for (var i: number = 0, len = keys.length; i < len; i++) {
+            var type = keys[i];
+            var arr: Array<any> = this.mMsgDict[type];
+            for (var j = 0; j < arr.length; j++) {
+                if (arr[j][1] == listenerObj) {
+                    arr.splice(j, 1);
+                    j--;
+                }
+            }
+
+            if (arr.length == 0) {
+                this.mMsgDict[type] = null;
+                delete this.mMsgDict[type];
+            }
+        }
+    }
+
+    public dispatch(type: number, ...param: any[]): boolean {
+        if (this.mMsgDict[type] == null) {
+            return false;
+        }
+
+        let listeners: Array<any> = this.mMsgDict[type];
+        let i: number = 0;
+        let len: number = listeners.length;
+        let listener: Array<any> = null;
+        while (i < len) {
+            listener = listeners[i];
+            listener[0].apply(listener[1], param);
+            if (listeners.length != len) {
+                len = listeners.length;
+                i--;
+            }
+            i++;
+        }
     }
 }

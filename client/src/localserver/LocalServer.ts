@@ -5,15 +5,15 @@ class SRole {
     public mRoleData: RoleData = null;
 }
 
-class SPlayer extends Role {
+class SPlayer extends SRole {
 
 }
 
-class SNpc extends Role {
+class SNpc extends SRole {
 
 }
 
-class SMonster extends Role {
+class SMonster extends SRole {
 
 }
 
@@ -56,7 +56,7 @@ class LocalServer {
         player.mRoleData = d;
         this.mPlayerDict[d.mInstId] = player;
 
-        MessageCenter.getInstance().dispatch(MsgConst.ADD_MYPLAYER, {
+        Network.getInstance().dispatch(MsgConst.ADD_MYPLAYER, {
             secenId: d.mSceneId,
             instId: d.mInstId,
             typeId: d.mTypeId,
@@ -92,7 +92,7 @@ class LocalServer {
         player.mRoleData = d;
         this.mPlayerDict[d.mInstId] = player;
 
-        MessageCenter.getInstance().dispatch(MsgConst.ADD_PLAYER, {
+        Network.getInstance().dispatch(MsgConst.ADD_PLAYER, {
             secenId: d.mSceneId,
             instId: d.mInstId,
             typeId: d.mTypeId,
@@ -129,7 +129,7 @@ class LocalServer {
         player.mRoleData = d;
         this.mPlayerDict[d.mInstId] = player;
 
-        MessageCenter.getInstance().dispatch(MsgConst.ADD_NPC, {
+        Network.getInstance().dispatch(MsgConst.ADD_NPC, {
             secenId: d.mSceneId,
             instId: d.mInstId,
             typeId: d.mTypeId,
@@ -166,7 +166,7 @@ class LocalServer {
         monster.mRoleData = d;
         this.mMonsterDict[d.mInstId] = monster;
 
-        MessageCenter.getInstance().dispatch(MsgConst.ADD_MONSTER, {
+        Network.getInstance().dispatch(MsgConst.ADD_MONSTER, {
             secenId: 1,
             instId: d.mInstId,
             typeId: d.mTypeId,
@@ -196,7 +196,7 @@ class LocalServer {
         d.mMoveList[0].mPos.y = oldPos.y;
         d.mMoveList[0].setNextForward(d.mMoveList[0].mPos, oldPos);
 
-        MessageCenter.getInstance().dispatch(MsgConst.MOVE_MONSTER, {
+        Network.getInstance().dispatch(MsgConst.MOVE_MONSTER, {
             instId: d.mInstId,
             pos: [d.mMoveList[0].mPos.x, d.mMoveList[0].mPos.y, d.mMoveList[0].mPos.z],
             dir: [d.mMoveList[0].mNextForward.x, d.mMoveList[0].mNextForward.y, d.mMoveList[0].mNextForward.z],

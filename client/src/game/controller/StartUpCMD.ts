@@ -121,7 +121,7 @@ class StartUpCMD extends puremvc.SimpleCommand {
     // }
 
     private conmmonResComplete() {
-        ClientSocket.getInstance().initServer("127.0.0.1", 8000, new ProtoBufMsg); // test
+        Network.getInstance().initServer("127.0.0.1", 8000, new JsonMsg); // test
 
         // 注册porxy
         this.facade.registerProxy(new MyPlayerPorxy());

@@ -6,7 +6,7 @@ class MyPlayerPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.MYPLAYER_PROXY);
 
-        MessageCenter.getInstance().addListener(MsgConst.ADD_MYPLAYER, this, this.add);
+        Network.getInstance().on(MsgConst.ADD_MYPLAYER, this, this.add);
         // this.socketTest("test");
     }
 
@@ -69,7 +69,7 @@ class PlayerPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.PLAYER_PROXY);
         this.data = {};
-        MessageCenter.getInstance().addListener(MsgConst.ADD_PLAYER, this, this.add);
+        Network.getInstance().on(MsgConst.ADD_PLAYER, this, this.add);
     }
 
     add(param: any) {
@@ -114,7 +114,7 @@ class NpcPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.NPC_PROXY);
         this.data = {};
-        MessageCenter.getInstance().addListener(MsgConst.ADD_NPC, this, this.add);
+        Network.getInstance().on(MsgConst.ADD_NPC, this, this.add);
     }
 
     add(param: any) {
@@ -158,8 +158,8 @@ class MonsterPorxy extends puremvc.Proxy {
     constructor() {
         super(ProxyNames.MONSTER_PROXY);
         this.data = {};
-        MessageCenter.getInstance().addListener(MsgConst.ADD_MONSTER, this, this.add);
-        MessageCenter.getInstance().addListener(MsgConst.MOVE_MONSTER, this, this.move);
+        Network.getInstance().on(MsgConst.ADD_MONSTER, this, this.add);
+        Network.getInstance().on(MsgConst.MOVE_MONSTER, this, this.move);
     }
 
     add(param: any) {
