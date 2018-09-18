@@ -20,7 +20,7 @@ class MonsterConfig {
             this.mMonsterDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public getMonster(typeId: number): Monstercfg {

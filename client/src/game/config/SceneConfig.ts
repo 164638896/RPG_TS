@@ -21,7 +21,7 @@ class SceneConfig {
             this.mSceneDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public getSceneInfo(typeId: number): Scenecfg {

@@ -20,7 +20,7 @@ class NpcConfig {
             this.mNpcDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public getNpc(typeId: number): Npccfg {

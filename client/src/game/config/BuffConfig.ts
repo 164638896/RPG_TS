@@ -24,7 +24,7 @@ class BuffConfig {
             this.mBehaviorDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public loadMoveBuff(url: string) {
@@ -34,7 +34,7 @@ class BuffConfig {
             this.mMoveDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public loadHurtBuff(url: string) {
@@ -44,7 +44,7 @@ class BuffConfig {
            this.mHurtDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public loadControlBuff(url: string) {
@@ -54,7 +54,7 @@ class BuffConfig {
             this.mControlDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public getBehaviorBuff(typeId: number): Behaviorbuffcfg {

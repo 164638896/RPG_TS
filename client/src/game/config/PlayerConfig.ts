@@ -20,7 +20,7 @@ class PlayerConfig {
             this.mPlayerDict[arr[i].id] = arr[i];
         }
 
-        Laya.loader.clearRes(url, true);
+        Laya.loader.clearRes(url);
     }
 
     public getPlayer(typeId: number): Playercfg {
