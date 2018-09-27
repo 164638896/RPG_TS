@@ -40,8 +40,8 @@ class StartUpCMD extends puremvc.SimpleCommand {
         }
         else {
             let cdnPath = Laya.Browser.window.getCDN();
-            if (cdnPath && cdnPath != "")  {
-                Laya.URL.basePath = cdnPath;       
+            if (cdnPath && cdnPath != "") {
+                Laya.URL.basePath = cdnPath;
             }
         }
 
@@ -136,5 +136,14 @@ class StartUpCMD extends puremvc.SimpleCommand {
 
         this.facade.registerCommand(NotiNames.ENTER_SCENE, EnterSceneCMD);
         this.sendNotification(NotiNames.ENTER_SCENE);
+
+        ///////////////////////////////////////////
+        Pomelo.getInstance().init({
+            host: "127.0.0.1",
+            port: 3014
+        }, function () {
+            console.log('success');
+        });
+        //////////////////////////////////////////
     }
 }

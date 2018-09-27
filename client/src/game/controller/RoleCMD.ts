@@ -132,17 +132,17 @@ class SkillCMD extends puremvc.SimpleCommand {
 
         let monsterPorxy = this.facade.retrieveProxy(ProxyNames.MONSTER_PROXY) as MonsterPorxy;
         let datas = monsterPorxy.getData();
-        for(let i in datas){
+        for (let i in datas) {
             let monsterData = datas[i] as MonsterData;
             let tPos = monsterData.mPos;
-
-            if(MathUtils.IsPointInCircularSector(pos.x, pos.z, forward.x, forward.z, 0.5, 3.14 / 2, tPos.x, tPos.z))
-            {
-                let monster = RoleMgr.getInstance().getMonster(monsterData.mInstId);
-                monster.mStateMachine.switchState(StateType.Hit, [AniName.Hit, 1]);
+            let monster = RoleMgr.getInstance().getMonster(monsterData.mInstId);
+            if (monster != null && monster.mRole3D != null) { // 还没加载好怪物
+                if (MathUtils.IsPointInCircularSector(pos.x, pos.z, forward.x, forward.z, 0.5, 3.14 / 2, tPos.x, tPos.z)) {
+                    monster.mStateMachine.switchState(StateType.Hit, [AniName.Hit, 1]);
+                }
             }
         }
-       
+
         if (role) {
             let skillInfo = SkillConfig.getInstance().getSkillInfo(arr[1]);
             if (skillInfo) {

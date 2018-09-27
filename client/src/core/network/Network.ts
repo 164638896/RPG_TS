@@ -1,7 +1,7 @@
 /*
 * name;
 */
-class Network {
+class Network extends laya.events.EventDispatcher{
     private mSocket: Laya.Socket = null;
     private mHost: string;
     private mPort: any;
@@ -13,10 +13,10 @@ class Network {
     private _connectFlag: boolean;
     private _isConnecting: boolean;
 
-    private mMsgDict = {};
+    //private mMsgDict = {};
 
     constructor() {
-
+        super();
     }
 
     private static _instance = null;
@@ -46,9 +46,11 @@ class Network {
         this._isConnecting = true;
 
         if (this._connectFlag && this._needReconnect) {
-            this.dispatch(MsgConst.SOCKET_RECONNECT);
+            //this.dispatch(MsgConst.SOCKET_RECONNECT);
+            this.event(MsgConst.SOCKET_RECONNECT);
         } else {
-            this.dispatch(MsgConst.SOCKET_CONNECT);
+            //this.dispatch(MsgConst.SOCKET_CONNECT);
+            this.event(MsgConst.SOCKET_CONNECT);
         }
 
         this._connectFlag = true;
@@ -58,10 +60,12 @@ class Network {
         this._isConnecting = false;
 
         if (this._needReconnect) {
-            this.dispatch(MsgConst.SOCKET_START_RECONNECT);
+            //this.dispatch(MsgConst.SOCKET_START_RECONNECT);
+            this.event(MsgConst.SOCKET_START_RECONNECT);
             this.reconnect();
         } else {
-            this.dispatch(MsgConst.SOCKET_CLOSE);
+            //this.dispatch(MsgConst.SOCKET_CLOSE);
+            this.event(MsgConst.SOCKET_CLOSE);
         }
     }
 
@@ -69,7 +73,8 @@ class Network {
         if (this._needReconnect) {
             this.reconnect();
         } else {
-            this.dispatch(MsgConst.SOCKET_NOCONNECT);
+            //this.dispatch(MsgConst.SOCKET_NOCONNECT);
+            this.event(MsgConst.SOCKET_NOCONNECT);
         }
         this._isConnecting = false;
     }
@@ -102,7 +107,8 @@ class Network {
     private onReceiveMessage(msg: any = null): void {
         var obj: any = this.mMsg.decode(msg);
         if (obj != null) {
-            this.dispatch(obj.id, obj.data);
+            //this.dispatch(obj.id, obj.data);
+            this.event(obj.id, obj.data);
         }
     }
 
@@ -116,7 +122,7 @@ class Network {
     public close(): void {
         this._connectFlag = false;
         this.closeCurrentSocket();
-        this.mMsgDict = {};
+        //this.mMsgDict = {};
     }
 
     private closeCurrentSocket() {
@@ -131,85 +137,85 @@ class Network {
     }
 
 
-    public on(type: number, listenerObj: any, listener: Function): boolean {
-        let arr: Array<any> = this.mMsgDict[type];
-        if (arr == null) {
-            arr = new Array<any>();
-            this.mMsgDict[type] = arr;
-        }
+    // public on(type: number, listenerObj: any, listener: Function): boolean {
+    //     let arr: Array<any> = this.mMsgDict[type];
+    //     if (arr == null) {
+    //         arr = new Array<any>();
+    //         this.mMsgDict[type] = arr;
+    //     }
 
-        //检测是否已经存在
-        let i: number = 0;
-        let len: number = arr.length;
-        for (i; i < len; i++) {
-            if (arr[i][0] == listener && arr[i][1] == listenerObj) {
-                return false;
-            }
-        }
+    //     //检测是否已经存在
+    //     let i: number = 0;
+    //     let len: number = arr.length;
+    //     for (i; i < len; i++) {
+    //         if (arr[i][0] == listener && arr[i][1] == listenerObj) {
+    //             return false;
+    //         }
+    //     }
 
-        arr.push([listener, listenerObj]);
-        return true;
-    }
+    //     arr.push([listener, listenerObj]);
+    //     return true;
+    // }
 
-    public off(type: number, listenerObj: any, listener: Function): boolean {
-        let arr: Array<any> = this.mMsgDict[type];
-        if (arr == null) {
-            return false;
-        }
+    // public off(type: number, listenerObj: any, listener: Function): boolean {
+    //     let arr: Array<any> = this.mMsgDict[type];
+    //     if (arr == null) {
+    //         return false;
+    //     }
 
-        let i: number = 0;
-        let len: number = arr.length;
-        for (i; i < len; i++) {
-            if (arr[i][0] == listener && arr[i][1] == listenerObj) {
-                arr.splice(i, 1);
-                break;
-            }
-        }
+    //     let i: number = 0;
+    //     let len: number = arr.length;
+    //     for (i; i < len; i++) {
+    //         if (arr[i][0] == listener && arr[i][1] == listenerObj) {
+    //             arr.splice(i, 1);
+    //             break;
+    //         }
+    //     }
 
-        if (arr.length == 0) {
-            this.mMsgDict[type] = null;
-            delete this.mMsgDict[type];
-        }
+    //     if (arr.length == 0) {
+    //         this.mMsgDict[type] = null;
+    //         delete this.mMsgDict[type];
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
-    public offAll(listenerObj: any): void {
-        let keys = Object.keys(this.mMsgDict);
-        for (var i: number = 0, len = keys.length; i < len; i++) {
-            var type = keys[i];
-            var arr: Array<any> = this.mMsgDict[type];
-            for (var j = 0; j < arr.length; j++) {
-                if (arr[j][1] == listenerObj) {
-                    arr.splice(j, 1);
-                    j--;
-                }
-            }
+    // public offAll(listenerObj: any): void {
+    //     let keys = Object.keys(this.mMsgDict);
+    //     for (var i: number = 0, len = keys.length; i < len; i++) {
+    //         var type = keys[i];
+    //         var arr: Array<any> = this.mMsgDict[type];
+    //         for (var j = 0; j < arr.length; j++) {
+    //             if (arr[j][1] == listenerObj) {
+    //                 arr.splice(j, 1);
+    //                 j--;
+    //             }
+    //         }
 
-            if (arr.length == 0) {
-                this.mMsgDict[type] = null;
-                delete this.mMsgDict[type];
-            }
-        }
-    }
+    //         if (arr.length == 0) {
+    //             this.mMsgDict[type] = null;
+    //             delete this.mMsgDict[type];
+    //         }
+    //     }
+    // }
 
-    public dispatch(type: number, ...param: any[]): boolean {
-        if (this.mMsgDict[type] == null) {
-            return false;
-        }
+    // public dispatch(type: number, ...param: any[]): boolean {
+    //     if (this.mMsgDict[type] == null) {
+    //         return false;
+    //     }
 
-        let listeners: Array<any> = this.mMsgDict[type];
-        let i: number = 0;
-        let len: number = listeners.length;
-        let listener: Array<any> = null;
-        while (i < len) {
-            listener = listeners[i];
-            listener[0].apply(listener[1], param);
-            if (listeners.length != len) {
-                len = listeners.length;
-                i--;
-            }
-            i++;
-        }
-    }
+    //     let listeners: Array<any> = this.mMsgDict[type];
+    //     let i: number = 0;
+    //     let len: number = listeners.length;
+    //     let listener: Array<any> = null;
+    //     while (i < len) {
+    //         listener = listeners[i];
+    //         listener[0].apply(listener[1], param);
+    //         if (listeners.length != len) {
+    //             len = listeners.length;
+    //             i--;
+    //         }
+    //         i++;
+    //     }
+    // }
 }

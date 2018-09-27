@@ -24,15 +24,15 @@ class ProxyNames {
 }
 
 class MsgConst {
-    static SOCKET_CONNECT: number = 1;
-    static SOCKET_RECONNECT: number = 2;
-    static SOCKET_START_RECONNECT: number = 3;
-    static SOCKET_CLOSE: number = 4;
-    static SOCKET_NOCONNECT: number = 5;
+    static SOCKET_CONNECT: string = "1";
+    static SOCKET_RECONNECT: string = "2";
+    static SOCKET_START_RECONNECT: string = "3";
+    static SOCKET_CLOSE: string = "4";
+    static SOCKET_NOCONNECT: string = "5";
 
-    static ADD_MYPLAYER: number = 6;
-    static ADD_PLAYER: number = 7;
-    static ADD_MONSTER: number = 8;
-    static ADD_NPC: number = 9;
-    static MOVE_MONSTER: number = 10;
+    static ADD_MYPLAYER: string = "6";
+    static ADD_PLAYER: string = "7";
+    static ADD_MONSTER: string = "8";
+    static ADD_NPC: string = "9";
+    static MOVE_MONSTER: string = "10";
 }
