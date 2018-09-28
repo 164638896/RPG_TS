@@ -1,46 +1,13 @@
 
-const DEFAULT_MAX_RECONNECT_ATTEMPTS = 10;
-
-const JS_WS_CLIENT_TYPE = 'js-websocket';
-const JS_WS_CLIENT_VERSION = '0.0.1';
-
-const RES_OK = 200;
-const RES_FAIL = 500;
-const RES_OLD_CLIENT = 501;
-
-function blobToBuffer(blob, cb) {
-    const fileReader = new FileReader();
-    fileReader.onload = (event: Event) => {
-        //const buffer = event.target.result; //modify by lai
-        const buffer = fileReader.result;
-        cb(buffer);
-    };
-    fileReader.readAsArrayBuffer(blob);
-}
-
-function defaultDecode(data) {
-    const msg = Message.decode(data);
-    msg.body = JSON.parse(Protocol.strdecode(msg.body));
-    return msg;
-}
-function defaultEncode(reqId, route, msg) {
-    const type = reqId ? Message.TYPE_REQUEST : Message.TYPE_NOTIFY;
-    msg = Protocol.strencode(JSON.stringify(msg));
-    const compressRoute = 0;
-    return Message.encode(reqId, type, compressRoute, route, msg);
-}
-function defaultUrlGenerator(host, port) {
-    let url = 'ws://' + host;
-    if (port) {
-        url += ':' + port;
-    }
-    return url;
-}
 
 class Pomelo extends laya.events.EventDispatcher {
-    // private wsCreator:Function;
-    // private wsCreatorWeb:Function;
-    // private urlGenerator:Function;
+    private static DEFAULT_MAX_RECONNECT_ATTEMPTS = 10;
+    private static JS_WS_CLIENT_TYPE = 'js-websocket';
+    private static JS_WS_CLIENT_VERSION = '0.0.1';
+    private static RES_OK = 200;
+    private static RES_FAIL = 500;
+    private static RES_OLD_CLIENT = 501;
+
     private reconnect: boolean;
     private reconncetTimer: number;
     private reconnectAttempts: number;
@@ -67,10 +34,6 @@ class Pomelo extends laya.events.EventDispatcher {
 
     constructor() {
         super();
-        // const {wsCreator, wsCreatorWeb, urlGenerator = defaultUrlGenerator} = args;
-        // this.wsCreator = wsCreator;
-        // this.wsCreatorWeb = wsCreatorWeb;
-        // this.urlGenerator = urlGenerator;
 
         this.reconnect = false;
         this.reconncetTimer = null;
@@ -79,8 +42,8 @@ class Pomelo extends laya.events.EventDispatcher {
 
         this.handshakeBuffer = {
             'sys': {
-                type: JS_WS_CLIENT_TYPE,
-                version: JS_WS_CLIENT_VERSION,
+                type: Pomelo.JS_WS_CLIENT_TYPE,
+                version: Pomelo.JS_WS_CLIENT_VERSION,
                 rsa: {}
             },
             'user': {
@@ -104,7 +67,7 @@ class Pomelo extends laya.events.EventDispatcher {
 
         this.reqId = 0;
     }
-    
+
     private static _instance = null;
     public static getInstance(): Pomelo {
         if (Pomelo._instance == null) {
@@ -113,15 +76,36 @@ class Pomelo extends laya.events.EventDispatcher {
         return Pomelo._instance;
     }
 
-    handshake(data) {
+    private defaultDecode(data) {
+        const msg = Message.decode(data);
+        msg.body = JSON.parse(Protocol.strdecode(msg.body));
+        return msg;
+    }
+
+    private defaultEncode(reqId, route, msg) {
+        const type = reqId ? Message.TYPE_REQUEST : Message.TYPE_NOTIFY;
+        msg = Protocol.strencode(JSON.stringify(msg));
+        const compressRoute = 0;
+        return Message.encode(reqId, type, compressRoute, route, msg);
+    }
+
+    private defaultUrlGenerator(host, port) {
+        let url = 'ws://' + host;
+        if (port) {
+            url += ':' + port;
+        }
+        return url;
+    }
+
+    private handshake(data) {
         data = JSON.parse(Protocol.strdecode(data));
-        if (data.code === RES_OLD_CLIENT) {
+        if (data.code === Pomelo.RES_OLD_CLIENT) {
             this.event('error', 'client version not fullfill');
             //this.emit('error', 'client version not fullfill');
             return;
         }
 
-        if (data.code !== RES_OK) {
+        if (data.code !== Pomelo.RES_OK) {
             this.event('error', 'handshake fail');
             //this.emit('error', 'handshake fail');
             return;
@@ -132,7 +116,8 @@ class Pomelo extends laya.events.EventDispatcher {
         this.send(obj);
         this.initCallback && this.initCallback(this.socket);
     }
-    handshakeInit(data) {
+
+    private handshakeInit(data) {
         if (data.sys && data.sys.heartbeat) {
             this.heartbeatInterval = data.sys.heartbeat * 1000;   // heartbeat interval
             this.heartbeatTimeout = this.heartbeatInterval * 2;   // max heartbeat timeout
@@ -143,7 +128,8 @@ class Pomelo extends laya.events.EventDispatcher {
 
         typeof this.handshakeCallback === 'function' && this.handshakeCallback(data.user);
     }
-    heartbeat(data) {
+
+    private heartbeat(data) {
         if (!this.heartbeatInterval) {
             return;
         }
@@ -166,7 +152,8 @@ class Pomelo extends laya.events.EventDispatcher {
             this.heartbeatTimeoutId = setTimeout(() => this.heartbeatTimeoutCb(), this.heartbeatTimeout);
         }, this.heartbeatInterval);
     }
-    heartbeatTimeoutCb() {
+
+    private heartbeatTimeoutCb() {
         var gap = this.nextHeartbeatTimeout - Date.now();
         if (gap > this.gapThreshold) {
             this.heartbeatTimeoutId = setTimeout(() => this.heartbeatTimeoutCb(), gap);
@@ -177,41 +164,33 @@ class Pomelo extends laya.events.EventDispatcher {
             this.disconnect();
         }
     }
-    reset() {
+
+    private reset() {
         this.reconnect = false;
         this.reconnectionDelay = 1000 * 5;
         this.reconnectAttempts = 0;
         clearTimeout(this.reconncetTimer);
     }
-    init(params, cb) {
+
+    public init(params, cb) {
         this.initCallback = cb;
 
         this.params = params;
-        const {host, port, user, handshakeCallback, encode = defaultEncode, decode = defaultDecode, debugMode, browserWS} = params;
+        const {host, port, user, handshakeCallback, encode = this.defaultEncode, decode = this.defaultDecode, debugMode, browserWS} = params;
 
         this.encode = encode;
         this.decode = decode;
 
-        this.url = defaultUrlGenerator(host, port);
-        // if (debugMode) {
-        //     this.url = defaultUrlGenerator(host, port);
-        // }
-        // else {
-        //     this.url = this.urlGenerator(host, port);
-        // }
-
-        // if (browserWS) {
-        //     this.wsCreator = this.wsCreatorWeb;
-        //     this.browserWS = browserWS;
-        // }
+        this.url = this.defaultUrlGenerator(host, port);
 
         this.handshakeBuffer.user = user;
         this.handshakeCallback = handshakeCallback;
         this.connect();
     }
-    connect() {
+
+    private connect() {
         this.socket = new Laya.Socket();
-        //this.socket.endian = Laya.Byte.LITTLE_ENDIAN;
+        this.socket.endian = Laya.Byte.LITTLE_ENDIAN;
         this.addEvents();
         //this.socket.connect(this.mHost, this.mPort);
         this.socket.connectByUrl(this.url);
@@ -241,32 +220,16 @@ class Pomelo extends laya.events.EventDispatcher {
         this.send(obj);
     }
 
-    private onReceiveMessage(msg: any = null): void {
-        this.processPackage(Package.decode(msg.data));
+    private onReceiveMessage(data: any = null): void {
+        this.processPackage(Package.decode(data));
         // new package arrived, update the heartbeat timeout
         if (this.heartbeatTimeout) {
             this.nextHeartbeatTimeout = Date.now() + this.heartbeatTimeout;
         }
-
-        // if (this.browserWS) {
-        //     blobToBuffer(msg.data, (buffer) => {
-        //         this.processPackage(Package.decode(buffer));
-        //         // new package arrived, update the heartbeat timeout
-        //         if (this.heartbeatTimeout) {
-        //             this.nextHeartbeatTimeout = Date.now() + this.heartbeatTimeout;
-        //         }
-        //     });
-        // } else {
-        //     this.processPackage(Package.decode(msg.data));
-        //     // new package arrived, update the heartbeat timeout
-        //     if (this.heartbeatTimeout) {
-        //         this.nextHeartbeatTimeout = Date.now() + this.heartbeatTimeout;
-        //     }
-        // }
     }
 
     private onSocketClose(event: any = null): void {
-        const maxReconnectAttempts = this.params.maxReconnectAttempts || DEFAULT_MAX_RECONNECT_ATTEMPTS;
+        const maxReconnectAttempts = this.params.maxReconnectAttempts || Pomelo.DEFAULT_MAX_RECONNECT_ATTEMPTS;
         this.event('close', event);
         this.event('disconnect', event);
         // this.emit('close', event);
@@ -285,7 +248,7 @@ class Pomelo extends laya.events.EventDispatcher {
         console.error('socket error: ', event);
     }
 
-    disconnect() {
+    public disconnect() {
         if (this.socket) {
             this.socket.close();
             this.socket = false;
@@ -300,8 +263,8 @@ class Pomelo extends laya.events.EventDispatcher {
             this.heartbeatTimeoutId = null;
         }
     }
-    
-    request(route, msg, cb) {
+
+    public request(route, msg, cb) {
         if (arguments.length === 2 && typeof msg === 'function') {
             cb = msg;
             msg = {};
@@ -318,34 +281,35 @@ class Pomelo extends laya.events.EventDispatcher {
 
         this.callbacks[this.reqId] = cb;
     }
-    notify(route, msg) {
+
+    public notify(route, msg) {
         msg = msg || {};
         this.sendMessage(0, route, msg);
     }
-    sendMessage(reqId, route, msg) {
+
+    public sendMessage(reqId, route, msg) {
         msg = this.encode(reqId, route, msg);
 
         const packet = Package.encode(Package.TYPE_DATA, msg);
         this.send(packet);
     }
-    send(packet) {
-        // if (this.browserWS) {
-        //     this.socket.send(packet.buffer);
-        // } else {
-        //     this.socket.send({ data: packet.buffer });
-        // }
+
+    public send(packet) {
         this.socket.send(packet.buffer);
     }
-    onData(msg) {
+
+    private onData(msg) {
         msg = this.decode(msg);
         this.processMessage(msg);
     }
-    onKick(data) {
+
+    private onKick(data) {
         data = JSON.parse(Protocol.strdecode(data));
         this.event('onKick', data);
         //this.emit('onKick', data);
     }
-    processMessage(msg) {
+
+    private processMessage(msg) {
         if (!msg.id) {
             this.event(msg.route, msg.body);
             //this.emit(msg.route, msg.body);
@@ -358,7 +322,8 @@ class Pomelo extends laya.events.EventDispatcher {
         delete this.callbacks[msg.id];
         typeof cb === 'function' && cb(msg.body);
     }
-    processPackage(msgs) {
+
+    private processPackage(msgs) {
         if (Array.isArray(msgs)) {
             for (let i = 0; i < msgs.length; i++) {
                 const msg = msgs[i];

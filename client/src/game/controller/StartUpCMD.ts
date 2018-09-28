@@ -138,11 +138,19 @@ class StartUpCMD extends puremvc.SimpleCommand {
         this.sendNotification(NotiNames.ENTER_SCENE);
 
         ///////////////////////////////////////////
-        Pomelo.getInstance().init({
-            host: "127.0.0.1",
-            port: 3014
-        }, function () {
-            console.log('success');
+        Pomelo.getInstance().init({ host: "127.0.0.1", port: 3014 }, function () {
+            Pomelo.getInstance().request('gate.gateHandler.queryEntry', { uid: 1 }, function (data) {
+                Pomelo.getInstance().disconnect();
+
+                if (data.code === 2001) {
+                    alert('Servers error!');
+                    return;
+                }
+
+                console.log("data.host: ", data.host);
+                console.log("data.port: ", data.port);
+                //callback(data.host, data.port);
+            });
         });
         //////////////////////////////////////////
     }
