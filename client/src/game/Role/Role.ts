@@ -126,6 +126,11 @@ class MyPlayer extends Player {
     getMyPlayerData(): MyPlayerData {
         return <MyPlayerData>this.mRoleData;
     }
+
+    move()
+    {
+        this.mMyPlayerPorxy.move();
+    }
 }
 
 class Npc extends Role {

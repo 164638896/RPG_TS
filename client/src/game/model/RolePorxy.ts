@@ -1,6 +1,39 @@
 /*
 * name;
 */
+class RolePorxy extends puremvc.Proxy {
+    constructor(name: string) {
+        super(name);
+        Pomelo.getInstance().on('addEntities', this, this.onAddEntities);
+        Pomelo.getInstance().on('onMove', this, this.onMove);
+    }
+
+    onAddEntities(data) {
+        var entities = data.entities;
+        // var area = app.getCurArea();
+        // if (!area) {
+        //     return;
+        // }
+        for (var i = 0; i < entities.length; i++) {
+            // var entity = area.getEntity(entities[i].entityId);
+            // if (!entity) {
+            //     area.addEntity(entities[i]);
+            // }
+        }
+    }
+
+    onMove(data) {
+        let d = this.get(data.entityId);
+        if (!d) return;
+
+        //d.mMoveSpeed = param.speed;
+        let m = new MoveData;
+        m.setPos(data.endPos[0], data.endPos[1], data.endPos[2]);
+        //m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
+        d.mMoveList.push(m);
+    }
+
+}
 
 class MyPlayerPorxy extends puremvc.Proxy {
     constructor() {
@@ -57,6 +90,20 @@ class MyPlayerPorxy extends puremvc.Proxy {
         data.mCameraRotation.y = y;
     }
 
+    public move() {
+        let data = this.get();
+        Pomelo.getInstance().request('area.playerHandler.move', { targetPos: { x: data.mPos.x * 10 + 100, y: data.mPos.z * 10 + 100 } }, function (result) {
+            if (result.code == 200) {
+                // var sprite = app.getCurPlayer().getSprite();
+                // var sPos = result.sPos;
+                // sprite.translateTo(sPos.x, sPos.y);
+            } else {
+                console.warn('curPlayer move error!');
+            }
+        });
+
+    }
+
     public playSkillByIndex(index: number) {
         let data = this.get();
         // 同步给服务器
@@ -71,6 +118,7 @@ class PlayerPorxy extends puremvc.Proxy {
         this.data = {};
         Network.getInstance().on(MsgConst.ADD_PLAYER, this, this.add);
     }
+
 
     add(param: any) {
         let d = new PlayerData();
@@ -87,17 +135,6 @@ class PlayerPorxy extends puremvc.Proxy {
         this.data[d.mInstId] = d;
 
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
-    }
-
-    move(param: any) {
-        let d = this.get(param.instId);
-        if (!d) return;
-
-        d.mMoveSpeed = param.speed;
-        let m = new MoveData;
-        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
     }
 
     remove(instId: number) {
@@ -174,7 +211,7 @@ class MonsterPorxy extends puremvc.Proxy {
         d.setPos(param.pos[0], param.pos[1], param.pos[2]);
         d.setDir(param.dir[0], param.dir[1], param.dir[2]);
         this.data[d.mInstId] = d;
- 
+
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 

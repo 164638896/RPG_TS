@@ -121,7 +121,8 @@ class StartUpCMD extends puremvc.SimpleCommand {
     // }
 
     private conmmonResComplete() {
-        Network.getInstance().initServer("127.0.0.1", 8000, new JsonMsg); // test
+
+        this.networkTest(); // 测试代码
 
         // 注册porxy
         this.facade.registerProxy(new MyPlayerPorxy());
@@ -136,10 +137,14 @@ class StartUpCMD extends puremvc.SimpleCommand {
 
         this.facade.registerCommand(NotiNames.ENTER_SCENE, EnterSceneCMD);
         this.sendNotification(NotiNames.ENTER_SCENE);
+    }
 
-        ///////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////
+    networkTest() {
+        //Network.getInstance().initServer("127.0.0.1", 8000, new JsonMsg); 
+        let name: string = "a";
         Pomelo.getInstance().init({ host: "127.0.0.1", port: 3014 }, function () {
-            Pomelo.getInstance().request('gate.gateHandler.queryEntry', { uid: 1 }, function (data) {
+            Pomelo.getInstance().request('gate.gateHandler.queryEntry', { uid: name }, function (data) {
                 Pomelo.getInstance().disconnect();
 
                 if (data.code === 2001) {
@@ -149,9 +154,19 @@ class StartUpCMD extends puremvc.SimpleCommand {
 
                 console.log("data.host: ", data.host);
                 console.log("data.port: ", data.port);
-                //callback(data.host, data.port);
+
+                Pomelo.getInstance().init({ host: data.host, port: data.port, log: true }, function () {
+                    Pomelo.getInstance().request('connector.entryHandler.entry', { name: name }, function (data) {
+                        Pomelo.getInstance().request("area.playerHandler.enterScene", { name: name, playerId: data.playerId }, function (data) {
+                            // msgHandler.init();
+                            // app.init(data.data);
+                             console.log("data: ");
+                        });
+                    });
+                });
+
             });
         });
-        //////////////////////////////////////////
     }
+    //////////////////////////////////////////////////////////////////////////////
 }

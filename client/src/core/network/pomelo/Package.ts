@@ -1,25 +1,27 @@
-const PKG_HEAD_BYTES = 4;
-const TYPE_HANDSHAKE = 1;
-const TYPE_HANDSHAKE_ACK = 2;
-const TYPE_HEARTBEAT = 3;
-const TYPE_DATA = 4;
-const TYPE_KICK = 5;
 
 class Package {
+    static PKG_HEAD_BYTES = 4;
+    
+    private static mTYPE_HANDSHAKE = 1;
+    private static mTYPE_HANDSHAKE_ACK = 2;
+    private static mTYPE_HEARTBEAT = 3;
+    private static mTYPE_DATA = 4;
+    private static mTYPE_KICK = 5;
+
     static get TYPE_HANDSHAKE() {
-        return TYPE_HANDSHAKE;
+        return Package.mTYPE_HANDSHAKE;
     }
     static get TYPE_HANDSHAKE_ACK() {
-        return TYPE_HANDSHAKE_ACK;
+        return Package.mTYPE_HANDSHAKE_ACK;
     }
     static get TYPE_HEARTBEAT() {
-        return TYPE_HEARTBEAT;
+        return Package.mTYPE_HEARTBEAT;
     }
     static get TYPE_DATA() {
-        return TYPE_DATA;
+        return Package.mTYPE_DATA;
     }
     static get TYPE_KICK() {
-        return TYPE_KICK;
+        return Package.mTYPE_KICK;
     }
     /**
      * Package protocol encode.
@@ -43,9 +45,9 @@ class Package {
      * @param  {Uint8Array} body   body content in bytes
      * @return {Uint8Array}        new byte array that contains encode result
      */
-    static encode(type, body?) {
+    static encode(type, body?) : Uint8Array{
         var length = body ? body.length : 0;
-        var buffer = new Uint8Array(PKG_HEAD_BYTES + length);
+        var buffer = new Uint8Array(Package.PKG_HEAD_BYTES + length);
         var index = 0;
         buffer[index++] = type & 0xff;
         buffer[index++] = (length >> 16) & 0xff;
@@ -65,7 +67,7 @@ class Package {
      * @param  {Uint8Array} buffer byte array containing package content
      * @return {Object}           {type: package type, buffer: body byte array}
      */
-    static decode(buffer) {
+    static decode(buffer) :Object{
         // buffer = toUTF8Array(str)
         var offset = 0;
         var bytes = new Uint8Array(buffer);

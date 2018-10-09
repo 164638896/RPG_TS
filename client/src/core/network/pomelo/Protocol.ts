@@ -1,4 +1,3 @@
-//const {copyArray} = require('./util');
 
 class Protocol {
     /**

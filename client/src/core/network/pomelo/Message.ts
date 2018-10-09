@@ -1,31 +1,32 @@
 
-const TYPE_REQUEST = 0;
-const TYPE_NOTIFY = 1;
-const TYPE_RESPONSE = 2;
-const TYPE_PUSH = 3;
-
-const MSG_FLAG_BYTES = 1;
-const MSG_ROUTE_CODE_BYTES = 2;
-const MSG_ID_MAX_BYTES = 5;
-const MSG_ROUTE_LEN_BYTES = 1;
-
-const MSG_ROUTE_CODE_MAX = 0xffff;
-
-const MSG_COMPRESS_ROUTE_MASK = 0x1;
-const MSG_TYPE_MASK = 0x7;
-
 class Message {
+
+    private static mTYPE_REQUEST:number = 0;
+    private static mTYPE_NOTIFY:number = 1;
+    private static mTYPE_RESPONSE:number = 2;
+    private static mTYPE_PUSH:number = 3;
+
+    static MSG_FLAG_BYTES = 1;
+    static MSG_ROUTE_CODE_BYTES = 2;
+    static MSG_ID_MAX_BYTES = 5;
+    static MSG_ROUTE_LEN_BYTES = 1;
+
+    static MSG_ROUTE_CODE_MAX = 0xffff;
+
+    static MSG_COMPRESS_ROUTE_MASK = 0x1;
+    static MSG_TYPE_MASK = 0x7;
+
     static get TYPE_REQUEST() {
-        return TYPE_REQUEST;
+        return Message.mTYPE_REQUEST;
     }
     static get TYPE_NOTIFY() {
-        return TYPE_NOTIFY;
+        return Message.mTYPE_NOTIFY;
     }
     static get TYPE_RESPONSE() {
-        return TYPE_RESPONSE;
+        return Message.mTYPE_RESPONSE;
     }
     static get TYPE_PUSH() {
-        return TYPE_PUSH;
+        return Message.mTYPE_PUSH;
     }
     /**
      * Message protocol encode.
@@ -40,16 +41,16 @@ class Message {
     static encode(id, type, compressRoute, route, msg) {
         // caculate message max length
         var idBytes = msgHasId(type) ? caculateMsgIdBytes(id) : 0;
-        var msgLen = MSG_FLAG_BYTES + idBytes;
+        var msgLen = Message.MSG_FLAG_BYTES + idBytes;
 
         if (msgHasRoute(type)) {
             if (compressRoute) {
                 if (typeof route !== 'number') {
                     throw new Error('error flag for number route!');
                 }
-                msgLen += MSG_ROUTE_CODE_BYTES;
+                msgLen += Message.MSG_ROUTE_CODE_BYTES;
             } else {
-                msgLen += MSG_ROUTE_LEN_BYTES;
+                msgLen += Message.MSG_ROUTE_LEN_BYTES;
                 if (route) {
                     route = Protocol.strencode(route);
                     if (route.length > 255) {
@@ -102,8 +103,8 @@ class Message {
 
         // parse flag
         var flag = bytes[offset++];
-        var compressRoute = flag & MSG_COMPRESS_ROUTE_MASK;
-        var type = (flag >> 1) & MSG_TYPE_MASK;
+        var compressRoute = flag & Message.MSG_COMPRESS_ROUTE_MASK;
+        var type = (flag >> 1) & Message.MSG_TYPE_MASK;
 
         // parse id
         if (msgHasId(type)) {
@@ -148,12 +149,12 @@ class Message {
 }
 
 var msgHasId = function (type) {
-    return type === TYPE_REQUEST || type === TYPE_RESPONSE;
+    return type === Message.TYPE_REQUEST || type === Message.TYPE_RESPONSE;
 };
 
 var msgHasRoute = function (type) {
-    return type === TYPE_REQUEST || type === TYPE_NOTIFY ||
-        type === TYPE_PUSH;
+    return type === Message.TYPE_REQUEST || type === Message.TYPE_NOTIFY ||
+        type === Message.TYPE_PUSH;
 };
 
 var caculateMsgIdBytes = function (id) {
@@ -166,14 +167,14 @@ var caculateMsgIdBytes = function (id) {
 };
 
 var encodeMsgFlag = function (type, compressRoute, buffer, offset) {
-    if (type !== TYPE_REQUEST && type !== TYPE_NOTIFY &&
-        type !== TYPE_RESPONSE && type !== TYPE_PUSH) {
+    if (type !== Message.TYPE_REQUEST && type !== Message.TYPE_NOTIFY &&
+        type !== Message.TYPE_RESPONSE && type !== Message.TYPE_PUSH) {
         throw new Error('unkonw message type: ' + type);
     }
 
     buffer[offset] = (type << 1) | (compressRoute ? 1 : 0);
 
-    return offset + MSG_FLAG_BYTES;
+    return offset + Message.MSG_FLAG_BYTES;
 };
 
 var encodeMsgId = function (id, buffer, offset) {
@@ -194,7 +195,7 @@ var encodeMsgId = function (id, buffer, offset) {
 
 var encodeMsgRoute = function (compressRoute, route, buffer, offset) {
     if (compressRoute) {
-        if (route > MSG_ROUTE_CODE_MAX) {
+        if (route > Message.MSG_ROUTE_CODE_MAX) {
             throw new Error('route number is overflow');
         }
 
