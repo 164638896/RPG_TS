@@ -2,7 +2,7 @@
 * name;
 */
 class MainMediator extends FuiBaseMediator {
-    private mMyPlayerPorxy: MyPlayerPorxy;
+    private mMyPlayerPorxy: RolePorxy;
     private touchId: number = -1;
     private _startStageX: number;
     private _startStageY: number;
@@ -18,7 +18,7 @@ class MainMediator extends FuiBaseMediator {
         let joystick = new JoystickModule(this.viewComponent);
         joystick.on(JoystickModule.JoystickMoving, this, this.onJoystickMoving);
         joystick.on(JoystickModule.JoystickUp, this, this.onJoystickUp);
-        this.mMyPlayerPorxy = <MyPlayerPorxy>this.facade.retrieveProxy(ProxyNames.MYPLAYER_PROXY);
+        this.mMyPlayerPorxy = <RolePorxy>this.facade.retrieveProxy(ProxyNames.ROLE_PROXY);
     }
 
     private registerListeners(): void {

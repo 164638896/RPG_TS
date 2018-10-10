@@ -17,10 +17,11 @@ class MediatorNames {
 }
 
 class ProxyNames {
-    static MYPLAYER_PROXY: string = "MyPlayerProxy";
-    static PLAYER_PROXY: string = "PlayerProxy";
-    static MONSTER_PROXY: string = "MonsterProxy";
-    static NPC_PROXY: string = "NpcProxy";
+    static ROLE_PROXY: string = "RoleProxy";
+    // static MYPLAYER_PROXY: string = "MyPlayerProxy";
+    // static PLAYER_PROXY: string = "PlayerProxy";
+    // static MONSTER_PROXY: string = "MonsterProxy";
+    // static NPC_PROXY: string = "NpcProxy";
 }
 
 class MsgConst {

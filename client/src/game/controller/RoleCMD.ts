@@ -17,7 +17,10 @@ class AddRoleCMD extends puremvc.SimpleCommand {
         let porxy = arr[0] as puremvc.Proxy;
         let roleData = arr[1] as RoleData;
 
-        if (roleData instanceof PlayerData) {
+        if (roleData instanceof MyPlayerData) {
+            
+        }
+        else if (roleData instanceof PlayerData) {
             let role = RoleMgr.getInstance().getPlayer(roleData.mInstId);
             if (role) return;
 
@@ -58,18 +61,9 @@ class AddRoleCMD extends puremvc.SimpleCommand {
     private onRoleComplete(porxy: puremvc.Proxy, roleData: RoleData) {
         let currScene = Laya.stage.getChildAt(0) as Laya.Scene;
         if (currScene) {
-            if (roleData instanceof PlayerData) {
-                let role = RoleMgr.getInstance().createPlayer(porxy as PlayerPorxy, roleData);
-                currScene.addChild(role.mRole3D);
-            }
-            else if (roleData instanceof MonsterData) {
-                let role = RoleMgr.getInstance().createMonster(porxy as MonsterPorxy, roleData);
-                currScene.addChild(role.mRole3D);
-            }
-            else if (roleData instanceof NpcData) {
-                let role = RoleMgr.getInstance().createNpc(porxy as PlayerPorxy, roleData);
-                currScene.addChild(role.mRole3D);
-            }
+
+            let role = RoleMgr.getInstance().createPlayer(porxy as RolePorxy, roleData);
+            currScene.addChild(role.mRole3D);
         }
     }
 }
@@ -130,7 +124,7 @@ class SkillCMD extends puremvc.SimpleCommand {
         // Laya.Vector3.normalize(f, nf);
         // Laya.Vector3.normalize(forward, nforward);
 
-        let monsterPorxy = this.facade.retrieveProxy(ProxyNames.MONSTER_PROXY) as MonsterPorxy;
+        let monsterPorxy = this.facade.retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy;
         let datas = monsterPorxy.getData();
         for (let i in datas) {
             let monsterData = datas[i] as MonsterData;

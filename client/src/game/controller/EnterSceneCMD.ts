@@ -12,8 +12,8 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
 
         this.mLoading = this.facade.retrieveMediator(MediatorNames.LOADING) as LoadingMediator;
 
-        let myPlayerPorxy = this.facade.retrieveProxy(ProxyNames.MYPLAYER_PROXY) as MyPlayerPorxy;
-        let myPlayerData = myPlayerPorxy.get();
+        let myRolePorxy = this.facade.retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy;
+        let myPlayerData = myRolePorxy.getMyPlayerData();
         if (!myPlayerData) return;
 
         let sceneCfg = SceneConfig.getInstance().getSceneInfo(myPlayerData.mSceneId);
@@ -58,7 +58,7 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
         // 创建自己
         let myPlayer = RoleMgr.getInstance().getMyPlayer();
         if (myPlayer == null) {
-            myPlayer = RoleMgr.getInstance().createMyPlayer(this.facade.retrieveProxy(ProxyNames.MYPLAYER_PROXY) as MyPlayerPorxy);
+            myPlayer = RoleMgr.getInstance().createMyPlayer(this.facade.retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy);
         }
 
         if (!myPlayer) {
@@ -90,23 +90,11 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
     }
 
     private initRole() {
-        // 初始化其他玩家
-        let playerPorxy = this.facade.retrieveProxy(ProxyNames.PLAYER_PROXY) as PlayerPorxy;
-        let playerData = playerPorxy.getData();
+
+        let rolePorxy = this.facade.retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy;
+        let playerData = rolePorxy.getData();
         for (let i in playerData) {
-            this.sendNotification(NotiNames.ADD_ROLE, [playerPorxy, playerData[i]]);
-        }
-        // 初始化monster
-        let monsterPorxy = this.facade.retrieveProxy(ProxyNames.MONSTER_PROXY) as MonsterPorxy;
-        let monsterData = monsterPorxy.getData();
-        for (let i in monsterData) {
-            this.sendNotification(NotiNames.ADD_ROLE, [monsterPorxy, monsterData[i]]);
-        }
-        // 初始化npc
-        let npcPorxy = this.facade.retrieveProxy(ProxyNames.NPC_PROXY) as NpcPorxy;
-        let npcData = npcPorxy.getData();
-        for (let i in npcData) {
-            this.sendNotification(NotiNames.ADD_ROLE, [npcPorxy, npcData[i]]);
+            this.sendNotification(NotiNames.ADD_ROLE, [rolePorxy, playerData[i]]);
         }
     }
 }

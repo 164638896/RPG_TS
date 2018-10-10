@@ -25,11 +25,11 @@ class LocalServer {
     private static mInstId: number = 0;
 
     constructor() {
-        this.createMyPlayer(1, 0, 0.282, -2.68);
+        //this.createMyPlayer(1, 0, 0.282, -2.68);
         // this.createPlayer(1);
         // this.createNpc(1);
-        this.createMonster(1, -1, 0.282, -2.68);
-        this.createMonster(2, 1, 0.282, -2.68);
+        // this.createMonster(1, -1, 0.282, -2.68);
+        // this.createMonster(2, 1, 0.282, -2.68);
 
         Laya.timer.loop(3000, this, this.moveMonster);
     }
@@ -182,6 +182,7 @@ class LocalServer {
 
     public moveMonster() {
         let keys = Object.keys(this.mMonsterDict);
+        if(keys.length <= 0) return;
         let index = RandomUtils.randomArray(keys)
         let d = this.mMonsterDict[index].mRoleData as MonsterData;
         //let d = RandomUtils.randomArray(a).mRoleData as MonsterData;

@@ -2,97 +2,96 @@
 * name;
 */
 class RolePorxy extends puremvc.Proxy {
-    constructor(name: string) {
-        super(name);
+    private myPlayerInstId: number = 0;
+
+    constructor() {
+        super(ProxyNames.ROLE_PROXY);
+        this.data = {};
+
+        // Network.getInstance().on(MsgConst.ADD_MONSTER, this, this.add);
+        // Network.getInstance().on(MsgConst.MOVE_MONSTER, this, this.move);
+
         Pomelo.getInstance().on('addEntities', this, this.onAddEntities);
         Pomelo.getInstance().on('onMove', this, this.onMove);
+        Pomelo.getInstance().on('onSkill', this, this.onSkill);
+
+        this.playerLogin(Math.random().toString(), "127.0.0.1", 3014);
     }
 
-    onAddEntities(data) {
+    public playerLogin(name: string, h: string, p: number) {
+        Pomelo.getInstance().init({ host: h, port: p }, function () {
+            Pomelo.getInstance().request('gate.gateHandler.queryEntry', { uid: name }, function (data) {
+                Pomelo.getInstance().disconnect();
+
+                if (data.code === 2001) {
+                    alert('Servers error!');
+                    return;
+                }
+
+                Pomelo.getInstance().init({ host: data.host, port: data.port, log: true }, function () {
+                    Pomelo.getInstance().request('connector.entryHandler.entry', { name: name }, function (data) {
+                        Pomelo.getInstance().request("area.playerHandler.enterScene", { name: name, playerId: data.playerId }, function (data) {
+                            let rolePorxy = AppFacade.getInstance().retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy;
+                            rolePorxy.setMyPlayerInstId(data.data.entityId);
+                            let e = data.data.area.entities;
+                            for (var key in e) {
+                                rolePorxy.addEntity(e[key]);
+                            }
+                            AppFacade.getInstance().sendNotification(NotiNames.ENTER_SCENE);
+                        });
+                    });
+                });
+            });
+        });
+    }
+
+    public onAddEntities(data) {
         var entities = data.entities;
-        // var area = app.getCurArea();
-        // if (!area) {
-        //     return;
-        // }
         for (var i = 0; i < entities.length; i++) {
-            // var entity = area.getEntity(entities[i].entityId);
-            // if (!entity) {
-            //     area.addEntity(entities[i]);
-            // }
+            this.addEntity(entities[i]);
         }
     }
 
-    onMove(data) {
-        let d = this.get(data.entityId);
-        if (!d) return;
+    public addEntity(entity: any) {
+        let d: RoleData = null
+        switch (entity.type) {
+            case 'player':
+                if (this.myPlayerInstId == entity.entityId) {
+                    if (this.getMyPlayerData()) return;
+                    d = new MyPlayerData();
+                }
+                else {
+                    d = new PlayerData();
+                }
 
-        //d.mMoveSpeed = param.speed;
-        let m = new MoveData;
-        m.setPos(data.endPos[0], data.endPos[1], data.endPos[2]);
-        //m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
-    }
+                break;
+            case 'monster':
+                d = new MonsterData();
+                break;
+            default:
+                return false;
+        }
 
-}
-
-class MyPlayerPorxy extends puremvc.Proxy {
-    constructor() {
-        super(ProxyNames.MYPLAYER_PROXY);
-
-        Network.getInstance().on(MsgConst.ADD_MYPLAYER, this, this.add);
-        // this.socketTest("test");
-    }
-
-    // public socketTest(userName:string):void{
-
-    //     let message = new awesomepackage.AwesomeMessage();
-    //     message.awesomeField= userName;
-
-    //     let encodeBuffer = awesomepackage.AwesomeMessage.encode(message).finish();      
-    //     ClientSocket.getInstance().send(1, encodeBuffer);
-
-    //     let decodeMessage = awesomepackage.AwesomeMessage.decode(encodeBuffer) as awesomepackage.AwesomeMessage;
-    //     console.log(decodeMessage.awesomeField); 
-    // }
-
-    add(param: any) {
-        let d = new MyPlayerData();
-        d.mInstId = param.instId;
-        d.mTypeId = param.typeId;
-        d.mMoveSpeed = param.speed;
-        d.mSceneId = param.secenId;
-        d.mAtk = param.atk;
-        d.mHp = param.hp;
-        d.mDef = param.def;
-        d.mSkillList = param.skillList;
-        d.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        d.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        this.setData(d);
-
-        //this.sendNotification(NotiNames.MYPLAYER_ADDED, instId);
-        this.sendNotification(NotiNames.ENTER_SCENE);
-    }
-
-    get(): MyPlayerData {
-        return <MyPlayerData>this.data;
-    }
-
-    public setJoystickForward(x: number, z: number) {
-        let data = this.get();
-        data.mJoystickForward.x = x;
-        data.mJoystickForward.y = 0;
-        data.mJoystickForward.z = z;
-    }
-
-    public setCameraRotation(x: number, y: number) {
-        let data = this.get();
-        data.mCameraRotation.x = x;
-        data.mCameraRotation.y = y;
+        d.mInstId = entity.entityId;
+        d.mTypeId = 1;
+        d.mMoveSpeed = 1;
+        d.mSceneId = 1;
+        d.mAtk = 1;
+        d.mHp = 100;
+        d.mDef = 100;
+        d.mSkillList.push(1);
+        d.mSkillList.push(2);
+        d.mSkillList.push(3);
+        d.mSkillList.push(4);
+        d.setPos(entity.x / 100, 0, entity.y / 100);
+        d.setDir(0, 0, 1);
+        this.data[d.mInstId] = d;
+        this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
 
     public move() {
-        let data = this.get();
-        Pomelo.getInstance().request('area.playerHandler.move', { targetPos: { x: data.mPos.x * 10 + 100, y: data.mPos.z * 10 + 100 } }, function (result) {
+        let data = this.get(this.myPlayerInstId);
+        Pomelo.getInstance().request('area.playerHandler.move', { targetPos: { x: data.mPos.x, y: data.mPos.z } }, function (result) {
             if (result.code == 200) {
                 // var sprite = app.getCurPlayer().getSprite();
                 // var sPos = result.sPos;
@@ -101,137 +100,68 @@ class MyPlayerPorxy extends puremvc.Proxy {
                 console.warn('curPlayer move error!');
             }
         });
+    }
 
+    public onMove(data) {
+        if (data.entityId != this.myPlayerInstId) {
+            let d = this.get(data.entityId);
+            if (!d) return;
+
+            //d.mMoveSpeed = param.speed;
+            let m = new MoveData;
+            m.setPos(data.endPos.x, 0, data.endPos.y);
+            //m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
+            d.mMoveList.push(m);
+        }
     }
 
     public playSkillByIndex(index: number) {
-        let data = this.get();
-        // 同步给服务器
-        // 通知播放动作
-        this.sendNotification(NotiNames.SKILL, [data, data.mSkillList[index]]);
-    }
-}
+        let data = this.get(this.myPlayerInstId);
 
-class PlayerPorxy extends puremvc.Proxy {
-    constructor() {
-        super(ProxyNames.PLAYER_PROXY);
-        this.data = {};
-        Network.getInstance().on(MsgConst.ADD_PLAYER, this, this.add);
+        Pomelo.getInstance().request('area.playerHandler.skill', { id: index }, function (result) {
+            if (result.code == 200) {
+            } else {
+                console.warn('curPlayer skill error!');
+            }
+        });
     }
 
-
-    add(param: any) {
-        let d = new PlayerData();
-        d.mInstId = param.instId;
-        d.mTypeId = param.typeId;
-        d.mMoveSpeed = param.speed;
-        d.mAtk = param.atk;
-        d.mHp = param.hp;
-        d.mDef = param.def;
-        d.mSkillList = param.skillList;
-        d.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        d.setDir(param.dir[0], param.dir[1], param.dir[2]);
-
-        this.data[d.mInstId] = d;
-
-        this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
+    public onSkill(param)  {
+        let data = this.get(param.entityId);
+        if (data)  {
+            this.sendNotification(NotiNames.SKILL, [data, data.mSkillList[param.id]]);
+        }
     }
 
-    remove(instId: number) {
+    // myPlayer
+    public setJoystickForward(x: number, z: number) {
+        let data = this.getMyPlayerData();
+        data.mJoystickForward.x = x;
+        data.mJoystickForward.y = 0;
+        data.mJoystickForward.z = z;
+    }
+
+    // myPlayer
+    public setCameraRotation(x: number, y: number) {
+        let data = this.getMyPlayerData();
+        data.mCameraRotation.x = x;
+        data.mCameraRotation.y = y;
+    }
+
+    public getMyPlayerData(): MyPlayerData {
+        return this.get(this.myPlayerInstId) as MyPlayerData;
+    }
+
+    public get(instId: number): RoleData {
+        return this.data[instId];
+    }
+
+    public remove(instId: number) {
         this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
         this.data[instId] = null;
     }
 
-    get(instId: number): PlayerData {
-        return this.data[instId];
-    }
-}
-
-class NpcPorxy extends puremvc.Proxy {
-    constructor() {
-        super(ProxyNames.NPC_PROXY);
-        this.data = {};
-        Network.getInstance().on(MsgConst.ADD_NPC, this, this.add);
-    }
-
-    add(param: any) {
-        let d = new NpcData();
-        d.mInstId = param.instId;
-        d.mTypeId = param.typeId;
-        d.mMoveSpeed = param.speed;
-        d.mAtk = param.atk;
-        d.mHp = param.hp;
-        d.mDef = param.def;
-        d.mSkillList = param.skillList;
-        d.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        d.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        this.data[d.mInstId] = d;
-
-        this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
-    }
-
-    move(param: any) {
-        let d = this.get(param.instId);
-        if (!d) return;
-
-        d.mMoveSpeed = param.speed;
-        let m = new MoveData;
-        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
-    }
-
-    remove(instId: number) {
-        this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
-        this.data[instId] = null;
-    }
-
-    get(instId: number): NpcData {
-        return this.data[instId];
-    }
-}
-
-class MonsterPorxy extends puremvc.Proxy {
-    constructor() {
-        super(ProxyNames.MONSTER_PROXY);
-        this.data = {};
-        Network.getInstance().on(MsgConst.ADD_MONSTER, this, this.add);
-        Network.getInstance().on(MsgConst.MOVE_MONSTER, this, this.move);
-    }
-
-    add(param: any) {
-        let d = new MonsterData();
-        d.mInstId = param.instId;
-        d.mTypeId = param.typeId;
-        d.mMoveSpeed = param.speed;
-        d.mAtk = param.atk;
-        d.mHp = param.hp;
-        d.mDef = param.def;
-        d.mSkillList = param.skillList;
-        d.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        d.setDir(param.dir[0], param.dir[1], param.dir[2]);
-        this.data[d.mInstId] = d;
-
-        this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
-    }
-
-    move(param: any) {
-        let d = this.get(param.instId);
-        if (!d) return;
-
-        d.mMoveSpeed = param.speed;
-        let m = new MoveData;
-        m.setPos(param.pos[0], param.pos[1], param.pos[2]);
-        m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
-        d.mMoveList.push(m);
-    }
-
-    remove(instId: number) {
-        this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
-        this.data[instId] = null;
-    }
-
-    get(instId: number): MonsterData {
-        return this.data[instId];
+    public setMyPlayerInstId(id: number)  {
+        this.myPlayerInstId = id;
     }
 }

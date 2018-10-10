@@ -19,8 +19,8 @@ class RoleMgr{
         return RoleMgr._instance;
     }
 
-    public createMyPlayer(myPlayerPorxy: MyPlayerPorxy) : MyPlayer{
-        let myPlayerData = myPlayerPorxy.get();
+    public createMyPlayer(myPlayerPorxy: RolePorxy) : MyPlayer{
+        let myPlayerData = myPlayerPorxy.getMyPlayerData();
         if(!myPlayerData) return null;
 
         let myPlayerCfg = PlayerConfig.getInstance().getPlayer(myPlayerData.mTypeId);
@@ -43,7 +43,7 @@ class RoleMgr{
         return this.mMyPlayer;
     }
 
-    public createPlayer(playerPorxy: PlayerPorxy, playerData: PlayerData) : Player{
+    public createPlayer(playerPorxy: RolePorxy, playerData: PlayerData) : Player{
         let playerCfg = PlayerConfig.getInstance().getPlayer(playerData.mTypeId);
         if (!playerCfg) {
             return null;
@@ -78,7 +78,7 @@ class RoleMgr{
     }
 
 
-    public createMonster(monsterProxy: MonsterPorxy, monsterData: MonsterData) : Monster{
+    public createMonster(monsterProxy: RolePorxy, monsterData: MonsterData) : Monster{
         let monsterCfg = MonsterConfig.getInstance().getMonster(monsterData.mTypeId);
         if (!monsterCfg) {
             return null;
@@ -114,8 +114,7 @@ class RoleMgr{
         laya.utils.Pool.recover(monster.mRole3D.name, monster.mRole3D);
     }
 
-
-    public createNpc(npcProxy: NpcPorxy, npcData: NpcData) : Npc{
+    public createNpc(npcProxy: RolePorxy, npcData: NpcData) : Npc{
         let npcCfg = NpcConfig.getInstance().getNpc(npcData.mTypeId);
         if (!npcCfg) {
             return null;
