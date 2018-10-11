@@ -43,6 +43,11 @@ class RoleMgr{
         return this.mMyPlayer;
     }
 
+    public removeMyPlayer(inst: number)  {
+        let currScene = Laya.stage.getChildAt(0) as Laya.Scene;
+        currScene.removeChild(this.mMyPlayer.mRole3D);
+    }
+
     public createPlayer(playerPorxy: RolePorxy, playerData: PlayerData) : Player{
         let playerCfg = PlayerConfig.getInstance().getPlayer(playerData.mTypeId);
         if (!playerCfg) {
@@ -74,9 +79,8 @@ class RoleMgr{
 
         let player = this.getPlayer(inst);
         currScene.removeChild(player.mRole3D);
-        laya.utils.Pool.recover(player.mRole3D.name, player.mRole3D);
+        //laya.utils.Pool.recover(player.mRole3D.name, player.mRole3D);
     }
-
 
     public createMonster(monsterProxy: RolePorxy, monsterData: MonsterData) : Monster{
         let monsterCfg = MonsterConfig.getInstance().getMonster(monsterData.mTypeId);
@@ -111,7 +115,7 @@ class RoleMgr{
 
         let monster = this.getMonster(inst);
         currScene.removeChild(monster.mRole3D);
-        laya.utils.Pool.recover(monster.mRole3D.name, monster.mRole3D);
+        //laya.utils.Pool.recover(monster.mRole3D.name, monster.mRole3D);
     }
 
     public createNpc(npcProxy: RolePorxy, npcData: NpcData) : Npc{
@@ -147,6 +151,6 @@ class RoleMgr{
 
         let npc = this.getNpc(inst);
         currScene.removeChild(npc.mRole3D);
-        laya.utils.Pool.recover(npc.mRole3D.name, npc.mRole3D);
+        //laya.utils.Pool.recover(npc.mRole3D.name, npc.mRole3D);
     }
 }

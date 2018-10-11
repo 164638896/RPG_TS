@@ -76,7 +76,7 @@ class PlayerControl extends Laya.Script {
             Laya.Vector3.scale(forward, -this.mMyPlayer.mRoleData.mMoveSpeed * state.elapsedTime * 0.001, teampPos);
 
             Laya.Vector3.add(role3D.transform.position, teampPos, teampPos);
-            teampPos.y = 0;//this.mTerrainSprite.getHeight(teampPos.x, teampPos.z);
+            teampPos.y = this.mTerrainSprite.getHeight(teampPos.x, teampPos.z);
             if (!isNaN(teampPos.y)) {
                 this.mMyPlayer.mRoleData.mPos = teampPos;
                 this.mMyPlayer.move();

@@ -4,6 +4,8 @@
 class RolePorxy extends puremvc.Proxy {
     private myPlayerInstId: number = 0;
 
+    private offset: number = 500; //临时代码,未了服务器通过
+
     constructor() {
         super(ProxyNames.ROLE_PROXY);
         this.data = {};
@@ -11,14 +13,18 @@ class RolePorxy extends puremvc.Proxy {
         // Network.getInstance().on(MsgConst.ADD_MONSTER, this, this.add);
         // Network.getInstance().on(MsgConst.MOVE_MONSTER, this, this.move);
 
-        Pomelo.getInstance().on('addEntities', this, this.onAddEntities);
+        Pomelo.getInstance().on('onAddEntities', this, this.onAddEntities);
+        Pomelo.getInstance().on('onUserLeave', this, this.onUserLeave);
+        Pomelo.getInstance().on('onKick', this, this.onKick);
+        Pomelo.getInstance().on('disconnect', this, this.onDisconnect);
+
         Pomelo.getInstance().on('onMove', this, this.onMove);
         Pomelo.getInstance().on('onSkill', this, this.onSkill);
 
-        this.playerLogin(Math.random().toString(), "127.0.0.1", 3014);
+        this.playerLogin(RandomUtils.limitInteger(1, 5), "192.168.6.100", 3014);
     }
 
-    public playerLogin(name: string, h: string, p: number) {
+    public playerLogin(name: number, h: string, p: number) {
         Pomelo.getInstance().init({ host: h, port: p }, function () {
             Pomelo.getInstance().request('gate.gateHandler.queryEntry', { uid: name }, function (data) {
                 Pomelo.getInstance().disconnect();
@@ -32,10 +38,20 @@ class RolePorxy extends puremvc.Proxy {
                     Pomelo.getInstance().request('connector.entryHandler.entry', { name: name }, function (data) {
                         Pomelo.getInstance().request("area.playerHandler.enterScene", { name: name, playerId: data.playerId }, function (data) {
                             let rolePorxy = AppFacade.getInstance().retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy;
-                            rolePorxy.setMyPlayerInstId(data.data.entityId);
-                            let e = data.data.area.entities;
-                            for (var key in e) {
-                                rolePorxy.addEntity(e[key]);
+                            // if (data.code !== 200) {
+                            //     alert('Servers error!');
+                            //     return;
+                            // }
+                            if (!data.curPlayer) return;
+
+                            rolePorxy.setMyPlayerInstId(data.curPlayer.entityId);
+                            rolePorxy.addEntity(data.curPlayer);
+
+                            for (let key in data.entities) {
+                                let array = data.entities[key];
+                                for (let i = 0; i < array.length; i++) {
+                                    rolePorxy.addEntity(array[i]);
+                                }
                             }
                             AppFacade.getInstance().sendNotification(NotiNames.ENTER_SCENE);
                         });
@@ -46,10 +62,14 @@ class RolePorxy extends puremvc.Proxy {
     }
 
     public onAddEntities(data) {
-        var entities = data.entities;
+        var entities = data.player;
         for (var i = 0; i < entities.length; i++) {
             this.addEntity(entities[i]);
         }
+    }
+
+    public onUserLeave(data) {
+        this.remove(data.entityId);
     }
 
     public addEntity(entity: any) {
@@ -83,7 +103,7 @@ class RolePorxy extends puremvc.Proxy {
         d.mSkillList.push(2);
         d.mSkillList.push(3);
         d.mSkillList.push(4);
-        d.setPos(entity.x / 100, 0, entity.y / 100);
+        d.setPos((entity.x - this.offset) / 10, 0.282, (entity.y - this.offset) / 10);
         d.setDir(0, 0, 1);
         this.data[d.mInstId] = d;
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
@@ -91,7 +111,7 @@ class RolePorxy extends puremvc.Proxy {
 
     public move() {
         let data = this.get(this.myPlayerInstId);
-        Pomelo.getInstance().request('area.playerHandler.move', { targetPos: { x: data.mPos.x, y: data.mPos.z } }, function (result) {
+        Pomelo.getInstance().request('area.playerHandler.move', { path: [{ x: (data.mPos.x * 10 + this.offset), y: (data.mPos.z * 10 + this.offset) }, { x: (data.mPos.x * 10 + this.offset), y: (data.mPos.z * 10 + this.offset) }] }, function (result) {
             if (result.code == 200) {
                 // var sprite = app.getCurPlayer().getSprite();
                 // var sPos = result.sPos;
@@ -108,9 +128,16 @@ class RolePorxy extends puremvc.Proxy {
             if (!d) return;
 
             //d.mMoveSpeed = param.speed;
-            let m = new MoveData;
-            m.setPos(data.endPos.x, 0, data.endPos.y);
+            let m;
+            if (d.mMoveList.length > 5) {
+                m = d.mMoveList.shift();
+            }
+            else  {
+                m = new MoveData;
+            }
+            m.setPos((data.path[0].x - this.offset) / 10, 0.282, (data.path[0].y - this.offset) / 10);
             //m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
+
             d.mMoveList.push(m);
         }
     }
@@ -126,9 +153,9 @@ class RolePorxy extends puremvc.Proxy {
         });
     }
 
-    public onSkill(param)  {
+    public onSkill(param) {
         let data = this.get(param.entityId);
-        if (data)  {
+        if (data) {
             this.sendNotification(NotiNames.SKILL, [data, data.mSkillList[param.id]]);
         }
     }
@@ -136,16 +163,20 @@ class RolePorxy extends puremvc.Proxy {
     // myPlayer
     public setJoystickForward(x: number, z: number) {
         let data = this.getMyPlayerData();
-        data.mJoystickForward.x = x;
-        data.mJoystickForward.y = 0;
-        data.mJoystickForward.z = z;
+        if (data) {
+            data.mJoystickForward.x = x;
+            data.mJoystickForward.y = 0;
+            data.mJoystickForward.z = z;
+        }
     }
 
     // myPlayer
     public setCameraRotation(x: number, y: number) {
         let data = this.getMyPlayerData();
-        data.mCameraRotation.x = x;
-        data.mCameraRotation.y = y;
+        if (data) {
+            data.mCameraRotation.x = x;
+            data.mCameraRotation.y = y;
+        }
     }
 
     public getMyPlayerData(): MyPlayerData {
@@ -157,11 +188,32 @@ class RolePorxy extends puremvc.Proxy {
     }
 
     public remove(instId: number) {
-        this.sendNotification(NotiNames.REMOVE_ROLE, this.get(instId));
-        this.data[instId] = null;
+        let roleData = this.get(instId);
+        if (roleData) {
+            this.sendNotification(NotiNames.REMOVE_ROLE, roleData);
+            this.data[instId] = null;
+        }
     }
 
-    public setMyPlayerInstId(id: number)  {
+    private removeAll() {
+        for (let i in this.data) {
+            this.sendNotification(NotiNames.REMOVE_ROLE, this.data[i]);
+        }
+        this.data = {};
+    }
+
+    public setMyPlayerInstId(id: number) {
         this.myPlayerInstId = id;
+    }
+
+    private onKick(data) {
+        Pomelo.getInstance().disconnect();
+        this.removeAll();
+        //this.playerLogin(RandomUtils.limitInteger(1, 5), "192.168.6.100", 3014);
+        console.log("onKick");
+    }
+
+    private onDisconnect() {
+
     }
 }

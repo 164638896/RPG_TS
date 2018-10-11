@@ -127,7 +127,7 @@ class StartUpCMD extends puremvc.SimpleCommand {
         // 注册ui
         this.facade.registerMediator(new MainMediator(MediatorNames.MAIN, fairygui.UIPackage.createObject("Joystick", "Main").asCom));
 
-        new LocalServer(); // test
+        //new LocalServer(); // test
 
         this.facade.registerCommand(NotiNames.ENTER_SCENE, EnterSceneCMD);
         this.sendNotification(NotiNames.ENTER_SCENE);

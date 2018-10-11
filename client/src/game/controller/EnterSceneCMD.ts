@@ -14,7 +14,11 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
 
         let myRolePorxy = this.facade.retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy;
         let myPlayerData = myRolePorxy.getMyPlayerData();
-        if (!myPlayerData) return;
+        if (!myPlayerData)
+        {
+            console.error("MyPlayer 没有初始化");
+            return;
+        } 
 
         let sceneCfg = SceneConfig.getInstance().getSceneInfo(myPlayerData.mSceneId);
         if (!sceneCfg) {
