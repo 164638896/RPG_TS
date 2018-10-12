@@ -38,7 +38,7 @@ class FollowPlayerCamera {
     }
 
     public updateCamera(targetPos: Laya.Vector3, force:boolean = false) {
-        if(force) this.mTargetPos = targetPos;
+        if(force) targetPos.cloneTo(this.mTargetPos);
         else Laya.Tween.to(this.mTargetPos, {x:targetPos.x, y:targetPos.y, z:targetPos.z}, 1000, Laya.Ease.strongOut);
 
         Laya.Vector3.scale(this.mCameraForward, this.mCameraOffsetDis, this._cameraOffset);

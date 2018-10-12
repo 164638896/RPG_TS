@@ -30,8 +30,7 @@ class RoleMgr{
 
         let myPlayer3DRoot = Laya.loader.getRes(myPlayerCfg.res) as Laya.Sprite3D;
         if (myPlayer3DRoot) {
-            let originalPlayer = myPlayer3DRoot.getChildAt(0) as Laya.Sprite3D;
-            let myPlayer3D = Laya.Sprite3D.instantiate(originalPlayer);
+            let myPlayer3D = Laya.Sprite3D.instantiate(myPlayer3DRoot);
             this.mMyPlayer = myPlayer3D.addComponent(MyPlayer) as MyPlayer;
             this.mMyPlayer.initData(myPlayerPorxy, myPlayerData);
             return this.mMyPlayer;
@@ -59,7 +58,7 @@ class RoleMgr{
             let originalPlayer = player3DRoot.getChildAt(0) as Laya.Sprite3D;
 
             let player3D = laya.utils.Pool.getItem(originalPlayer.name);
-            if(player3D == null) player3D = Laya.Sprite3D.instantiate(originalPlayer);
+            if(player3D == null) player3D = Laya.Sprite3D.instantiate(player3DRoot);
             
             let player = player3D.addComponent(Player) as Player;
             player.initData(playerPorxy, playerData);
@@ -93,7 +92,7 @@ class RoleMgr{
             let originalMonster = monster3DRoot.getChildAt(0) as Laya.Sprite3D;
 
             let monster3D = laya.utils.Pool.getItem(originalMonster.name);
-            if(monster3D == null) monster3D = Laya.Sprite3D.instantiate(originalMonster);
+            if(monster3D == null) monster3D = Laya.Sprite3D.instantiate(monster3DRoot);
             
             let monster = monster3D.addComponent(Monster) as Monster;
             monster.initData(monsterProxy, monsterData);
@@ -129,7 +128,7 @@ class RoleMgr{
             let originalNpc = npc3DRoot.getChildAt(0) as Laya.Sprite3D;
 
             let npc3D = laya.utils.Pool.getItem(originalNpc.name);
-            if(npc3D == null) npc3D = Laya.Sprite3D.instantiate(originalNpc);
+            if(npc3D == null) npc3D = Laya.Sprite3D.instantiate(npc3DRoot);
             
             let npc = npc3D.addComponent(Npc) as Npc;
             npc.initData(npcProxy, npcData);

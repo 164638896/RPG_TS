@@ -8,7 +8,8 @@ class Role extends Laya.Script {
     public mRoleData: RoleData = null; //小心数据被释放
     public mRolePorxy: RolePorxy;
     public mRole3D: Laya.Sprite3D;
-
+    private _teampPos = new Laya.Vector3();
+    private _dirPos = new Laya.Vector3();
     constructor() {
         super();
     }
@@ -33,7 +34,7 @@ class Role extends Laya.Script {
     initData(proxy: RolePorxy, data: RoleData) {
         this.mRolePorxy = proxy;
         this.mRoleData = data;
-        this.mRole3D.transform.position = this.mRoleData.mPos;
+        this.mRole3D.transform.translate(this.mRoleData.mPos, false);
     }
 
     private updatePos(state: Laya.RenderState) {
@@ -65,18 +66,13 @@ class Role extends Laya.Script {
                     maxStep = dist;
                 }
 
-                let teampPos = new Laya.Vector3();
-
                 // position
-                Laya.Vector3.scale(forward, maxStep, teampPos);
-                Laya.Vector3.add(this.mRole3D.transform.position, teampPos, teampPos);
-                this.mRole3D.transform.position = teampPos;
+                Laya.Vector3.scale(forward, maxStep, this._teampPos);
+                this.mRole3D.transform.translate(this._teampPos, false);
 
                 // rotate
-                let dirPos = new Laya.Vector3();
-                //Laya.Vector3.add(teampPos, forward, dirPos);
-                Laya.Vector3.subtract(teampPos, forward, dirPos);
-                this.mRole3D.transform.lookAt(dirPos, Laya.Vector3.Up, false);
+                Laya.Vector3.subtract(this.mRole3D.transform.position, forward, this._dirPos);
+                this.mRole3D.transform.lookAt(this._dirPos, Laya.Vector3.Up, false);
             }
         }
         else {

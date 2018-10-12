@@ -55,7 +55,8 @@ class LoopAniState extends IState {
 
     constructor(r: Role, machine: StateMachine, state: StateType) {
         super(r, machine, state);
-        this.mAnimator = r.mRole3D.getComponentByType(Laya.Animator) as Laya.Animator;
+        let role3DChild = r.mRole3D.getChildAt(0) as Laya.Sprite3D;
+        this.mAnimator = role3DChild.getComponentByType(Laya.Animator) as Laya.Animator;
     }
 
     public EnterState(param: any) : boolean{
