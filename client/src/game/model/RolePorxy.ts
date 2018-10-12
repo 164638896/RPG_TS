@@ -62,9 +62,10 @@ class RolePorxy extends puremvc.Proxy {
     }
 
     public onAddEntities(data) {
-        var entities = data.player;
-        for (var i = 0; i < entities.length; i++) {
-            this.addEntity(entities[i]);
+        if (data.player)  {
+            for (var i = 0; i < data.player.length; i++) {
+                this.addEntity(data.player[i]);
+            }
         }
     }
 
@@ -132,7 +133,7 @@ class RolePorxy extends puremvc.Proxy {
             if (d.mMoveList.length > 5) {
                 m = d.mMoveList.shift();
             }
-            else  {
+            else {
                 m = new MoveData;
             }
             m.setPos((data.path[0].x - this.offset) / 10, 0.282, (data.path[0].y - this.offset) / 10);
