@@ -112,9 +112,10 @@ class RoleMgr {
     public removeRole(inst: number) {
         let currScene = Laya.stage.getChildAt(0) as Laya.Scene;
 
-        let role = this.getRole(inst);
+        let role = this.mRoleDict[inst];
         if (role)  {
             currScene.removeChild(role.mRole3D);
+            delete this.mRoleDict[inst];
             //laya.utils.Pool.recover(player.mRole3D.name, player.mRole3D);
         }
     }

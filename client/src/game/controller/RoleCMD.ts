@@ -82,7 +82,9 @@ class RemoveRoleCMD extends puremvc.SimpleCommand {
     execute(notification: puremvc.INotification): void {
         console.info("RemoveRoleCMD");
         let roleData = notification.getBody() as RoleData;
-        RoleMgr.getInstance().removeRole(roleData.mInstId);
+        if (roleData)  {
+            RoleMgr.getInstance().removeRole(roleData.mInstId);
+        }
     }
 }
 

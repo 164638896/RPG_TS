@@ -207,7 +207,7 @@ class RolePorxy extends puremvc.Proxy {
         let roleData = this.get(instId);
         if (roleData) {
             this.sendNotification(NotiNames.REMOVE_ROLE, roleData);
-            this.data[instId] = null;
+            delete this.data[instId];
         }
     }
 
