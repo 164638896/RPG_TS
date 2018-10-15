@@ -4,7 +4,7 @@
 class RolePorxy extends puremvc.Proxy {
     private myPlayerInstId: number = 0;
 
-    private offset: number = 500; //临时代码,未了服务器通过
+    private offset: number = 700; //临时代码,未了服务器通过
 
     constructor() {
         super(ProxyNames.ROLE_PROXY);
@@ -14,14 +14,18 @@ class RolePorxy extends puremvc.Proxy {
         // Network.getInstance().on(MsgConst.MOVE_MONSTER, this, this.move);
 
         Pomelo.getInstance().on('onAddEntities', this, this.onAddEntities);
+        Pomelo.getInstance().on('onRemoveEntities', this, this.onRemoveEntities);
         Pomelo.getInstance().on('onUserLeave', this, this.onUserLeave);
         Pomelo.getInstance().on('onKick', this, this.onKick);
         Pomelo.getInstance().on('disconnect', this, this.onDisconnect);
 
         Pomelo.getInstance().on('onMove', this, this.onMove);
-        Pomelo.getInstance().on('onSkill', this, this.onSkill);
+        //Pomelo.getInstance().on('onSkill', this, this.onSkill);
 
-        this.playerLogin(RandomUtils.limitInteger(1, 5), "192.168.6.100", 3014);
+        Pomelo.getInstance().on('onAttack', this, this.onAttack);
+        Pomelo.getInstance().on('onRevive', this, this.onRevive);
+
+        this.playerLogin(RandomUtils.limitInteger(1, 5), "127.0.0.1", 3014);
     }
 
     public playerLogin(name: number, h: string, p: number) {
@@ -61,15 +65,26 @@ class RolePorxy extends puremvc.Proxy {
         });
     }
 
-    public onAddEntities(data) {
-        if (data.player)  {
+    private onAddEntities(data) {
+        if (data.player) {
             for (var i = 0; i < data.player.length; i++) {
                 this.addEntity(data.player[i]);
             }
         }
     }
 
-    public onUserLeave(data) {
+    private onRemoveEntities(data) {
+        var entities = data.entities;
+        //var area = app.getCurArea();
+        let d = this.getMyPlayerData();
+        for (var i = 0; i < entities.length; i++) {
+            if (entities[i] !== d.mInstId) {
+                this.remove(entities[i]);
+            }
+        }
+    }
+
+    private onUserLeave(data) {
         this.remove(data.entityId);
     }
 
@@ -80,21 +95,23 @@ class RolePorxy extends puremvc.Proxy {
                 if (this.myPlayerInstId == entity.entityId) {
                     if (this.getMyPlayerData()) return;
                     d = new MyPlayerData();
+                    d.mTypeId = 1;
                 }
                 else {
                     d = new PlayerData();
+                    d.mTypeId = 1;
                 }
 
                 break;
-            case 'monster':
+            case 'mob':
                 d = new MonsterData();
+                d.mTypeId = 2;
                 break;
             default:
                 return false;
         }
 
         d.mInstId = entity.entityId;
-        d.mTypeId = 1;
         d.mMoveSpeed = 1;
         d.mSceneId = 1;
         d.mAtk = 1;
@@ -104,7 +121,7 @@ class RolePorxy extends puremvc.Proxy {
         d.mSkillList.push(2);
         d.mSkillList.push(3);
         d.mSkillList.push(4);
-        d.setPos((entity.x - this.offset) / 10, 0.282, (entity.y - this.offset) / 10);
+        d.setPos((entity.x - this.offset) / 100, 0.282, (entity.y - this.offset) / 100);
         d.setDir(0, 0, 1);
         this.data[d.mInstId] = d;
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
@@ -112,7 +129,7 @@ class RolePorxy extends puremvc.Proxy {
 
     public move() {
         let data = this.get(this.myPlayerInstId);
-        Pomelo.getInstance().request('area.playerHandler.move', { path: [{ x: (data.mPos.x * 10 + this.offset), y: (data.mPos.z * 10 + this.offset) }, { x: (data.mPos.x * 10 + this.offset), y: (data.mPos.z * 10 + this.offset) }] }, function (result) {
+        Pomelo.getInstance().request('area.playerHandler.move', { path: [{ x: (data.mPos.x * 100 + this.offset), y: (data.mPos.z * 100 + this.offset) }, { x: (data.mPos.x * 100 + this.offset), y: (data.mPos.z * 100 + this.offset) }] }, function (result) {
             if (result.code == 200) {
                 // var sprite = app.getCurPlayer().getSprite();
                 // var sPos = result.sPos;
@@ -136,7 +153,7 @@ class RolePorxy extends puremvc.Proxy {
             else {
                 m = new MoveData;
             }
-            m.setPos((data.path[0].x - this.offset) / 10, 0.282, (data.path[0].y - this.offset) / 10);
+            m.setPos((data.path[0].x - this.offset) / 100, 0.282, (data.path[0].y - this.offset) / 100);
             //m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
 
             d.mMoveList.push(m);
@@ -146,19 +163,17 @@ class RolePorxy extends puremvc.Proxy {
     public playSkillByIndex(index: number) {
         let data = this.get(this.myPlayerInstId);
 
-        Pomelo.getInstance().request('area.playerHandler.skill', { id: index }, function (result) {
-            if (result.code == 200) {
-            } else {
-                console.warn('curPlayer skill error!');
-            }
+        // Pomelo.getInstance().request('area.fightHandler.attack', { id: index }, function (result) {
+        //     if (result.code == 200) {
+        //     } else {
+        //         console.warn('curPlayer skill error!');
+        //     }
+        // });
+        
+        Pomelo.getInstance().notify("area.fightHandler.useSkill", {
+            skillId: data.mSkillList[index],
+            entityId: data.mInstId
         });
-    }
-
-    public onSkill(param) {
-        let data = this.get(param.entityId);
-        if (data) {
-            this.sendNotification(NotiNames.SKILL, [data, data.mSkillList[param.id]]);
-        }
     }
 
     // myPlayer
@@ -216,5 +231,47 @@ class RolePorxy extends puremvc.Proxy {
 
     private onDisconnect() {
 
+    }
+
+    private onAttack(data) {
+        var skillId = data.skillId; //技能id
+        let attackerId = data.attacker; // 攻击者
+        let targetId = data.target; // 被攻击者
+
+        var resultData = data.result;
+        var result = resultData.result;
+
+        if (result === AttackResult.SUCCESS) {
+            let attackData = this.get(attackerId);
+            let targetData = this.get(targetId);
+            if (attackData) {
+                this.sendNotification(NotiNames.SKILL, [attackData, targetData, skillId]);
+            }
+            //successAction(params);
+        } else if (result === AttackResult.KILLED) {
+            //killedAction(params);
+            console.log("KILLED");
+        } else if (result === AttackResult.NOT_IN_RANGE) {
+            //targetSprite.stand({ x1: attackerPos.x, x2: attackerPos.y, y1: targetPos.x, y2: targetPos.y });
+        }
+    }
+
+    private onRevive(data) { // 复活
+        // var area = app.getCurArea();
+        // var curPlayer = app.getCurPlayer();
+        // if (curPlayer.entityId !== data.entityId) {
+        //     area.addEntity(data.entity);
+        // }
+        // var player = area.getEntity(data.entityId);
+        // player.died = false;
+        // player.set('hp', data.hp);
+        // var sprite = player.getSprite();
+        // sprite.revive(data, function () {
+        //     if (player.entityId === app.getCurPlayer().entityId) {
+        //         area.map.centerTo(data.x, data.y);
+        //         mainPanel.reviveMaskHide();
+        //     }
+        // });
+        console.log("onRevive");
     }
 }

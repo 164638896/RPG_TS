@@ -37,3 +37,13 @@ class MsgConst {
     static ADD_NPC: string = "9";
     static MOVE_MONSTER: string = "10";
 }
+
+class AttackResult {
+    static SUCCESS: number = 1;
+    static KILLED: number = 2;
+    static MISS: number = 3;
+    static NOT_IN_RANGE: number = 4;
+    static NO_ENOUGH_MP: number = 5;
+    static NOT_COOLDOWN: number = 6;
+    static ATTACKER_CONFUSED: number = 7;
+}

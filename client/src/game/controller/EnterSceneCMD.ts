@@ -74,7 +74,7 @@ class EnterSceneCMD extends puremvc.SimpleCommand {
         let camera: Laya.Camera = scene.getChildByName('Scenes').getChildByName("Main Camera") as Laya.Camera;
         if (camera) {
             let playerControl: PlayerControl = camera.addComponent(PlayerControl) as PlayerControl;
-            playerControl.initData(myPlayer, terrainSprite);
+            playerControl.initData(myPlayer as MyPlayer, terrainSprite);
         }
 
         this.facade.registerCommand(NotiNames.ADD_ROLE, AddRoleCMD);
