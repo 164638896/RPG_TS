@@ -29,8 +29,8 @@ class RolePorxy extends puremvc.Proxy {
     }
 
     public playerLogin(name: number, h: string, p: number) {
-        Pomelo.getInstance().init({ host: h, port: p }, function () {
-            Pomelo.getInstance().request('gate.gateHandler.queryEntry', { uid: name }, function (data) {
+        Pomelo.getInstance().init({ host: h, port: p }, ()=> {
+            Pomelo.getInstance().request('gate.gateHandler.queryEntry', { uid: name }, (data)=> {
                 Pomelo.getInstance().disconnect();
 
                 if (data.code === 2001) {
@@ -38,26 +38,29 @@ class RolePorxy extends puremvc.Proxy {
                     return;
                 }
 
-                Pomelo.getInstance().init({ host: data.host, port: data.port, log: true }, function () {
-                    Pomelo.getInstance().request('connector.entryHandler.entry', { name: name }, function (data) {
-                        Pomelo.getInstance().request("area.playerHandler.enterScene", { name: name, playerId: data.playerId }, function (data) {
-                            let rolePorxy = AppFacade.getInstance().retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy;
+                Pomelo.getInstance().init({ host: data.host, port: data.port, log: true }, ()=> {
+                    Pomelo.getInstance().request('connector.entryHandler.entry', { name: name },  (data)=> {
+                        Pomelo.getInstance().request("area.playerHandler.enterScene", { name: name, playerId: data.playerId }, (data)=> {
                             // if (data.code !== 200) {
                             //     alert('Servers error!');
                             //     return;
                             // }
-                            if (!data.curPlayer) return;
+                            if (!data.curPlayer) 
+                            {
+                                console.error("curPlayer is null");
+                                return;
+                            }
 
-                            rolePorxy.setMyPlayerInstId(data.curPlayer.entityId);
-                            rolePorxy.addEntity(data.curPlayer);
+                            this.setMyPlayerInstId(data.curPlayer.entityId);
+                            this.addEntity(data.curPlayer);
 
                             for (let key in data.entities) {
                                 let array = data.entities[key];
                                 for (let i = 0; i < array.length; i++) {
-                                    rolePorxy.addEntity(array[i]);
+                                    this.addEntity(array[i]);
                                 }
                             }
-                            AppFacade.getInstance().sendNotification(NotiNames.ENTER_SCENE);
+                            this.sendNotification(NotiNames.ENTER_SCENE);
                         });
                     });
                 });
