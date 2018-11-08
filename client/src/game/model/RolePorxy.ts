@@ -4,8 +4,6 @@
 class RolePorxy extends puremvc.Proxy {
     private myPlayerInstId: number = 0;
 
-    private offset: number = 700; //临时代码,未了服务器通过
-
     constructor() {
         super(ProxyNames.ROLE_PROXY);
         this.data = {};
@@ -25,10 +23,11 @@ class RolePorxy extends puremvc.Proxy {
         Pomelo.getInstance().on('onAttack', this, this.onAttack);
         Pomelo.getInstance().on('onRevive', this, this.onRevive);
 
-        this.playerLogin(RandomUtils.limitInteger(1, 5), "127.0.0.1", 3014);
+        //this.playerLogin(RandomUtils.limitInteger(1, 5), "192.168.6.100", 3014);
+        this.playerLogin(Math.random().toString(), "192.168.6.200", 3014);
     }
 
-    public playerLogin(name: number, h: string, p: number) {
+    public playerLogin(name: string, h: string, p: number) {
         Pomelo.getInstance().init({ host: h, port: p }, ()=> {
             Pomelo.getInstance().request('gate.gateHandler.queryEntry', { uid: name }, (data)=> {
                 Pomelo.getInstance().disconnect();
@@ -45,20 +44,21 @@ class RolePorxy extends puremvc.Proxy {
                             //     alert('Servers error!');
                             //     return;
                             // }
-                            if (!data.curPlayer) 
+                            if (!data.curPlayerInstId) 
                             {
                                 console.error("curPlayer is null");
                                 return;
                             }
 
-                            this.setMyPlayerInstId(data.curPlayer.entityId);
-                            this.addEntity(data.curPlayer);
+                            this.setMyPlayerInstId(data.curPlayerInstId);
+                            //this.addEntity(data.curPlayer);
 
                             for (let key in data.entities) {
-                                let array = data.entities[key];
-                                for (let i = 0; i < array.length; i++) {
-                                    this.addEntity(array[i]);
-                                }
+                                 this.addEntity(data.entities[key]);
+                                // let array = data.entities[key];
+                                // for (let i = 0; i < array.length; i++) {
+                                //     this.addEntity(array[i]);
+                                // }
                             }
                             this.sendNotification(NotiNames.ENTER_SCENE);
                         });
@@ -69,10 +69,8 @@ class RolePorxy extends puremvc.Proxy {
     }
 
     private onAddEntities(data) {
-        if (data.player) {
-            for (var i = 0; i < data.player.length; i++) {
-                this.addEntity(data.player[i]);
-            }
+        for (let key in data.entities) {
+            this.addEntity(data.entities[key]);
         }
     }
 
@@ -93,9 +91,9 @@ class RolePorxy extends puremvc.Proxy {
 
     public addEntity(entity: any) {
         let d: RoleData = null
-        switch (entity.type) {
+        switch (entity.mType) {
             case 'player':
-                if (this.myPlayerInstId == entity.entityId) {
+                if (this.myPlayerInstId == entity.mInstId) {
                     if (this.getMyPlayerData()) return;
                     d = new MyPlayerData();
                     d.mTypeId = 1;
@@ -114,7 +112,7 @@ class RolePorxy extends puremvc.Proxy {
                 return false;
         }
 
-        d.mInstId = entity.entityId;
+        d.mInstId = entity.mInstId;
         d.mMoveSpeed = 1;
         d.mSceneId = 1;
         d.mAtk = 1;
@@ -124,7 +122,7 @@ class RolePorxy extends puremvc.Proxy {
         d.mSkillList.push(2);
         d.mSkillList.push(3);
         d.mSkillList.push(4);
-        d.setPos((entity.x - this.offset) / 100, 0.282, (entity.y - this.offset) / 100);
+        d.setPos(entity.x, entity.y, entity.z);
         d.setDir(0, 0, 1);
         this.data[d.mInstId] = d;
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
@@ -132,7 +130,7 @@ class RolePorxy extends puremvc.Proxy {
 
     public move() {
         let data = this.get(this.myPlayerInstId);
-        Pomelo.getInstance().request('area.playerHandler.move', { path: [{ x: (data.mPos.x * 100 + this.offset), y: (data.mPos.z * 100 + this.offset) }, { x: (data.mPos.x * 100 + this.offset), y: (data.mPos.z * 100 + this.offset) }] }, function (result) {
+        Pomelo.getInstance().request('area.playerHandler.move', { x: data.mPos.x, y: data.mPos.y, z: data.mPos.z}, function (result) {
             if (result.code == 200) {
                 // var sprite = app.getCurPlayer().getSprite();
                 // var sPos = result.sPos;
@@ -142,10 +140,9 @@ class RolePorxy extends puremvc.Proxy {
             }
         });
     }
-
-    public onMove(data) {
-        if (data.entityId != this.myPlayerInstId) {
-            let d = this.get(data.entityId);
+    public onMove(msg: {InstId: number, x: number, y: number, z: number}) {
+        if (msg.InstId != this.myPlayerInstId) {
+            let d = this.get(msg.InstId);
             if (!d) return;
 
             //d.mMoveSpeed = param.speed;
@@ -156,27 +153,11 @@ class RolePorxy extends puremvc.Proxy {
             else {
                 m = new MoveData;
             }
-            m.setPos((data.path[0].x - this.offset) / 100, 0.282, (data.path[0].y - this.offset) / 100);
+            m.setPos(msg.x, msg.y, msg.z);
             //m.setNextDir(param.dir[0], param.dir[1], param.dir[2]);
 
             d.mMoveList.push(m);
         }
-    }
-
-    public playSkillByIndex(index: number) {
-        let data = this.get(this.myPlayerInstId);
-
-        // Pomelo.getInstance().request('area.fightHandler.attack', { id: index }, function (result) {
-        //     if (result.code == 200) {
-        //     } else {
-        //         console.warn('curPlayer skill error!');
-        //     }
-        // });
-        
-        Pomelo.getInstance().notify("area.fightHandler.useSkill", {
-            skillId: data.mSkillList[index],
-            entityId: data.mInstId
-        });
     }
 
     // myPlayer
@@ -235,28 +216,48 @@ class RolePorxy extends puremvc.Proxy {
     private onDisconnect() {
 
     }
+    public playSkillByIndex(index: number) {
+        let data = this.get(this.myPlayerInstId);
 
-    private onAttack(data) {
-        var skillId = data.skillId; //技能id
-        let attackerId = data.attacker; // 攻击者
-        let targetId = data.target; // 被攻击者
+        // Pomelo.getInstance().request('area.fightHandler.attack', { id: index }, function (result) {
+        //     if (result.code == 200) {
+        //     } else {
+        //         console.warn('curPlayer skill error!');
+        //     }
+        // });
+        
+        Pomelo.getInstance().notify("area.playerHandler.skill", {
+            skillId: data.mSkillList[index],
+            playerInstId: data.mInstId
+        });
+    }
+    private onAttack(data: {skillId: number, playerInstId: number, targetInstId: number, result: any}) {
+        let skillId = data.skillId; //技能id
+        let attackerId = data.playerInstId; // 攻击者
+        let targetId = data.targetInstId; // 被攻击者
 
-        var resultData = data.result;
-        var result = resultData.result;
-
-        if (result === AttackResult.SUCCESS) {
-            let attackData = this.get(attackerId);
-            let targetData = this.get(targetId);
-            if (attackData) {
-                this.sendNotification(NotiNames.SKILL, [attackData, targetData, skillId]);
-            }
-            //successAction(params);
-        } else if (result === AttackResult.KILLED) {
-            //killedAction(params);
-            console.log("KILLED");
-        } else if (result === AttackResult.NOT_IN_RANGE) {
-            //targetSprite.stand({ x1: attackerPos.x, x2: attackerPos.y, y1: targetPos.x, y2: targetPos.y });
+        let attackData = this.get(attackerId);
+        let targetData = this.get(targetId);
+        if (attackData) {
+            this.sendNotification(NotiNames.SKILL, [attackData, targetData, skillId]);
         }
+
+        // let resultData = data.result;
+        // let result = resultData.result;
+
+        // if (result === AttackResult.SUCCESS) {
+        //     let attackData = this.get(attackerId);
+        //     let targetData = this.get(targetId);
+        //     if (attackData) {
+        //         this.sendNotification(NotiNames.SKILL, [attackData, targetData, skillId]);
+        //     }
+        //     //successAction(params);
+        // } else if (result === AttackResult.KILLED) {
+        //     //killedAction(params);
+        //     console.log("KILLED");
+        // } else if (result === AttackResult.NOT_IN_RANGE) {
+        //     //targetSprite.stand({ x1: attackerPos.x, x2: attackerPos.y, y1: targetPos.x, y2: targetPos.y });
+        // }
     }
 
     private onRevive(data) { // 复活

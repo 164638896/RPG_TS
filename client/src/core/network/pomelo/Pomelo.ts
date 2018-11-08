@@ -250,8 +250,9 @@ class Pomelo extends laya.events.EventDispatcher {
 
     public disconnect() {
         if (this.socket) {
+            //this.socket.disconnect();
             this.socket.close();
-            this.socket = false;
+            this.socket = null;
         }
 
         if (this.heartbeatId) {
@@ -295,7 +296,12 @@ class Pomelo extends laya.events.EventDispatcher {
     }
 
     public send(packet) {
-        this.socket.send(packet.buffer);
+        if(this.socket){
+            this.socket.send(packet.buffer);
+        }
+        else{
+            console.warn("socket is null");
+        }
     }
 
     private onData(msg) {

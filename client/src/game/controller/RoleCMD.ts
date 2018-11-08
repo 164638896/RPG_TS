@@ -82,7 +82,7 @@ class RemoveRoleCMD extends puremvc.SimpleCommand {
     execute(notification: puremvc.INotification): void {
         console.info("RemoveRoleCMD");
         let roleData = notification.getBody() as RoleData;
-        if (roleData)  {
+        if (roleData) {
             RoleMgr.getInstance().removeRole(roleData.mInstId);
         }
     }
@@ -101,7 +101,6 @@ class SkillCMD extends puremvc.SimpleCommand {
         let targetData = arr[1] as RoleData;
 
         let attackRole: Role = RoleMgr.getInstance().getRole(attackData.mInstId);
-        let targetRole: Role = RoleMgr.getInstance().getRole(targetData.mInstId);
 
         // let pos = role.mRole3D.transform.position;
         // let forward = roleData.mForward;
@@ -123,7 +122,12 @@ class SkillCMD extends puremvc.SimpleCommand {
             let skillInfo = SkillConfig.getInstance().getSkillInfo(arr[2]);
             if (skillInfo) {
                 attackRole.mStateMachine.switchState(StateType.Atk, [skillInfo.ani, 2]);
-                targetRole.mStateMachine.switchState(StateType.Hit, [AniName.Hit, 1]);
+                if (targetData) {
+                    let targetRole: Role = RoleMgr.getInstance().getRole(targetData.mInstId);
+                    if (targetRole) {
+                        targetRole.mStateMachine.switchState(StateType.Hit, [AniName.Hit, 1]);
+                    }
+                }
             }
             else {
                 console.error("没有这个技能Id=", arr[1]);
