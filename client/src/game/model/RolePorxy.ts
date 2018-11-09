@@ -24,7 +24,7 @@ class RolePorxy extends puremvc.Proxy {
         Pomelo.getInstance().on('onRevive', this, this.onRevive);
 
         //this.playerLogin(RandomUtils.limitInteger(1, 5), "192.168.6.100", 3014);
-        this.playerLogin(Math.random().toString(), "192.168.6.200", 3014);
+        this.playerLogin(Math.random().toString(), "192.168.6.100", 3014);
     }
 
     public playerLogin(name: string, h: string, p: number) {
@@ -231,19 +231,9 @@ class RolePorxy extends puremvc.Proxy {
             playerInstId: data.mInstId
         });
     }
-    private onAttack(data: {skillId: number, playerInstId: number, targetInstId: number, result: any}) {
-        let skillId = data.skillId; //技能id
-        let attackerId = data.playerInstId; // 攻击者
-        let targetId = data.targetInstId; // 被攻击者
+    private onAttack(data: {skillId: number, playerInstId: number, targets: Array<number>, result: any}) {
 
-        let attackData = this.get(attackerId);
-        let targetData = this.get(targetId);
-        if (attackData) {
-            this.sendNotification(NotiNames.SKILL, [attackData, targetData, skillId]);
-        }
-
-        // let resultData = data.result;
-        // let result = resultData.result;
+        this.sendNotification(NotiNames.SKILL, data);
 
         // if (result === AttackResult.SUCCESS) {
         //     let attackData = this.get(attackerId);

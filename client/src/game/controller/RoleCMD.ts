@@ -96,41 +96,23 @@ class SkillCMD extends puremvc.SimpleCommand {
     execute(notification: puremvc.INotification): void {
         console.info("SkillCMD");
 
-        let arr = notification.getBody();
-        let attackData = arr[0] as RoleData;
-        let targetData = arr[1] as RoleData;
-
-        let attackRole: Role = RoleMgr.getInstance().getRole(attackData.mInstId);
-
-        // let pos = role.mRole3D.transform.position;
-        // let forward = roleData.mForward;
-
-        // let monsterPorxy = this.facade.retrieveProxy(ProxyNames.ROLE_PROXY) as RolePorxy;
-        // let datas = monsterPorxy.getData();
-        // for (let i in datas) {
-        //     let monsterData = datas[i] as MonsterData;
-        //     let tPos = monsterData.mPos;
-        //     let monster = RoleMgr.getInstance().getMonster(monsterData.mInstId);
-        //     if (monster != null && monster.mRole3D != null) { // 还没加载好怪物
-        //         if (MathUtils.IsPointInCircularSector(pos.x, pos.z, forward.x, forward.z, 0.5, 3.14 / 2, tPos.x, tPos.z)) {
-        //             monster.mStateMachine.switchState(StateType.Hit, [AniName.Hit, 1]);
-        //         }
-        //     }
-        // }
+        let data = notification.getBody();
+        let attackRole: Role = RoleMgr.getInstance().getRole(data.playerInstId);
 
         if (attackRole) {
-            let skillInfo = SkillConfig.getInstance().getSkillInfo(arr[2]);
+            let skillInfo = SkillConfig.getInstance().getSkillInfo(data.skillId);
             if (skillInfo) {
                 attackRole.mStateMachine.switchState(StateType.Atk, [skillInfo.ani, 2]);
-                if (targetData) {
-                    let targetRole: Role = RoleMgr.getInstance().getRole(targetData.mInstId);
+
+                for (let i in data.targets) {
+                    let targetRole: Role = RoleMgr.getInstance().getRole(data.targets[i]);
                     if (targetRole) {
                         targetRole.mStateMachine.switchState(StateType.Hit, [AniName.Hit, 1]);
                     }
                 }
             }
             else {
-                console.error("没有这个技能Id=", arr[1]);
+                console.error("没有这个技能Id=", data.skillId);
             }
         }
     }
