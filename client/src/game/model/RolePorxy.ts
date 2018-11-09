@@ -122,8 +122,8 @@ class RolePorxy extends puremvc.Proxy {
         d.mSkillList.push(2);
         d.mSkillList.push(3);
         d.mSkillList.push(4);
-        d.setPos(entity.x, entity.y, entity.z);
-        d.setDir(0, 0, 1);
+        d.setPos(entity.mPos.x, entity.mPos.y, entity.mPos.z);
+        d.setDir(entity.mForward.x, entity.mForward.y, entity.mForward.z);
         this.data[d.mInstId] = d;
         this.sendNotification(NotiNames.ADD_ROLE, [this, d]);
     }
